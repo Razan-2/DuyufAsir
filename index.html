@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ضيوف عسير | دليلك الذكي في عسير</title>
+
+    <link rel="stylesheet" href="style.css?v=240">
+    <link rel="icon" type="image/png" href="assets/brand/duof-asir-logo-v2.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="home-page">
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <a href="#home" class="brand">
+        <div class="brand-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+
+        <div>
+            <h2>ضيوف عسير</h2>
+            <span>دليلك الذكي في أبها</span>
+        </div>
+    </a>
+
+    <nav class="nav-links">
+        <a class="active" href="#home">الرئيسية</a>
+        <a href="agents.html">الوكلاء</a>
+        <a href="about.html">عن المنصة</a>
+        <a href="contact.html">الدعم الفني</a>
+    </nav>
+
+    <div class="nav-actions">
+
+        <button class="header-tool-btn" id="quickSearchBtn" type="button" aria-label="البحث السريع"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="header-tool-btn" id="notificationsBtn" type="button" aria-label="الإشعارات"><i class="fa-solid fa-bell"></i><b id="notificationCount">0</b></button>
+        <button class="header-tool-btn language-toggle" id="languageBtn" type="button" aria-label="تغيير اللغة">EN</button>
+
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="تفعيل الوضع الليلي">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <button class="login-btn" type="button">
+            <i class="fa-solid fa-user"></i>
+            تسجيل الدخول
+        </button>
+
+        <button class="logout-btn" id="logoutBtn" type="button" hidden>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            تسجيل الخروج
+        </button>
+
+        <button class="profile-btn" id="profileBtn" type="button" hidden><i class="fa-solid fa-user-circle"></i> الملف الشخصي</button>
+
+    </div>
+
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<main>
+
+<section class="hero" id="home">
+
+    <div class="hero-text">
+
+        <h1>
+            عسير أقرب
+            <span>بتفاصيلها وأهلها</span>
+        </h1>
+
+        <p>
+            دليلك الذكي لاكتشاف السكن والمواصلات والعمل والتعليم والترفيه
+            في أبها وخميس مشيط ومحافظات منطقة عسير.
+        </p>
+
+        <div class="hero-actions">
+
+            <a href="agents.html" class="primary-btn">
+                استكشف الوكلاء الآن
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <button class="watch-btn" type="button">
+                <span>
+                    <i class="fa-solid fa-play"></i>
+                </span>
+                نبذة عن أبها
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Visual AI Area -->
+
+    <div class="hero-visual">
+
+        <img class="hero-center-photo" src="assets/brand/abha-mountains-center.png" alt="جبال أبها بين السحب">
+
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+
+        <div class="agent-bubble bubble-house">
+            <div class="bubble-icon blue">
+                <i class="fa-solid fa-house"></i>
+            </div>
+            <span>السكن والفنادق</span>
+        </div>
+
+        <div class="agent-bubble bubble-education">
+            <div class="bubble-icon purple">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span>التعليم</span>
+        </div>
+
+        <div class="agent-bubble bubble-job">
+            <div class="bubble-icon turquoise">
+                <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <span>الموارد البشرية</span>
+        </div>
+
+        <div class="agent-bubble bubble-fun">
+            <div class="bubble-icon pink">
+                <i class="fa-solid fa-ticket"></i>
+            </div>
+            <span>الترفيه</span>
+        </div>
+
+
+        <div class="ai-platform">
+
+            <div class="robot">
+
+                <div class="robot-head">
+
+                    <span class="robot-ear left"></span>
+                    <span class="robot-ear right"></span>
+
+                    <div class="robot-face">
+
+                        <div class="eyes">
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <div class="robot-smile"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="platform-ring ring-1"></div>
+            <div class="platform-ring ring-2"></div>
+            <div class="platform-core"></div>
+
+        </div>
+
+        <div class="spark spark1">✦</div>
+        <div class="spark spark2">✦</div>
+        <div class="spark spark3">✦</div>
+
+    </div>
+
+</section>
+
+<section class="main-assistant-section" id="mainAssistant">
+    <div class="main-assistant-card">
+        <div class="main-assistant-heading">
+            <span><i class="fa-solid fa-diagram-project"></i> الوكيل الرئيسي · Supervisor Agent</span>
+            <h2>اكتب طلبك مرة واحدة</h2>
+            <p>سأفهم احتياجك، وأشغّل الوكلاء المناسبين تلقائيًا، ثم أدمج النتائج لك في شاشة واحدة.</p>
+        </div>
+        <form class="main-assistant-form" id="mainAssistantForm">
+            <label for="mainAssistantInput">ما الذي تبحث عنه؟</label>
+            <div>
+                <textarea id="mainAssistantInput" rows="3" placeholder="مثال: أبحث عن وظيفة في خميس مشيط وأحتاج سكنًا قريبًا من الشركة." required></textarea>
+                <button class="voice-search-btn" id="voiceSearchBtn" type="button" aria-label="البحث الصوتي"><i class="fa-solid fa-microphone"></i></button>
+                <button id="mainAssistantSubmit" type="submit"><i class="fa-solid fa-paper-plane"></i><span>حلّل طلبي</span></button>
+            </div>
+            <div class="smart-request-suggestions" id="smartRequestSuggestions"></div>
+        </form>
+        <div class="main-assistant-output" id="mainAssistantOutput" aria-live="polite" hidden></div>
+    </div>
+</section>
+
+
+<!-- ================= AGENTS ================= -->
+
+<section class="agents-section" id="agents">
+
+    <div class="section-heading">
+
+        <span class="mini-title">
+            <i class="fa-solid fa-sparkles"></i>
+            الوكلاء الذكيون
+        </span>
+
+        <h2>
+            اختر الوكيل الذي
+            <span>يناسب احتياجك</span>
+        </h2>
+
+        <p>
+            كل وكيل ذكي صُمم لمساعدتك وتوفير الوقت والجهد.
+        </p>
+
+    </div>
+
+
+    <div class="agents-grid">
+
+
+        <!-- Transportation -->
+
+        <article class="agent-card transport-card">
+
+            <div class="card-visual visual-housing">
+                <img class="agent-photo" src="assets/agents/transport-abha-v2.png" alt="حافلة وسيارة أجرة على طريق جبلي في أبها" loading="lazy">
+                <div class="floating-icon"><i class="fa-solid fa-bus"></i></div>
+            </div>
+
+            <div class="card-content">
+                <h3>وكيل المواصلات</h3>
+                <p>اعثر على سيارات الأجرة وحافلات النقل وتطبيقات التوصيل وتأجير السيارات داخل أبها.</p>
+                <div class="tags">
+                    <span>توصيل</span>
+                    <span>حافلات</span>
+                    <span>أجرة</span>
+                    <span>تأجير</span>
+                </div>
+                <button class="agent-button blue-button" onclick="openAgent('وكيل المواصلات','transport')">
+                    استكشف الآن
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+
+        </article>
+
+
+        <!-- Housing -->
+
+        <article class="agent-card housing-card">
+
+            <div class="card-visual visual-housing">
+
+                <img class="agent-photo" src="assets/agents/housing-abha-v2.png" alt="غرفة فندقية بإطلالة على جبال أبها" loading="lazy">
+
+                <div class="visual-circle"></div>
+
+                <i class="fa-solid fa-building building-one"></i>
+                <i class="fa-solid fa-building building-two"></i>
+
+                <div class="main-house">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+
+                <div class="floating-icon">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+
+            </div>
+
+            <div class="card-content">
+
+                <h3>وكيل السكن والفنادق</h3>
+
+                <p>
+                    ابحث عن الفنادق والشقق والفلل المناسبة لاحتياجك وميزانيتك داخل أبها.
+                </p>
+
+                <div class="tags">
+                    <span>شقق</span>
+                    <span>فلل</span>
+                    <span>فنادق</span>
+                    <span>إقامة</span>
+                </div>
+
+                <button
+                    class="agent-button blue-button"
+                    onclick="openAgent('وكيل السكن والفنادق','housing')">
+                    استكشف الآن
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- HR -->
+
+        <article class="agent-card hr-card">
+
+            <div class="card-visual visual-hr">
+
+                <img class="agent-photo" src="assets/agents/hr-abha-v2.png" alt="مقابلة توظيف في مكتب حديث بمدينة أبها" loading="lazy">
+
+                <div class="visual-circle"></div>
+
+                <div class="briefcase">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+
+                <i class="fa-solid fa-building office-one"></i>
+                <i class="fa-solid fa-tree office-tree"></i>
+
+                <div class="floating-icon">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+
+            </div>
+
+            <div class="card-content">
+
+                <h3>وكيل الموارد البشرية</h3>
+
+                <p>
+                    اكتشف الشركات والوظائف وفرص التدريب
+                    والخدمات المتعلقة بالموارد البشرية.
+                </p>
+
+                <div class="tags">
+                    <span>وظائف</span>
+                    <span>شركات</span>
+                    <span>تدريب</span>
+                    <span>استشارات</span>
+                </div>
+
+                <button
+                    class="agent-button purple-button"
+                    onclick="openAgent('وكيل الموارد البشرية','hr')">
+                    استكشف الآن
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- Education -->
+
+        <article class="agent-card education-card">
+
+            <div class="card-visual visual-education">
+
+                <img class="agent-photo" src="assets/agents/education-child-study.png" alt="طفل يدرس ويكتب بجانب الكتب والكرة الأرضية" loading="lazy">
+
+                <div class="visual-circle"></div>
+
+                <div class="books">
+                    <i class="fa-solid fa-book"></i>
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <div class="graduation">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="floating-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+            </div>
+
+            <div class="card-content">
+
+                <h3>وكيل التعليم</h3>
+
+                <p>
+                    ابحث عن الجامعات والمدارس والدورات
+                    والفرص التعليمية المناسبة لك.
+                </p>
+
+                <div class="tags">
+                    <span>جامعات</span>
+                    <span>مدارس</span>
+                    <span>دورات</span>
+                    <span>منح</span>
+                </div>
+
+                <button
+                    class="agent-button cyan-button"
+                    onclick="openAgent('وكيل التعليم','education')">
+                    استكشف الآن
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+            </div>
+
+        </article>
+
+
+        <!-- Entertainment -->
+
+        <article class="agent-card entertainment-card">
+
+            <div class="card-visual visual-entertainment">
+
+                <img class="agent-photo" src="assets/agents/entertainment-abha-night-enhanced.png" alt="ممشى ترفيهي ليلي مضاء في أبها" loading="lazy">
+
+                <div class="visual-circle"></div>
+
+                <div class="popcorn">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+
+                <div class="game">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+
+                <div class="ticket">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+
+                <div class="floating-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+            </div>
+
+            <div class="card-content">
+
+                <h3>وكيل الترفيه</h3>
+
+                <p>
+                    اكتشف الفعاليات والأماكن والأنشطة
+                    الترفيهية القريبة منك.
+                </p>
+
+                <div class="tags">
+                    <span>فعاليات</span>
+                    <span>مطاعم</span>
+                    <span>أماكن</span>
+                    <span>أنشطة</span>
+                </div>
+
+                <button
+                    class="agent-button orange-button"
+                    onclick="openAgent('وكيل الترفيه','entertainment')">
+                    استكشف الآن
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SERVICES ================= -->
+
+<section class="services" id="services">
+
+    <div class="section-heading">
+        <span class="mini-title">لماذا ضيوف عسير؟</span>
+
+        <h2>
+            كل خدماتك
+            <span>في منصة واحدة</span>
+        </h2>
+    </div>
+
+
+    <div class="service-grid">
+
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+
+            <h3>سريع</h3>
+            <p>
+                الوصول إلى المعلومات والخدمات التي تحتاجها بسرعة.
+            </p>
+        </div>
+
+
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <h3>ذكي</h3>
+
+            <p>
+                وكلاء أذكياء يفهمون احتياجك ويقدمون خيارات مناسبة.
+            </p>
+        </div>
+
+
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+
+            <h3>متكامل</h3>
+
+            <p>
+                خدمات متنوعة في مكان واحد دون الحاجة للتنقل بين المواقع.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+
+<section class="about" id="about">
+
+    <div class="about-container">
+
+        <div class="about-content">
+
+            <span class="mini-title">عن منصة ضيوف عسير</span>
+
+            <h2>
+                مساعدك الذكي
+                <span>في حياتك اليومية</span>
+            </h2>
+
+            <p>
+                «ضيوف عسير» منصة رقمية ذكية صُممت لتسهيل تجربة الزائر والمقيم في منطقة عسير.
+                تجمع أهم احتياجاتك اليومية في مكان واحد، وتساعدك على الوصول إلى خيارات مناسبة
+                في المواصلات والسكن والتعليم والتوظيف والترفيه داخل أبها ومحيطها.
+            </p>
+
+            <div class="about-features">
+                <div><i class="fa-solid fa-location-dot"></i><span><strong>تركيز محلي</strong><small>خيارات وخدمات من منطقة عسير</small></span></div>
+                <div><i class="fa-solid fa-wand-magic-sparkles"></i><span><strong>مساعدة ذكية</strong><small>اقتراحات مبنية على احتياجك</small></span></div>
+                <div><i class="fa-solid fa-layer-group"></i><span><strong>خدمات متكاملة</strong><small>عدة وكلاء في منصة واحدة</small></span></div>
+                <div><i class="fa-solid fa-shield-heart"></i><span><strong>تجربة موثوقة</strong><small>معلومات منظمة وسهلة الوصول</small></span></div>
+            </div>
+
+            <p class="about-mission"><strong>رسالتنا:</strong> أن نجعل استكشاف عسير وإنجاز الاحتياجات اليومية تجربة أسهل وأسرع وأكثر وضوحًا.</p>
+
+            <a href="agents.html" class="primary-btn">
+                ابدأ الآن
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+        </div>
+
+        <div class="about-graphic">
+            <div class="about-circle">
+                <img src="assets/brand/duof-asir-logo-v2.png" alt="شعار ضيوف عسير">
+            </div>
+            <div class="about-visual-caption">
+                <strong>ضيوف عسير</strong>
+                <span>دليلك الذكي في عسير</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="about-rewards" id="rewards">
+        <div class="about-rewards-icon"><i class="fa-solid fa-ticket"></i></div>
+        <div>
+            <span>مكافأة ضيوف عسير</span>
+            <h3>كل 5 طلبات تمنحك كوبون جولة مجانية</h3>
+            <p>منصة ضيوف عسير تقدم لك كوبونًا بعد إكمال كل 5 طلبات لدى أي وكيل، لتحصل على جولة مع «نفس للسياحة» لمدة يوم واحد مجانًا.</p>
+        </div>
+        <button id="aboutRewardsBtn" type="button"><i class="fa-solid fa-gift"></i> شاهد كوبوناتك</button>
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer id="contact">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+
+                <div>
+                    <h2>ضيوف عسير</h2>
+                    <span>دليلك الذكي في أبها</span>
+                </div>
+            </div>
+
+            <p>
+                كل ما تحتاجه في مكان واحد.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <div>
+                <h4>المنصة</h4>
+                <a href="#home">الرئيسية</a>
+                <a href="agents.html">الوكلاء</a>
+                <a href="index.html#services">الخدمات</a>
+            </div>
+
+            <div>
+                <h4>المساعدة</h4>
+                <a href="#">الأسئلة الشائعة</a>
+                <a href="#">سياسة الخصوصية</a>
+                <a href="#">الشروط والأحكام</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 ضيوف عسير - جميع الحقوق محفوظة
+    </div>
+
+</footer>
+
+</main>
+
+<button class="feedback-fab" id="feedbackBtn" type="button" aria-label="إرسال تقييم">
+    <i class="fa-solid fa-comment-dots"></i>
+    <span>رأيك يهمنا</span>
+</button>
+
+<div class="abha-video-page" id="abhaVideoPage" aria-hidden="true">
+    <video id="abhaVideo" src="assets/videos/abha-intro.mp4" controls playsinline preload="metadata" aria-label="فيديو نبذة عن أبها"></video>
+</div>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal simple-modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-box form-modal-box">
+        <button class="close-modal" type="button" data-close="loginModal" aria-label="إغلاق">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-agent-icon"><i class="fa-solid fa-user"></i></div>
+        <h2 id="loginTitle">تسجيل الدخول</h2>
+        <p>ادخل بريدك الإلكتروني أو رقم جوالك للوصول إلى حسابك.</p>
+        <form class="action-form" id="loginForm" novalidate>
+            <label>البريد الإلكتروني أو رقم الجوال<input id="loginEmail" type="text" placeholder="name@example.com أو 05xxxxxxxx" autocomplete="username" required></label>
+            <label>كلمة المرور<input id="loginPassword" type="password" placeholder="6 خانات وبها حرف إنجليزي" autocomplete="current-password" minlength="6" required></label>
+            <p class="form-status" id="loginStatus" role="status"></p>
+            <button class="form-submit" type="submit"><i class="fa-solid fa-right-to-bracket"></i> دخول</button>
+        </form>
+        <button class="modal-link-button" id="openSignupBtn" type="button">ليس لديك حساب؟ أنشئ حسابًا</button>
+    </div>
+</div>
+
+<div class="modal simple-modal" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
+    <div class="modal-box form-modal-box">
+        <button class="close-modal" type="button" data-close="signupModal" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+        <button class="signup-back-button" id="signupBackBtn" type="button"><i class="fa-solid fa-arrow-right"></i><span>رجوع لتسجيل الدخول</span></button>
+        <div class="modal-agent-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <h2 id="signupTitle">إنشاء حساب</h2>
+        <p>أنشئ حسابًا مناسبًا لك لحفظ السجل والمفضلة والإعدادات.</p>
+        <form class="action-form" id="signupForm">
+            <label>الاسم<input name="name" required minlength="2" autocomplete="name" placeholder="الاسم الكامل"></label>
+            <label>البريد الإلكتروني<input name="email" type="email" required autocomplete="email" placeholder="name@example.com"></label>
+            <label>رقم الجوال<input name="phone" type="tel" inputmode="numeric" autocomplete="tel" pattern="(?:\+?966|0)?5[0-9]{8}" placeholder="05xxxxxxxx" required></label>
+            <label>العمر<input name="age" type="number" inputmode="numeric" min="16" max="100" placeholder="16 سنة أو أكثر" required><small class="field-help"><i class="fa-solid fa-circle-info"></i> الحد الأدنى لاستخدام المنصة 16 سنة.</small></label>
+            <label>كلمة المرور<input name="password" type="password" minlength="6" pattern="(?=.*[A-Za-z]).{6,}" autocomplete="new-password" placeholder="6 خانات وبها حرف كبير أو صغير" title="استخدم 6 خانات على الأقل وبداخلها حرف إنجليزي كبير أو صغير" required><small class="field-help"><i class="fa-solid fa-circle-info"></i> 6 خانات على الأقل وبها حرف إنجليزي كبير أو صغير.</small></label>
+            <p class="form-status" id="signupStatus" role="status"></p>
+            <button class="form-submit" type="submit"><i class="fa-solid fa-user-check"></i> إنشاء الحساب</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal simple-modal" id="utilityModal" role="dialog" aria-modal="true" aria-labelledby="utilityTitle">
+    <div class="modal-box form-modal-box utility-modal-box">
+        <button class="close-modal" type="button" data-close="utilityModal" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-agent-icon" id="utilityIcon"><i class="fa-solid fa-grid-2"></i></div>
+        <h2 id="utilityTitle">الأدوات</h2>
+        <div id="utilityContent"></div>
+    </div>
+</div>
+
+<!-- ================= FEEDBACK MODAL ================= -->
+<div class="modal simple-modal" id="feedbackModal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+    <div class="modal-box form-modal-box">
+        <button class="close-modal" type="button" data-close="feedbackModal" aria-label="إغلاق">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-agent-icon feedback-logo"><img src="assets/brand/duof-asir-logo-v2.png" alt="شعار ضيوف عسير"></div>
+        <h2 id="feedbackTitle">شاركنا رأيك</h2>
+        <p>ملاحظتك تساعدنا على تطوير ضيوف عسير.</p>
+        <form class="action-form" id="feedbackForm">
+            <fieldset class="rating-field">
+                <legend>كيف كانت تجربتك؟</legend>
+                <div class="rating-options">
+                    <label><input type="radio" name="rating" value="5" required><span>😍</span><small>ممتازة</small></label>
+                    <label><input type="radio" name="rating" value="4"><span>🙂</span><small>جيدة</small></label>
+                    <label><input type="radio" name="rating" value="3"><span>😐</span><small>مقبولة</small></label>
+                    <label><input type="radio" name="rating" value="1"><span>☹️</span><small>سيئة</small></label>
+                </div>
+            </fieldset>
+            <label>ملاحظتك<textarea id="feedbackMessage" rows="4" placeholder="اكتب اقتراحك أو ملاحظتك..." required></textarea></label>
+            <p class="form-status" id="feedbackStatus" role="status"></p>
+            <button class="form-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> إرسال التقييم</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- ================= AGENT MODAL ================= -->
+
+<div class="modal simple-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <div class="modal-box form-modal-box">
+        <button class="close-modal" type="button" data-close="bookingModal" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-agent-icon"><i class="fa-solid fa-hotel"></i></div>
+        <h2 id="bookingTitle">حجز غرفة فندقية</h2>
+        <p id="bookingHotelName">اختر الفندق لإكمال الحجز.</p>
+        <form class="action-form" id="bookingForm">
+            <input id="bookingHotel" type="hidden">
+            <div class="booking-dates">
+                <label>تاريخ الدخول<input id="bookingCheckIn" type="date" required></label>
+                <label>تاريخ الخروج<input id="bookingCheckOut" type="date" required></label>
+            </div>
+            <label>عدد الأشخاص<select id="bookingGuests" required><option value="1">شخص واحد</option><option value="2" selected>شخصان</option><option value="3">3 أشخاص</option><option value="4">4 أشخاص</option></select></label>
+            <div class="booking-total" id="bookingTotal">اختر التواريخ لعرض الإجمالي</div>
+            <p class="form-status" id="bookingStatus" role="status"></p>
+            <button class="form-submit" type="submit"><i class="fa-solid fa-calendar-check"></i> تأكيد الحجز</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="agentModal">
+
+    <div class="modal-box">
+
+        <button class="close-modal agent-back-button" type="button" onclick="closeAgent()" aria-label="رجوع للخلف">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>رجوع للخلف</span>
+        </button>
+
+        <div class="modal-agent-icon" id="modalIcon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+
+        <span class="modal-label">
+            وكيل ذكي
+        </span>
+
+        <h2 id="modalTitle">
+            الوكيل الذكي
+        </h2>
+
+        <p id="modalDescription">
+            أخبرني بما تبحث عنه وسأساعدك.
+        </p>
+
+
+        <div class="agent-workspace chat-collapsed">
+
+        <aside class="recommendations-panel">
+            <div class="recommendations-heading">
+                <i class="fa-solid fa-list-check"></i>
+                <div>
+                    <span>خيارات حقيقية</span>
+                    <h3 id="listTitle">القائمة المقترحة</h3>
+                </div>
+            </div>
+            <div class="recommendations-list" id="recommendationsList"></div>
+        </aside>
+
+        <button class="agent-chat-toggle" id="agentChatToggle" type="button" aria-expanded="false" aria-controls="agentChatArea" title="فتح الوكيل الذكي">
+            <i class="fa-solid fa-robot"></i>
+            <span>افتح الوكيل الذكي</span>
+        </button>
+
+        <div class="chat-area" id="agentChatArea">
+
+            <header class="agent-chat-header">
+                <span class="chat-agent-avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <div><strong id="chatAgentName">الوكيل الذكي</strong><small><i></i> متصل الآن</small></div>
+                <button id="clearAgentChat" type="button" aria-label="محادثة جديدة"><i class="fa-solid fa-pen-to-square"></i><span>محادثة جديدة</span></button>
+            </header>
+
+            <div class="assistant-message">
+                <span class="chat-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </span>
+
+                <p id="welcomeMessage">
+                    مرحباً! كيف يمكنني مساعدتك اليوم؟
+                </p>
+            </div>
+
+
+            <div id="messages"></div>
+
+            <div class="suggested-prompts" id="suggestedPrompts"></div>
+
+
+            <div class="input-container">
+
+                <textarea
+                    id="userInput"
+                    placeholder="اكتب طلبك هنا..."
+                    autocomplete="off"
+                    rows="1"></textarea>
+
+                <button onclick="sendMessage()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="main.js?v=247"></script>
+
+</body>
+</html>

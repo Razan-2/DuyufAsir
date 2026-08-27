@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100" role="img" aria-label="الفارس">
+  <rect width="240" height="100" rx="24" fill="#fff"/>
+  <path d="M38 68c14-32 32-45 55-42-14 7-20 16-21 28 13-8 27-9 42-3-18 4-31 14-40 29H40z" fill="#7f1d2d"/>
+  <text x="170" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="900" fill="#7f1d2d">الفارس</text>
+</svg>

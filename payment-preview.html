@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>معاينة الدفع | ضيوف عسير</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root { --green:#1f5b43; --green-dark:#143f2e; --cream:#fbf7f0; --line:#e4d3bf; --brown:#8a5735; --muted:#786f68; }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; font-family:"Tajawal",sans-serif; color:#302820; background:radial-gradient(circle at top right,#e9f3ed,transparent 32%),linear-gradient(145deg,#f7efe4,#fff); }
+        button,a { font-family:inherit; }
+        .page { width:min(1120px,calc(100% - 28px)); margin:24px auto; }
+        .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 18px; border:1px solid rgba(228,211,191,.8); border-radius:22px; background:rgba(255,255,255,.9); box-shadow:0 16px 38px rgba(55,42,31,.1); }
+        .brand { display:flex; align-items:center; gap:11px; }
+        .brand img { width:54px; height:54px; object-fit:cover; border-radius:16px; }
+        .brand span { display:grid; gap:1px; }
+        .brand strong { color:var(--green-dark); font-size:20px; }
+        .brand small { color:var(--muted); }
+        .back { display:inline-flex; align-items:center; gap:7px; padding:8px 10px; border:0; color:var(--green); background:transparent; font-weight:800; cursor:pointer; }
+        .notice { display:flex; gap:10px; align-items:center; margin:18px 0; padding:13px 16px; border:1px solid #d8c7ae; border-radius:15px; color:#70523d; background:#fff8e9; }
+        .notice i { color:#d28a27; }
+        .layout { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr); gap:18px; }
+        .card { padding:22px; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.94); box-shadow:0 18px 42px rgba(61,44,31,.09); }
+        h1 { margin:0 0 5px; font-size:28px; }
+        .subtitle { margin:0 0 20px; color:var(--muted); }
+        .order-number { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px; border:1px dashed #bd8f65; border-radius:14px; background:#fff8ef; }
+        .order-number span { color:var(--muted); }
+        .order-number strong { color:var(--green); font-size:19px; letter-spacing:.04em; }
+        .summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:16px 0 0; }
+        .summary div { padding:12px; border-radius:13px; background:var(--cream); }
+        .summary dt { color:#81756b; font-size:12px; }
+        .summary dd { margin:4px 0 0; font-weight:900; }
+        .amount { display:grid; gap:5px; margin-top:13px; padding:16px; border-radius:15px; color:#fff; background:linear-gradient(135deg,var(--green),var(--green-dark)); }
+        .amount small { color:#dbece3; }
+        .amount strong { font-size:28px; }
+        .methods-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 13px; }
+        .methods-title h2 { margin:0; font-size:19px; }
+        .methods-title span { padding:4px 9px; border-radius:999px; color:#9a6239; background:#fff1dc; font-size:11px; font-weight:900; }
+        .methods { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+        .method { min-height:76px; padding:10px; border:1px solid var(--line); border-radius:14px; color:#322a24; background:#fff; font-weight:900; cursor:pointer; transition:.2s ease; }
+        .method:hover,.method.selected { border-color:var(--green); background:#eef7f1; transform:translateY(-2px); box-shadow:0 9px 18px rgba(31,91,67,.11); }
+        .method i { display:block; margin-bottom:5px; color:var(--green); font-size:22px; }
+        .method .wordmark { display:block; font-size:17px; direction:ltr; }
+        .method small { display:block; margin-top:3px; color:#8a8179; font-size:10px; font-weight:500; }
+        .future-message { display:none; margin-top:12px; padding:12px; border-radius:12px; color:#674e3e; background:#fff5df; line-height:1.7; font-size:12px; }
+        .future-message.show { display:block; }
+        .pay { width:100%; min-height:52px; margin-top:14px; border:0; border-radius:13px; color:#fff; background:var(--green); font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 10px 22px rgba(31,91,67,.2); }
+        .pay:hover { background:var(--green-dark); }
+        .security { display:flex; align-items:flex-start; gap:8px; margin:12px 0 0; color:#7c746d; font-size:11px; line-height:1.7; }
+        .security i { color:var(--green); margin-top:3px; }
+        .missing { grid-column:1/-1; padding:50px 20px; text-align:center; }
+        .missing i { color:#b36b3f; font-size:45px; }
+        @media(max-width:800px){ .layout{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.page{margin:12px auto}.topbar{border-radius:17px}.card{padding:17px}.methods{grid-template-columns:1fr 1fr} }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <div class="brand"><img src="assets/brand/duof-asir-logo-v2.png" alt="شعار ضيوف عسير"><span><strong>ضيوف عسير</strong><small>معاينة الدفع المستقبلي</small></span></div>
+            <button class="back" id="backToAgent" type="button"><i class="fa-solid fa-arrow-right"></i> العودة إلى الوكيل</button>
+        </header>
+        <div class="notice"><i class="fa-solid fa-circle-info"></i><strong>هذه صفحة تجريبية للعرض فقط، ولا تنفذ أو ترسل أي عملية دفع حقيقية.</strong></div>
+        <section id="paymentContent" class="layout" aria-live="polite"></section>
+    </main>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get("order");
+        const bookings = JSON.parse(localStorage.getItem("transportBookings") || "[]");
+        const futureOrders = JSON.parse(localStorage.getItem("futurePaymentOrders") || "[]");
+        const order = futureOrders.find((item) => item.id === orderId) || bookings.find((item) => item.id === orderId);
+        const paymentContent = document.querySelector("#paymentContent");
+        const safe = (value) => String(value ?? "—").replace(/[&<>'"]/g, (character) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+        document.querySelector("#backToAgent").addEventListener("click", () => {
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = `agents.html${order?.returnAgent ? `?agent=${encodeURIComponent(order.returnAgent)}` : ""}`;
+        });
+        if (!order) {
+            paymentContent.innerHTML = '<div class="card missing"><i class="fa-solid fa-file-circle-xmark"></i><h1>لم يتم العثور على الطلب</h1><p>ارجعي إلى وكيل المواصلات وأنشئي طلبًا جديدًا.</p></div>';
+        } else {
+            const numericAmount = Number(order.total || 0);
+            const amount = numericAmount > 0 ? `${numericAmount.toLocaleString("ar-SA")} ر.س` : "يُحدد عند إكمال الطلب";
+            const isHotel = order.category === "hotel" || String(order.service || "").includes("فندق");
+            const pageTitle = isHotel ? "ملخص حجز الفندق" : "ملخص طلب التأجير";
+            const pageSubtitle = isHotel ? "راجعي بيانات الإقامة والضيوف قبل تجربة وسيلة الدفع المستقبلية." : "راجعي بيانات الطلب قبل تجربة وسيلة الدفع المستقبلية.";
+            const summaryRows = isHotel
+                ? `<div><dt>الفندق</dt><dd>${safe(order.company)}</dd></div><div><dt>الخدمة</dt><dd>${safe(order.service)}</dd></div><div><dt>نوع الغرفة</dt><dd>${safe(order.roomType)}</dd></div><div><dt>عدد الغرف</dt><dd>${safe(order.rooms)}</dd></div><div><dt>تاريخ الدخول</dt><dd dir="ltr">${safe(order.checkIn)}</dd></div><div><dt>تاريخ الخروج</dt><dd dir="ltr">${safe(order.checkOut)}</dd></div><div><dt>مدة الإقامة</dt><dd>${safe(order.nights)} ليلة</dd></div><div><dt>الضيوف</dt><dd>${safe(order.adults)} بالغ · ${safe(order.children)} طفل</dd></div>`
+                : `<div><dt>الشركة أو مقدم الخدمة</dt><dd>${safe(order.company)}</dd></div><div><dt>الخدمة</dt><dd>${safe(order.service || "تأجير سيارة")}</dd></div><div><dt>المدينة</dt><dd>${safe(order.city)}</dd></div><div><dt>ملخص الطلب</dt><dd>${safe(order.summary || order.carType || order.car)}</dd></div><div><dt>تاريخ الاستلام</dt><dd dir="ltr">${safe(order.pickupDate)}</dd></div><div><dt>تاريخ التسليم</dt><dd dir="ltr">${safe(order.returnDate)}</dd></div>`;
+            paymentContent.innerHTML = `
+                <article class="card">
+                    <h1>${pageTitle}</h1><p class="subtitle">${pageSubtitle}</p>
+                    <div class="order-number"><span>رقم الطلب الداخلي</span><strong dir="ltr">${safe(order.id)}</strong></div>
+                    <dl class="summary">${summaryRows}</dl>
+                    <div class="amount"><small>المبلغ المتوقع — للعرض فقط</small><strong>${amount}</strong><small>قد يختلف السعر النهائي في الموقع الرسمي لمقدم الخدمة.</small></div>
+                </article>
+                <aside class="card">
+                    <div class="methods-title"><h2>وسائل الدفع المستقبلية</h2><span>قريبًا</span></div>
+                    <div class="methods">
+                        <button class="method" type="button"><i class="fa-brands fa-apple"></i><span class="wordmark">Apple Pay</span><small>دفع سريع وآمن</small></button>
+                        <button class="method" type="button"><i class="fa-solid fa-credit-card"></i><span class="wordmark">mada</span><small>بطاقة مدى</small></button>
+                        <button class="method" type="button"><i class="fa-solid fa-mobile-screen"></i><span class="wordmark">STC Pay</span><small>المحفظة الرقمية</small></button>
+                        <button class="method" type="button"><img src="assets/payment/tabby-logo.svg" alt="Tabby" style="width:76px;height:28px;object-fit:contain;border-radius:6px"><small>قسّم مشترياتك</small></button>
+                        <button class="method" type="button"><img src="assets/payment/tamara-logo.svg" alt="Tamara" style="width:76px;height:28px;object-fit:contain;border-radius:6px"><small>ادفع لاحقًا</small></button>
+                        <button class="method" type="button"><i class="fa-brands fa-cc-visa"></i><span class="wordmark">Visa</span><small>بطاقة ائتمانية</small></button>
+                        <button class="method" type="button"><i class="fa-brands fa-cc-mastercard"></i><span class="wordmark">Mastercard</span><small>بطاقة ائتمانية</small></button>
+                    </div>
+                    <div id="futureMessage" class="future-message">هذه الميزة مخصصة للإصدار المستقبلي من منصة ضيوف عسير، وسيتم تفعيل الدفع بعد التكامل الرسمي مع الشركات وبوابات الدفع المعتمدة.</div>
+                    <button id="completePayment" class="pay" type="button"><i class="fa-solid fa-lock"></i> إتمام الدفع</button>
+                    <p class="security"><i class="fa-solid fa-shield-halved"></i><span>لا تطلب هذه الصفحة بيانات بطاقات، ولا تحفظ معلومات مالية، ولا تتصل بأي API للدفع.</span></p>
+                </aside>`;
+            const message = document.querySelector("#futureMessage");
+            document.querySelectorAll(".method").forEach((button) => button.addEventListener("click", () => {
+                document.querySelectorAll(".method").forEach((item) => item.classList.remove("selected"));
+                button.classList.add("selected");
+                message.classList.add("show");
+            }));
+            document.querySelector("#completePayment").addEventListener("click", () => {
+                message.textContent = "تم تصميم هذه الصفحة لتوضيح آلية الدفع المستقبلية. سيتم تفعيل الدفع الفعلي بعد التكامل مع الشركات وبوابات الدفع الرسمية مثل Apple Pay وTabby وTamara وmada وغيرها.";
+                message.classList.add("show");
+                message.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+        }
+    </script>
+</body>
+</html>

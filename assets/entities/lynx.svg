@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" role="img" aria-labelledby="title">
+  <title id="title">شركة لينكس لتقنية المعلومات</title>
+  <rect width="420" height="220" rx="28" fill="#ffffff"/>
+  <path d="M80 42 132 110 80 178h42l31-42 31 42h43l-53-68 53-68h-43l-31 42-31-42z" fill="#244b38"/>
+  <text x="250" y="102" text-anchor="middle" font-family="Arial,sans-serif" font-size="54" font-weight="800" fill="#244b38">LYNX</text>
+  <text x="250" y="148" text-anchor="middle" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="#a86443">لينكس</text>
+</svg>
