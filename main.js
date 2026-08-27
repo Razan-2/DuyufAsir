@@ -2141,6 +2141,30 @@ async function saveSignedInUser(fullName, email) {
     }
 }
 
+const rememberedEmailKey = "wakala-remembered-email";
+const loginIdentityInput = document.querySelector("#loginEmail");
+const signupEmailInput = signupForm.elements.email;
+
+function rememberEmail(value) {
+    const email = String(value || "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    localStorage.setItem(rememberedEmailKey, email);
+    loginIdentityInput.value = email;
+    signupEmailInput.value = email;
+}
+
+function restoreRememberedEmail() {
+    const account = JSON.parse(localStorage.getItem("wakala-account") || "null");
+    const rememberedEmail = localStorage.getItem(rememberedEmailKey) || account?.email || "";
+    if (!rememberedEmail) return;
+    loginIdentityInput.value = rememberedEmail;
+    signupEmailInput.value = rememberedEmail;
+}
+
+loginIdentityInput.addEventListener("change", () => rememberEmail(loginIdentityInput.value));
+signupEmailInput.addEventListener("change", () => rememberEmail(signupEmailInput.value));
+restoreRememberedEmail();
+
 loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = document.querySelector("#loginEmail");
@@ -2177,6 +2201,8 @@ loginForm.addEventListener("submit", async (event) => {
         }
     }
     localStorage.setItem("wakala-user", savedAccount?.email || identity);
+    if (isEmail) rememberEmail(identity);
+    else if (savedAccount?.email) rememberEmail(savedAccount.email);
     status.textContent = "تم تسجيل الدخول بنجاح.";
     status.classList.add("success");
     loginButton.hidden = true;
@@ -2189,6 +2215,7 @@ loginForm.addEventListener("submit", async (event) => {
 logoutButton.addEventListener("click", () => {
     localStorage.removeItem("wakala-user");
     loginForm.reset();
+    restoreRememberedEmail();
     document.querySelector("#loginStatus").textContent = "";
     logoutButton.hidden = true;
     loginButton.hidden = false;
@@ -2282,6 +2309,7 @@ signupForm.addEventListener("submit", async (event) => {
     }
     localStorage.setItem("wakala-account", JSON.stringify(account));
     localStorage.setItem("wakala-user", account.email);
+    rememberEmail(account.email);
     status.textContent = "تم إنشاء الحساب وتسجيل الدخول بنجاح.";
     status.classList.add("success");
     loginButton.hidden = true;
