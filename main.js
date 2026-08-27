@@ -2035,10 +2035,7 @@ const languageObserver = new MutationObserver((mutations) => {
 });
 languageObserver.observe(document.body, { childList: true, subtree: true });
 
-loginButton.addEventListener("click", () => {
-    restoreRememberedEmail();
-    openSimpleModal(loginModal);
-});
+loginButton.addEventListener("click", () => openSimpleModal(loginModal));
 document.querySelector("#feedbackBtn").addEventListener("click", () => openSimpleModal(feedbackModal));
 document.querySelector(".watch-btn").addEventListener("click", openAbhaVideo);
 abhaVideoPage.addEventListener("click", (event) => { if (event.target === abhaVideoPage) closeAbhaVideo(); });
@@ -2158,15 +2155,14 @@ function rememberEmail(value) {
 
 function restoreRememberedEmail() {
     const account = JSON.parse(localStorage.getItem("wakala-account") || "null");
-    const signedInIdentity = localStorage.getItem("wakala-user") || "";
-    const rememberedEmail = localStorage.getItem(rememberedEmailKey) || account?.email || (signedInIdentity.includes("@") ? signedInIdentity : "");
+    const rememberedEmail = localStorage.getItem(rememberedEmailKey) || account?.email || "";
     if (!rememberedEmail) return;
     loginIdentityInput.value = rememberedEmail;
     signupEmailInput.value = rememberedEmail;
 }
 
-loginIdentityInput.addEventListener("input", () => rememberEmail(loginIdentityInput.value));
-signupEmailInput.addEventListener("input", () => rememberEmail(signupEmailInput.value));
+loginIdentityInput.addEventListener("change", () => rememberEmail(loginIdentityInput.value));
+signupEmailInput.addEventListener("change", () => rememberEmail(signupEmailInput.value));
 restoreRememberedEmail();
 
 loginForm.addEventListener("submit", async (event) => {
@@ -2283,10 +2279,7 @@ document.querySelector("#openSignupBtn").addEventListener("click", () => {
 
 document.querySelector("#signupBackBtn")?.addEventListener("click", () => {
     closeSimpleModal(signupModal);
-    window.setTimeout(() => {
-        restoreRememberedEmail();
-        openSimpleModal(loginModal);
-    }, 120);
+    window.setTimeout(() => openSimpleModal(loginModal), 120);
 });
 
 signupForm.addEventListener("submit", async (event) => {
