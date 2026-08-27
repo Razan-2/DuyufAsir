@@ -198,7 +198,7 @@ function escapeHtml(value) {
 const mainAgentRoutes = [
     { type: "housing", title: "وكيل السكن", icon: "fa-house", keywords: ["سكن", "شقة", "شقق", "فندق", "فنادق", "فيلا", "إيجار", "غرفة", "قريب"] },
     { type: "transport", title: "وكيل المواصلات", icon: "fa-bus", keywords: ["مواصلات", "نقل", "سيارة", "تاكسي", "حافلة", "رحلة", "محطة", "توصيل"] },
-    { type: "hr", title: "وكيل الموارد البشرية", icon: "fa-briefcase", keywords: ["وظيفة", "وظائف", "عمل", "شركة", "توظيف", "سيرة", "مقابلة", "راتب"] },
+    { type: "hr", title: "وكيل الموارد البشرية", icon: "fa-briefcase", keywords: ["وظيفة", "وظائف", "عمل", "شركة", "شركه", "لينكس", "توظيف", "سيرة", "مقابلة", "راتب"] },
     { type: "education", title: "وكيل التعليم", icon: "fa-graduation-cap", keywords: ["تعليم", "جامعة", "مدرسة", "دورة", "تخصص", "دراسة", "تعلم", "كلية"] },
     { type: "entertainment", title: "وكيل الترفيه", icon: "fa-ticket", keywords: ["ترفيه", "فعالية", "مطعم", "مقهى", "سياحة", "فيلم", "مسلسل", "حديقة", "مكان"] }
 ];

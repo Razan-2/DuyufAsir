@@ -154,7 +154,7 @@ fetch("/")
 
         const script = document.createElement("script");
 
-        script.src = "/main.js?v=247";
+        script.src = "/main.js?v=248";
         script.defer = true;
 
         document.body.appendChild(script);
