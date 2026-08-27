@@ -2035,7 +2035,10 @@ const languageObserver = new MutationObserver((mutations) => {
 });
 languageObserver.observe(document.body, { childList: true, subtree: true });
 
-loginButton.addEventListener("click", () => openSimpleModal(loginModal));
+loginButton.addEventListener("click", () => {
+    restoreRememberedEmail();
+    openSimpleModal(loginModal);
+});
 document.querySelector("#feedbackBtn").addEventListener("click", () => openSimpleModal(feedbackModal));
 document.querySelector(".watch-btn").addEventListener("click", openAbhaVideo);
 abhaVideoPage.addEventListener("click", (event) => { if (event.target === abhaVideoPage) closeAbhaVideo(); });
@@ -2155,14 +2158,15 @@ function rememberEmail(value) {
 
 function restoreRememberedEmail() {
     const account = JSON.parse(localStorage.getItem("wakala-account") || "null");
-    const rememberedEmail = localStorage.getItem(rememberedEmailKey) || account?.email || "";
+    const signedInIdentity = localStorage.getItem("wakala-user") || "";
+    const rememberedEmail = localStorage.getItem(rememberedEmailKey) || account?.email || (signedInIdentity.includes("@") ? signedInIdentity : "");
     if (!rememberedEmail) return;
     loginIdentityInput.value = rememberedEmail;
     signupEmailInput.value = rememberedEmail;
 }
 
-loginIdentityInput.addEventListener("change", () => rememberEmail(loginIdentityInput.value));
-signupEmailInput.addEventListener("change", () => rememberEmail(signupEmailInput.value));
+loginIdentityInput.addEventListener("input", () => rememberEmail(loginIdentityInput.value));
+signupEmailInput.addEventListener("input", () => rememberEmail(signupEmailInput.value));
 restoreRememberedEmail();
 
 loginForm.addEventListener("submit", async (event) => {
@@ -2279,7 +2283,10 @@ document.querySelector("#openSignupBtn").addEventListener("click", () => {
 
 document.querySelector("#signupBackBtn")?.addEventListener("click", () => {
     closeSimpleModal(signupModal);
-    window.setTimeout(() => openSimpleModal(loginModal), 120);
+    window.setTimeout(() => {
+        restoreRememberedEmail();
+        openSimpleModal(loginModal);
+    }, 120);
 });
 
 signupForm.addEventListener("submit", async (event) => {
