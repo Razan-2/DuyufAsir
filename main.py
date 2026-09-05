@@ -13,13 +13,17 @@ from threading import Lock
 from typing import Literal
 
 import httpx
+from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
+from app.database import initialize_orm_database
+from app.routers.api import router as tourism_api_router
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -80,8 +84,8 @@ def initialize_database() -> None:
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     initialize_database()
+    initialize_orm_database()
     yield
-    database.close()
 
 
 app = FastAPI(title="Duof Asir API", version="2.0.0", lifespan=lifespan)
@@ -93,6 +97,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount("/assets", StaticFiles(directory=BASE_DIR / "assets"), name="assets")
+app.include_router(tourism_api_router)
 
 
 class ChatRequest(BaseModel):
@@ -177,11 +182,16 @@ def send_job_application_email(application: JobApplicationRequest, cv_bytes: byt
 
 @app.exception_handler(RequestValidationError)
 async def validation_error_handler(_, error: RequestValidationError) -> JSONResponse:
-    return JSONResponse(status_code=422, content={"success": False, "detail": "Invalid request data.", "errors": error.errors()})
+    return JSONResponse(status_code=422, content=jsonable_encoder({"success": False, "detail": "Invalid request data.", "errors": error.errors()}))
 
 
 @app.exception_handler(sqlite3.Error)
 async def sqlite_error_handler(_, error: sqlite3.Error) -> JSONResponse:
+    return JSONResponse(status_code=500, content={"success": False, "detail": "Database operation failed."})
+
+
+@app.exception_handler(SQLAlchemyError)
+async def orm_error_handler(_, error: SQLAlchemyError) -> JSONResponse:
     return JSONResponse(status_code=500, content={"success": False, "detail": "Database operation failed."})
 
 
@@ -454,3 +464,4 @@ async def prayer_times(city: str) -> dict[str, object]:
 
 
 initialize_database()
+initialize_orm_database()

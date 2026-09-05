@@ -8,10 +8,14 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.13",
     "fastapi>=0.141.1",
     "httpx>=0.28.1",
+    "pwdlib[argon2]>=0.2",
     "pydantic[email]>=2.13.4",
+    "pyjwt>=2.9",
     "python-dotenv>=1.2.3",
+    "sqlalchemy>=2.0",
     "uvicorn>=0.52.4",
 ]
 
@@ -21,3 +25,13 @@ wakla = "wakla:main"
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=6",
+]

@@ -1,11 +1,12 @@
-# Duof Asir - Multi AI Agents Platform
+# Duof Asir Tourism Platform
 
-A single FastAPI service that serves the existing Duof Asir website and provides SQLite-backed users, conversation history, AI chat, and prayer times.
+The existing FastAPI website plus a structured SQLite tourism database using SQLAlchemy 2.x, Alembic, and Pydantic v2.
 
 ## Setup
 
 ```powershell
 uv sync
+Copy-Item .env.example .env
 ```
 
 The `.env` file is ignored by Git. Add a Gemini key only when using Gemini:
@@ -14,7 +15,18 @@ The `.env` file is ignored by Git. Add a Gemini key only when using Gemini:
 GEMINI_API_KEY=your_real_key
 ```
 
-## AI provider
+Set a long random `JWT_SECRET_KEY` in `.env`. Never commit real secrets.
+
+## Database migrations
+
+```powershell
+uv run alembic upgrade head
+uv run alembic revision --autogenerate -m "describe change"
+```
+
+The app safely upgrades the legacy users table on startup.
+
+## Existing AI provider
 
 Open `main.py` and change one line:
 
@@ -40,6 +52,18 @@ uv run uvicorn main:app --reload
 Open `http://127.0.0.1:8000`.
 
 ## API routes
+
+Tourism resources are under `/api`: users, destinations, accommodations, restaurants, events, trips and stops, favorites, reviews, and preferences. The four public catalog lists support `page` and `page_size`.
+
+Passwords use Argon2 and are never returned. JWT helpers are prepared in `app/core/security.py` for a later login phase.
+
+## Tests
+
+```powershell
+uv run pytest
+```
+
+Tests use a separate `test_app.db`.
 
 - `GET /agents`
 - `POST /chat`

@@ -1,0 +1,1 @@
+"""Duof Asir application package."""
