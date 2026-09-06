@@ -4651,6 +4651,14 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .dark-mode .user-preferences-form > header, .dark-mode .preference-choice-grid span { background: #202722; }
 .dark-mode .preference-details-grid select { color: #eee; background: #191919; }
 @media (max-width: 650px) { .preference-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .preference-details-grid { grid-template-columns: 1fr; } }
+
+.heritage-stay-badge { display: inline-flex; align-items: center; gap: 6px; width: max-content; margin-top: 7px; padding: 6px 10px; border-radius: 999px; color: #fff; background: #885b31; font-size: 12px; }
+.property-location { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: #8b7362; }
+.property-location i { color: #b36a35; }
+.heritage-stay-description { margin: 8px 0 0; color: #694a35; font-size: 13px; line-height: 1.7; }
+.property-item:has(.heritage-stay-badge) { border: 2px solid #a8794c; background: linear-gradient(180deg, #fffaf0, #fff); }
+.dark-mode .property-item:has(.heritage-stay-badge) { background: linear-gradient(180deg, #2d241c, #191919); }
+.dark-mode .heritage-stay-description { color: #dec4a7; }
 .profile-summary { text-align: center; }
 .profile-summary > div { width: 72px; height: 72px; display: grid; place-items: center; margin: auto; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #2b684e, #17452f); font-size: 28px; font-weight: 900; }
 .profile-summary h3 { margin: 10px 0 2px; }
