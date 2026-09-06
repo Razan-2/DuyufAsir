@@ -153,6 +153,23 @@ const agents = {
     ], description: "اختر مكاناً ترفيهياً في أبها أو أخبرني بالنشاط الذي تفضله.", reply: "لنخطط لوقت ممتع في أبها! أخبرني باهتماماتك والموعد والميزانية." }
 };
 
+agents.guides = {
+    icon: "fa-person-hiking",
+    listTitle: "المرشدون السياحيون في عسير",
+    features: [
+        ["fa-map-location-dot", "اختيار نوع الجولة والمدينة"],
+        ["fa-language", "اختيار لغة المرشد"],
+        ["fa-calendar-check", "طلب موعد لجولة سياحية"]
+    ],
+    items: [
+        { name: "مرشد الجولات الطبيعية", location: "أبها والسودة", image: "assets/agents/entertainment-abha-authentic.jpg", type: "طبيعة ومشي جبلي", details: ["السودة", "ممشى الضباب", "المنتزهات"], mapUrl: "https://www.google.com/maps/search/?api=1&query=tourist+guide+Abha" },
+        { name: "مرشد التراث والثقافة", location: "أبها ورجال ألمع", image: "assets/agents/housing-abha-authentic.jpg", type: "تراث وثقافة عسيرية", details: ["القرية التراثية", "الأسواق الشعبية", "الفنون المحلية"], mapUrl: "https://www.google.com/maps/search/?api=1&query=heritage+guide+Asir" },
+        { name: "مرشد الجولات العائلية", location: "منطقة عسير", image: "assets/agents/entertainment-abha-real.jpg", type: "جولات مناسبة للعائلات", details: ["برنامج مرن", "مواقع مناسبة للأطفال", "اقتراح مسار يومي"], mapUrl: "https://www.google.com/maps/search/?api=1&query=tour+guide+Asir" }
+    ],
+    description: "اختر نوع الجولة والمدينة واللغة والموعد لأعرض لك المرشد المناسب.",
+    reply: "يسعدني مساعدتك في اختيار مرشد سياحي. ما المدينة ونوع الجولة والموعد وعدد الأشخاص؟"
+};
+
 let activeAgent = "housing";
 let lastFocusedElement = null;
 const housingState = {
@@ -198,25 +215,22 @@ function escapeHtml(value) {
 const mainAgentRoutes = [
     { type: "housing", title: "وكيل السكن", icon: "fa-house", keywords: ["سكن", "شقة", "شقق", "فندق", "فنادق", "فيلا", "إيجار", "غرفة", "قريب"] },
     { type: "transport", title: "وكيل المواصلات", icon: "fa-bus", keywords: ["مواصلات", "نقل", "سيارة", "تاكسي", "حافلة", "رحلة", "محطة", "توصيل"] },
-    { type: "hr", title: "وكيل الموارد البشرية", icon: "fa-briefcase", keywords: ["وظيفة", "وظائف", "عمل", "شركة", "شركه", "لينكس", "توظيف", "سيرة", "مقابلة", "راتب"] },
-    { type: "education", title: "وكيل التعليم", icon: "fa-graduation-cap", keywords: ["تعليم", "جامعة", "مدرسة", "دورة", "تخصص", "دراسة", "تعلم", "كلية"] },
+    { type: "guides", title: "وكيل المرشدين السياحيين", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "سياحية", "السودة", "تراث", "مغامرة"] },
     { type: "entertainment", title: "وكيل الترفيه", icon: "fa-ticket", keywords: ["ترفيه", "فعالية", "مطعم", "مقهى", "سياحة", "فيلم", "مسلسل", "حديقة", "مكان"] }
 ];
 
 const agentPromptSuggestions = {
     housing: ["أبحث عن فندق لعائلة", "قارن لي بين شقتين", "ما السكن المناسب لميزانيتي؟"],
     transport: ["احسب تكلفة رحلتي", "ما أفضل وسيلة نقل؟", "أين أقرب محطة؟"],
-    hr: ["حسّن سيرتي الذاتية", "ابحث عن وظيفة مناسبة", "جهزني للمقابلة"],
-    education: ["اقترح تخصصًا مناسبًا", "أنشئ لي خطة تعلم", "ابحث عن جامعة"],
+    guides: ["أريد مرشدًا لجولة في السودة", "اقترح جولة تراثية", "أحتاج مرشدًا لجولة عائلية"],
     entertainment: ["اقترح فعالية اليوم", "أريد مطعمًا عائليًا", "ما أفضل الأماكن السياحية؟"]
 };
 
 const supervisorSuggestions = [
-    "أبحث عن وظيفة وسكن قريب في خميس مشيط",
     "أحتاج فندقًا ومواصلات لعائلة في أبها",
-    "اقترح جامعة وسكنًا بميزانية مناسبة",
+    "أحتاج مرشدًا سياحيًا لجولة في السودة",
     "خطط لي يومًا سياحيًا مع مطعم ومواصلات",
-    "حسّن سيرتي وابحث عن شركات مناسبة"
+    "اقترح مرشدًا لجولة تراثية عائلية"
 ];
 
 if (localStorage.getItem("loyaltyProgressResetV2") !== "done") {
@@ -1884,8 +1898,7 @@ function showQuickSearch() {
         ...mainAgentRoutes.map((route) => ({ name: route.title, detail: agents[route.type].description, type: route.type, agentOnly: true })),
         ...agents.housing.items.map((item) => ({ name: item.name, detail: item.location, type: "housing" })),
         ...agents.transport.items.map((item) => ({ name: item.name || item[0], detail: item.location || item[1], type: "transport" })),
-        ...agents.hr.items.map((item) => ({ name: item.name, detail: item.type, type: "hr" })),
-        ...agents.education.items.map((item) => ({ name: item.name, detail: item.type, type: "education", group: item.group })),
+        ...agents.guides.items.map((item) => ({ name: item.name, detail: item.type, type: "guides" })),
         ...agents.entertainment.items.map((item) => ({ name: item.name, detail: item.location, type: "entertainment" }))
     ];
     openUtility("البحث السريع", "fa-magnifying-glass", `<form class="quick-search-form"><input type="search" placeholder="ابحث عن وكيل أو خدمة أو مكان" autofocus><button type="submit">بحث</button></form><div class="quick-search-results"></div>`);
@@ -1929,8 +1942,8 @@ const interfaceTranslations = {
     "الوكيل الرئيسي · Supervisor Agent": "Main Supervisor Agent", "اكتب طلبك مرة واحدة": "Write your request once", "ما الذي تبحث عنه؟": "What are you looking for?", "حلّل طلبي": "Analyze my request",
     "رفع ملف PDF": "Upload PDF", "رفع صورة": "Upload image", "لم يتم إرفاق ملفات": "No files attached",
     "اختر الوكيل الذي": "Choose the agent that", "يناسب احتياجك": "fits your needs", "الوكلاء الذكيون": "Smart agents",
-    "وكيل السكن والفنادق": "Housing and Hotels Agent", "وكيل المواصلات": "Transportation Agent", "وكيل الموارد البشرية": "Human Resources Agent", "وكيل التعليم": "Education Agent", "وكيل الترفيه": "Entertainment Agent",
-    "السكن والفنادق": "Housing and hotels", "المواصلات": "Transportation", "الموارد البشرية": "Human resources", "التعليم": "Education", "الترفيه": "Entertainment",
+    "وكيل السكن والفنادق": "Housing and Hotels Agent", "وكيل المواصلات": "Transportation Agent", "وكيل المرشدين السياحيين": "Tourist Guides Agent", "وكيل الترفيه": "Entertainment Agent",
+    "السكن والفنادق": "Housing and hotels", "المواصلات": "Transportation", "المرشدون السياحيون": "Tourist guides", "الترفيه": "Entertainment",
     "استكشف الآن": "Explore now", "شقق": "Apartments", "فلل": "Villas", "فنادق": "Hotels", "تأجير": "Rentals", "توصيل": "Ride services", "أجرة": "Taxi", "حافلات": "Buses",
     "وظائف": "Jobs", "شركات": "Companies", "تدريب": "Training", "استشارات": "Consulting", "جامعات": "Universities", "مدارس": "Schools", "دورات": "Courses", "منح": "Scholarships", "فعاليات": "Events", "مطاعم": "Restaurants", "أماكن": "Places", "أنشطة": "Activities",
     "سريع": "Fast", "ذكي": "Smart", "متكامل": "Integrated", "كل خدماتك": "All your services", "في منصة واحدة": "in one platform", "لماذا ضيوف عسير؟": "Why Guests of Asir?",
@@ -1953,7 +1966,7 @@ const interfaceTranslations = {
 Object.assign(interfaceTranslations, {
     "مكافآت ضيوف عسير": "Guests of Asir Rewards", "المكافآت": "Rewards", "المكافآت والكوبونات": "Rewards and coupons", "تابع تقدمك واستعرض كوبوناتك": "Track your progress and view your coupons", "عناصر محفوظة": "saved items", "مكافأة ضيوف عسير": "Guests of Asir reward", "مكافأة كل 5 طلبات": "A reward every 5 requests", "كل 5 طلبات تمنحك كوبون جولة مجانية": "Every 5 requests earn you a free tour coupon", "جولة مع نفس للسياحة لمدة يوم واحد مجانًا": "A free one-day tour with Nafs Tourism", "شاهد كوبوناتك": "View your coupons", "استخدام الكوبون": "Redeem coupon", "متاح للاستخدام": "Available to redeem",
     "منصة ضيوف عسير تقدم لك كوبونًا بعد إكمال كل 5 طلبات لدى أي وكيل، لتحصل على جولة مع «نفس للسياحة» لمدة يوم واحد مجانًا.": "Guests of Asir gives you a coupon after every 5 completed agent requests for a free one-day tour with Nafs Tourism.",
-    "دليلك الذكي لاكتشاف السكن والمواصلات والعمل والتعليم والترفيه في أبها وخميس مشيط ومحافظات منطقة عسير.": "Your smart guide to housing, transportation, work, education, and entertainment across Abha, Khamis Mushait, and the Asir region.",
+    "دليلك الذكي لاكتشاف السكن والمواصلات والمرشدين السياحيين والترفيه في أبها وخميس مشيط ومحافظات منطقة عسير.": "Your smart guide to housing, transportation, tourist guides, and entertainment across Abha, Khamis Mushait, and the Asir region.",
     "سأفهم احتياجك، وأشغّل الوكلاء المناسبين تلقائيًا، ثم أدمج النتائج لك في شاشة واحدة.": "I will understand your needs, run the right agents automatically, and combine their results in one view.",
     "كل وكيل ذكي صُمم لمساعدتك وتوفير الوقت والجهد.": "Each smart agent is designed to help you save time and effort.",
     "أخبرني بوجهتك داخل أبها وعدد الركاب والموعد لأقترح وسيلة المواصلات المناسبة.": "Tell me your destination in Abha, passenger count, and time so I can recommend the best transport option.",
@@ -2369,7 +2382,7 @@ if (localStorage.getItem("appLanguage") === "en") applyLanguage("en");
 if (!sessionStorage.getItem("liveUpdateShown")) {
     sessionStorage.setItem("liveUpdateShown", "true");
     window.setTimeout(() => {
-        const liveUpdates = ["تمت إضافة فرصة وظيفية جديدة في خميس مشيط.", "توجد فعالية عائلية جديدة في أبها هذا الأسبوع.", "تم تحديث خيارات السكن المتاحة في وسط أبها.", "تم تحديث معلومات القبول في الجهات التعليمية."];
+        const liveUpdates = ["تمت إضافة مرشد سياحي لجولات السودة.", "توجد فعالية عائلية جديدة في أبها هذا الأسبوع.", "تم تحديث خيارات السكن المتاحة في وسط أبها.", "تمت إضافة جولة تراثية جديدة في عسير."];
         addNotification(liveUpdates[Math.floor(Math.random() * liveUpdates.length)]);
     }, 12000);
 }
@@ -2444,7 +2457,7 @@ document.querySelectorAll('.footer-links a[href="#"]').forEach((link) => {
             openUtility("الأسئلة الشائعة", "fa-circle-question", `
                 <div class="privacy-content faq-content">
                     <header><i class="fa-solid fa-circle-question"></i><div><h3>كيف يمكننا مساعدتك؟</h3><p>إجابات سريعة عن أكثر الأسئلة شيوعًا حول منصة ضيوف عسير.</p></div></header>
-                    <details open><summary>ما هي منصة ضيوف عسير؟</summary><p>منصة رقمية تجمع وكلاء متخصصين للسكن والمواصلات والوظائف والتعليم والترفيه في منطقة عسير.</p></details>
+                    <details open><summary>ما هي منصة ضيوف عسير؟</summary><p>منصة رقمية تجمع وكلاء متخصصين للسكن والمواصلات والمرشدين السياحيين والترفيه في منطقة عسير.</p></details>
                     <details><summary>كيف أختار الوكيل المناسب؟</summary><p>يمكنك اختيار الوكيل مباشرة، أو كتابة طلبك في المساعد الرئيسي ليحدد الوكلاء المناسبين تلقائيًا.</p></details>
                     <details><summary>هل يلزم إنشاء حساب؟</summary><p>يمكن تصفح الخدمات دون حساب، لكن التسجيل مطلوب لحفظ المحادثات والمفضلة والحجوزات والطلبات.</p></details>
                     <details><summary>هل معلومات السكن والأسعار نهائية؟</summary><p>الأسعار والتوفر قابلة للتحديث. راجع تفاصيل الخيار وتأكد من السعر النهائي قبل تأكيد الحجز.</p></details>

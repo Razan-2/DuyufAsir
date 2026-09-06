@@ -38,14 +38,13 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 SYSTEM_PROMPT = (
     "You are a helpful assistant for Duof Asir. Give clear, concise, and practical "
-    "answers related to housing, transportation, employment, education, and entertainment in Asir."
+    "answers related to housing, transportation, tourist guides, and entertainment in Asir."
 )
 
 AGENTS = [
     {"id": "housing", "name": "Housing Agent", "description": "Find housing and hotels in Asir.", "icon": "house"},
     {"id": "transportation", "name": "Transportation Agent", "description": "Plan transportation and car rentals.", "icon": "car"},
-    {"id": "human-resources", "name": "Human Resources Agent", "description": "Explore jobs and career opportunities.", "icon": "briefcase"},
-    {"id": "education", "name": "Education Agent", "description": "Find universities, schools, and courses.", "icon": "graduation-cap"},
+    {"id": "guides", "name": "Tourist Guides Agent", "description": "Find a suitable tourist guide in Asir.", "icon": "person-hiking"},
     {"id": "entertainment", "name": "Entertainment Agent", "description": "Discover restaurants, cafes, and activities.", "icon": "ticket"},
 ]
 AGENT_IDS = {agent["id"] for agent in AGENTS}
