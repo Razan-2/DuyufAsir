@@ -42,10 +42,12 @@ SYSTEM_PROMPT = (
 )
 
 AGENTS = [
-    {"id": "housing", "name": "Housing Agent", "description": "Find housing and hotels in Asir.", "icon": "house"},
-    {"id": "transportation", "name": "Transportation Agent", "description": "Plan transportation and car rentals.", "icon": "car"},
-    {"id": "guides", "name": "Tourist Guides Agent", "description": "Find a suitable tourist guide in Asir.", "icon": "person-hiking"},
-    {"id": "entertainment", "name": "Entertainment Agent", "description": "Discover restaurants, cafes, and activities.", "icon": "ticket"},
+    {"id": "smart-trip", "name": "Smart Trip Agent", "description": "Build an adaptable trip around the visitor.", "icon": "route"},
+    {"id": "housing", "name": "Accommodation Agent", "description": "Find suitable accommodation in Asir.", "icon": "house"},
+    {"id": "transportation", "name": "Mobility Agent", "description": "Plan routes and transportation in Asir.", "icon": "car"},
+    {"id": "entertainment", "name": "Experiences Agent", "description": "Discover local experiences, dining, and activities.", "icon": "ticket"},
+    {"id": "guides", "name": "Local Guide Agent", "description": "Find guides and local tours in Asir.", "icon": "person-hiking"},
+    {"id": "aseer-now", "name": "Aseer Now Agent", "description": "Show a clearly labeled real-time experience simulation.", "icon": "location-crosshairs"},
 ]
 AGENT_IDS = {agent["id"] for agent in AGENTS}
 

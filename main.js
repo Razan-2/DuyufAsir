@@ -172,6 +172,9 @@ agents.guides = {
     reply: "يسعدني مساعدتك في اختيار مرشد سياحي. ما المدينة ونوع الجولة والموعد وعدد الأشخاص؟"
 };
 
+agents["smart-trip"] = { icon: "fa-route", listTitle: "رحلتك الذكية", items: [], description: "يبني رحلتك ويعيد تشكيلها حسب اهتماماتك والظروف المحيطة.", reply: "لنبدأ باكتشاف نمط رحلتك ثم نبني لك تجربة مناسبة في عسير." };
+agents["aseer-now"] = { icon: "fa-location-crosshairs", listTitle: "وش يناسبك الآن؟", items: [], description: "يكتشف أفضل تجربة لك الآن حسب الوقت والطقس وحالة الرحلة.", reply: "هذه محاكاة تجريبية تساعدك على اكتشاف تجربة مناسبة الآن." };
+
 let activeAgent = "housing";
 let lastFocusedElement = null;
 const housingState = {
@@ -215,16 +218,20 @@ function escapeHtml(value) {
 }
 
 const mainAgentRoutes = [
-    { type: "housing", title: "وكيل السكن", icon: "fa-house", keywords: ["سكن", "شقة", "شقق", "فندق", "فنادق", "فيلا", "إيجار", "غرفة", "قريب"] },
-    { type: "transport", title: "وكيل المواصلات", icon: "fa-bus", keywords: ["مواصلات", "نقل", "سيارة", "تاكسي", "حافلة", "رحلة", "محطة", "توصيل"] },
-    { type: "guides", title: "وكيل المرشدين السياحيين", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "سياحية", "السودة", "تراث", "مغامرة"] },
-    { type: "entertainment", title: "وكيل الترفيه", icon: "fa-ticket", keywords: ["ترفيه", "فعالية", "مطعم", "مقهى", "سياحة", "فيلم", "مسلسل", "حديقة", "مكان"] }
+    { type: "smart-trip", title: "وكيل الرحلة الذكية", icon: "fa-route", keywords: ["رحلة", "خطط", "برنامج", "جدول", "مسار", "يتكيف"] },
+    { type: "housing", title: "وكيل الإقامة", icon: "fa-house", keywords: ["سكن", "إقامة", "شقة", "فندق", "نزل", "فيلا", "إيجار", "غرفة"] },
+    { type: "transport", title: "وكيل التنقل", icon: "fa-bus", keywords: ["مواصلات", "تنقل", "نقل", "سيارة", "تاكسي", "حافلة", "محطة", "توصيل"] },
+    { type: "entertainment", title: "وكيل التجارب", icon: "fa-ticket", keywords: ["تجربة", "فعالية", "مطعم", "مقهى", "سياحة", "مغامرة", "فيلم", "حديقة"] },
+    { type: "guides", title: "وكيل المرشد المحلي", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "السودة", "تراث"] },
+    { type: "aseer-now", title: "وكيل عسير اللحظي", icon: "fa-location-crosshairs", keywords: ["الآن", "لحظي", "طقس", "ازدحام", "قريب", "تصوير"] }
 ];
 
 const agentPromptSuggestions = {
+    "smart-trip": ["ابنِ لي رحلة في عسير", "أريد رحلة تتكيف مع الظروف", "اكتشف نمط رحلتي"],
     housing: ["أبحث عن فندق لعائلة", "قارن لي بين شقتين", "ما السكن المناسب لميزانيتي؟"],
     transport: ["احسب تكلفة رحلتي", "ما أفضل وسيلة نقل؟", "أين أقرب محطة؟"],
     guides: ["أريد مرشدًا لجولة في السودة", "اقترح جولة تراثية", "أحتاج مرشدًا لجولة عائلية"],
+    "aseer-now": ["وش يناسبني الآن؟", "أين أذهب للتصوير؟", "اقترح وجهة أقل ازدحامًا"],
     entertainment: ["اقترح فعالية اليوم", "أريد مطعمًا عائليًا", "ما أفضل الأماكن السياحية؟"]
 };
 
@@ -2660,6 +2667,64 @@ document.querySelector("#refreshApiHistory")?.addEventListener("click", loadApiC
 loadApiAgents();
 loadApiConversations();
 
-if (!getUserPreferences()) {
+if (!getUserPreferences() && !new URLSearchParams(window.location.search).has("prototype")) {
     window.setTimeout(() => openUserPreferences(true), 500);
 }
+
+const prototypeStops = [
+    { time: "09:00", name: "ممشى الضباب", type: "وجهة طبيعية", reason: "هدوء وإطلالة صباحية", match: 94, image: "assets/entities/high-city-abha.jpg" },
+    { time: "11:30", name: "سوق الثلاثاء", type: "تجربة محلية", reason: "تراث وحرف من أهل عسير", match: 88, image: "assets/entertainment/tuesday-market-crafts.jpg" },
+    { time: "14:00", name: "مأكولات عسيرية", type: "مطعم محلي", reason: "تجربة طعام أصيلة", match: 91, image: "assets/entertainment/joy-venue-restaurant.jpg" },
+    { time: "16:30", name: "شارع الفن", type: "موقع تصوير", reason: "ألوان وهوية محلية", match: 90, image: "assets/entities/art-street-abha.jpg" },
+    { time: "18:00", name: "إطلالة السودة", type: "مشاهدة الغروب", reason: "ختام هادئ لليوم", match: 96, image: "assets/agents/housing-abha-real.jpg" }
+];
+
+function renderPrototypeJourney(stops = prototypeStops) {
+    const timeline = document.querySelector("#journeyTimeline");
+    if (!timeline) return;
+    timeline.innerHTML = stops.map((stop, index) => `<article style="--delay:${index * 70}ms"><time>${stop.time}</time><img src="${stop.image}" alt="${stop.name}" loading="lazy"><div><small>${stop.type}</small><h3>${stop.name}</h3><p>${stop.reason}</p></div><b>${stop.match}% مناسبة لك</b></article>`).join("");
+}
+
+document.querySelector("#journeyDnaForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const nature = data.get("pace") === "nature";
+    const calm = data.get("mood") === "calm";
+    const heritage = data.get("style") === "heritage";
+    const scores = { "طبيعة": nature ? 92 : 72, "مغامرة": nature ? 70 : 94, "تراث": heritage ? 90 : 65, "هدوء": calm ? 85 : 58, "تصوير": 90 };
+    const result = document.querySelector("#journeyDnaResult");
+    result.innerHTML = `<div class="dna-score-grid">${Object.entries(scores).map(([name, score]) => `<div><span>${name}</span><b>${score}%</b><i><em style="width:${score}%"></em></i></div>`).join("")}</div><h3><i class="fa-solid fa-circle-check"></i> اكتشفنا نمط رحلتك، دعنا نبني عسير المناسبة لك.</h3><a href="#adaptiveJourney">شاهد رحلتي المقترحة <i class="fa-solid fa-arrow-down"></i></a>`;
+    result.hidden = false;
+    renderPrototypeJourney();
+    result.scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+const conditionChanges = {
+    rain: { icon: "🌧️", before: "إطلالة السودة", after: "قصور أبو سراح", reason: "استبدلنا الموقع المكشوف بتجربة تراثية داخلية مناسبة للمطر.", stop: { time: "18:00", name: "قصور أبو سراح", type: "تجربة داخلية", reason: "بديل مناسب للمطر", match: 92, image: "assets/entertainment/productive-families-abha.jpg" } },
+    traffic: { icon: "🚗", before: "ممشى الضباب", after: "قرية طبب", reason: "اخترنا وجهة بديلة لتقليل وقت الانتظار على المسار.", stop: { time: "09:00", name: "قرية طبب", type: "وجهة أقل ازدحامًا", reason: "مسار أكثر هدوءًا", match: 89, image: "assets/agents/housing-abha-authentic.jpg" } },
+    closed: { icon: "⛔", before: "شارع الفن", after: "سوق الثلاثاء", reason: "أعدنا توزيع الوقت على تجربة محلية متاحة في المحاكاة.", stop: { time: "16:30", name: "سوق الثلاثاء", type: "تجربة محلية بديلة", reason: "بديل قريب ومناسب", match: 87, image: "assets/entertainment/tuesday-market-crafts.jpg" } },
+    late: { icon: "⏰", before: "خمس محطات", after: "أربع محطات مرنة", reason: "دمجنا محطتين وحافظنا على الغروب دون ضغط اليوم.", stop: { time: "17:00", name: "شارع الفن والغروب", type: "محطة مدمجة", reason: "توفير الوقت", match: 90, image: "assets/entities/art-street-abha.jpg" } }
+};
+
+document.querySelector("#conditionButtons")?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-condition]");
+    if (!button) return;
+    const change = conditionChanges[button.dataset.condition];
+    document.querySelectorAll("#conditionButtons button").forEach((item) => item.classList.toggle("active", item === button));
+    const updated = [...prototypeStops];
+    updated[button.dataset.condition === "rain" ? 4 : button.dataset.condition === "traffic" ? 0 : 3] = change.stop;
+    renderPrototypeJourney(updated);
+    const result = document.querySelector("#adaptationResult");
+    result.innerHTML = `<h3><i class="fa-solid fa-arrows-rotate"></i> تكيفت رحلتك مع الظروف الجديدة.</h3><div><span><small>قبل</small><del>${change.before}</del></span><i class="fa-solid fa-arrow-left"></i><span><small>بعد</small><strong>${change.after}</strong></span></div><p>${change.icon} ${change.reason}</p><small>تغيير توضيحي ضمن محاكاة النموذج الأولي.</small>`;
+    result.hidden = false;
+});
+
+document.querySelector("#rebalanceButton")?.addEventListener("click", (event) => {
+    const demo = document.querySelector("#rebalanceDemo");
+    demo.classList.toggle("balanced");
+    event.currentTarget.innerHTML = demo.classList.contains("balanced") ? '<i class="fa-solid fa-circle-check"></i> تمت إعادة التوزيع' : '<i class="fa-solid fa-shuffle"></i> إعادة موازنة عسير';
+    const label = demo.querySelector(".map-label");
+    label.textContent = demo.classList.contains("balanced") ? "بعد" : "قبل";
+});
+
+renderPrototypeJourney();

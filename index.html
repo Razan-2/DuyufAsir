@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ضيوف عسير | دليلك الذكي في عسير</title>
+    <title>ضيوف عسير | عسير رحلة تتكيّف معك</title>
 
-    <link rel="stylesheet" href="style.css?v=253">
+    <link rel="stylesheet" href="style.css?v=260">
     <link rel="icon" type="image/png" href="assets/brand/duof-asir-logo-v2.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,28 +76,28 @@
     <div class="hero-text">
 
         <h1>
-            عسير أقرب
-            <span>بتفاصيلها وأهلها</span>
+            عسير..
+            <span>رحلة تتكيّف معك</span>
         </h1>
 
         <p>
-            دليلك الذكي لاكتشاف السكن والمواصلات والمرشدين السياحيين والترفيه
-            في أبها وخميس مشيط ومحافظات منطقة عسير.
+            ضيوف عسير منصة سياحية ذكية تفهم اهتماماتك، تبني رحلتك،
+            وتعيد تشكيلها عند تغير الظروف.
         </p>
 
         <div class="hero-actions">
 
-            <a href="agents.html" class="primary-btn">
-                استكشف الوكلاء الآن
+            <a href="#journeyDna" class="primary-btn">
+                ابنِ رحلتي
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
 
-            <button class="watch-btn" type="button">
+            <a class="watch-btn" href="#adaptiveJourney">
                 <span>
                     <i class="fa-solid fa-play"></i>
                 </span>
-                نبذة عن أبها
-            </button>
+                شاهد كيف تتكيّف
+            </a>
 
         </div>
 
@@ -177,17 +177,58 @@
 
 </section>
 
+<section class="prototype-how" aria-labelledby="howTitle">
+    <div class="prototype-section-heading"><span>تجربة في أقل من دقيقة</span><h2 id="howTitle">كيف تعمل؟</h2></div>
+    <div class="prototype-how-grid">
+        <article><b>1</b><i class="fa-solid fa-fingerprint"></i><h3>نكتشف DNA رحلتك</h3></article>
+        <article><b>2</b><i class="fa-solid fa-route"></i><h3>نبني تجربتك في عسير</h3></article>
+        <article><b>3</b><i class="fa-solid fa-arrows-rotate"></i><h3>تتكيّف الرحلة معك</h3></article>
+    </div>
+</section>
+
+<section class="journey-dna-section" id="journeyDna">
+    <div class="dna-intro">
+        <span class="prototype-kicker"><i class="fa-solid fa-fingerprint"></i> وكيل الرحلة الذكية</span>
+        <h2>اكتشف DNA رحلتك</h2>
+        <p>اختيارات سريعة، ثم نبني لك يومًا يشبهك.</p>
+        <small>محاكاة تجريبية لأغراض النموذج الأولي</small>
+    </div>
+    <form class="dna-form" id="journeyDnaForm">
+        <div class="dna-question"><strong>تفضّل؟</strong><label><input type="radio" name="pace" value="nature" checked><span>🌿 طبيعة</span></label><label><input type="radio" name="pace" value="adventure"><span>🥾 مغامرة</span></label></div>
+        <div class="dna-question"><strong>أجواؤك؟</strong><label><input type="radio" name="mood" value="calm" checked><span>☁️ هدوء</span></label><label><input type="radio" name="mood" value="events"><span>✨ فعاليات</span></label></div>
+        <div class="dna-question"><strong>التجربة؟</strong><label><input type="radio" name="style" value="heritage" checked><span>🏛️ تراث</span></label><label><input type="radio" name="style" value="modern"><span>🌇 حديثة</span></label></div>
+        <div class="dna-selects"><label>مع من؟<select name="group"><option>العائلة</option><option>الأصدقاء</option><option>فردي</option></select></label><label>الميزانية<select name="budget"><option>اقتصادية</option><option selected>متوسطة</option><option>مفتوحة</option></select></label><label>المدة<select name="duration"><option>يوم واحد</option><option selected>3 أيام</option><option>5 أيام</option></select></label><label>مستوى المشي<select name="walking"><option>خفيف</option><option selected>متوسط</option><option>مرتفع</option></select></label></div>
+        <button type="submit"><i class="fa-solid fa-wand-magic-sparkles"></i> اكتشف نمط رحلتي</button>
+    </form>
+    <div class="dna-result" id="journeyDnaResult" hidden aria-live="polite"></div>
+</section>
+
+<section class="adaptive-journey-section" id="adaptiveJourney">
+    <div class="prototype-section-heading"><span>رحلتك تتغير معك</span><h2>رحلة ذكية ذاتية التكيّف</h2><p>خطة يومية مرنة مبنية على نمط رحلتك.</p></div>
+    <div class="journey-timeline" id="journeyTimeline"></div>
+    <div class="condition-lab">
+        <div><strong>ماذا لو؟</strong><span>جرّب تغير الظروف</span><small>اختر حالة لترى رحلتك قبل وبعد</small></div>
+        <div class="condition-buttons" id="conditionButtons"><button data-condition="rain">🌧️ بدأ المطر</button><button data-condition="traffic">🚗 ازدحام</button><button data-condition="closed">⛔ إغلاق وجهة</button><button data-condition="late">⏰ تأخرت ساعة</button></div>
+    </div>
+    <div class="adaptation-result" id="adaptationResult" hidden></div>
+</section>
+
+<section class="now-section" id="aseerNow">
+    <div class="prototype-section-heading"><span>وكيل عسير اللحظي</span><h2>وش يناسبك الآن؟</h2><p>اقتراحات محاكاة حسب وقت العرض وحالة الرحلة.</p><small>محاكاة تجريبية — ليست بيانات طقس أو ازدحام حية.</small></div>
+    <div class="now-grid"><article><i>📸</i><span>أفضل مكان للتصوير الآن</span><strong>ممشى الضباب</strong></article><article><i>🌿</i><span>أفضل تجربة طبيعية</span><strong>غابة رغدان</strong></article><article><i>👨‍👩‍👧</i><span>أفضل خيار للعائلة</span><strong>حديقة السلام</strong></article><article><i>✨</i><span>تجربة قريبة منك</span><strong>شارع الفن</strong></article><article><i>🚗</i><span>وجهة أقل ازدحامًا</span><strong>قرية طبب</strong></article></div>
+</section>
+
 <section class="main-assistant-section" id="mainAssistant">
     <div class="main-assistant-card">
         <div class="main-assistant-heading">
-            <span><i class="fa-solid fa-diagram-project"></i> الوكيل الرئيسي · Supervisor Agent</span>
-            <h2>اكتب طلبك مرة واحدة</h2>
-            <p>سأفهم احتياجك، وأشغّل الوكلاء المناسبين تلقائيًا، ثم أدمج النتائج لك في شاشة واحدة.</p>
+            <span><i class="fa-solid fa-route"></i> مساعد التخطيط السريع</span>
+            <h2>صف رحلتك بكلمات بسيطة</h2>
+            <p>نرتب احتياجك ونوصلك إلى الوكلاء المناسبين في شاشة واحدة.</p>
         </div>
         <form class="main-assistant-form" id="mainAssistantForm">
             <label for="mainAssistantInput">ما الذي تبحث عنه؟</label>
             <div>
-                <textarea id="mainAssistantInput" rows="3" placeholder="مثال: أبحث عن وظيفة في خميس مشيط وأحتاج سكنًا قريبًا من الشركة." required></textarea>
+                <textarea id="mainAssistantInput" rows="3" placeholder="مثال: أريد رحلة عائلية هادئة لمدة ثلاثة أيام في أبها." required></textarea>
                 <button class="voice-search-btn" id="voiceSearchBtn" type="button" aria-label="البحث الصوتي"><i class="fa-solid fa-microphone"></i></button>
                 <button id="mainAssistantSubmit" type="submit"><i class="fa-solid fa-paper-plane"></i><span>حلّل طلبي</span></button>
             </div>
@@ -223,10 +264,15 @@
 
     <div class="agents-grid">
 
+        <article class="agent-card smart-trip-agent-card">
+            <div class="card-visual smart-trip-visual"><img class="agent-photo" src="assets/agents/entertainment-abha-real.jpg" alt="رحلة سياحية بين جبال عسير" loading="lazy"><div class="floating-icon"><i class="fa-solid fa-route"></i></div><span>الوكيل الرئيسي</span></div>
+            <div class="card-content"><h3>وكيل الرحلة الذكية</h3><p>يبني رحلتك ويعيد تشكيلها حسب اهتماماتك والظروف المحيطة.</p><div class="tags"><span>DNA الرحلة</span><span>خطة شخصية</span><span>تكيّف فوري</span></div><a class="agent-button smart-trip-button" href="#journeyDna">ابنِ رحلتي <i class="fa-solid fa-arrow-left"></i></a></div>
+        </article>
+
 
         <!-- Transportation -->
 
-        <article class="agent-card transport-card">
+        <article class="agent-card transport-card prototype-transport-card">
 
             <div class="card-visual visual-housing">
                 <img class="agent-photo" src="assets/agents/transport-abha-v2.png" alt="حافلة وسيارة أجرة على طريق جبلي في أبها" loading="lazy">
@@ -234,15 +280,15 @@
             </div>
 
             <div class="card-content">
-                <h3>وكيل المواصلات</h3>
-                <p>اعثر على سيارات الأجرة وحافلات النقل وتطبيقات التوصيل وتأجير السيارات داخل أبها.</p>
+                <h3>وكيل التنقل</h3>
+                <p>يساعدك على اختيار المسارات والتنقل بين وجهات عسير.</p>
                 <div class="tags">
                     <span>توصيل</span>
                     <span>حافلات</span>
                     <span>أجرة</span>
                     <span>تأجير</span>
                 </div>
-                <button class="agent-button blue-button" onclick="openAgent('وكيل المواصلات','transport')">
+                <button class="agent-button blue-button" onclick="openAgent('وكيل التنقل','transport')">
                     استكشف الآن
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
@@ -253,7 +299,7 @@
 
         <!-- Housing -->
 
-        <article class="agent-card housing-card">
+        <article class="agent-card housing-card prototype-housing-card">
 
             <div class="card-visual visual-housing">
 
@@ -276,10 +322,10 @@
 
             <div class="card-content">
 
-                <h3>وكيل السكن والفنادق</h3>
+                <h3>وكيل الإقامة</h3>
 
                 <p>
-                    ابحث عن الفنادق والشقق والفلل المناسبة لاحتياجك وميزانيتك داخل أبها.
+                    يقترح الإقامة الأنسب حسب ميزانيتك وموقع رحلتك.
                 </p>
 
                 <div class="tags">
@@ -291,7 +337,7 @@
 
                 <button
                     class="agent-button blue-button"
-                    onclick="openAgent('وكيل السكن والفنادق','housing')">
+                    onclick="openAgent('وكيل الإقامة','housing')">
                     استكشف الآن
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
@@ -303,7 +349,7 @@
 
         <!-- Tourist Guides -->
 
-        <article class="agent-card hr-card">
+        <article class="agent-card hr-card prototype-guide-card">
 
             <div class="card-visual visual-hr">
 
@@ -326,11 +372,10 @@
 
             <div class="card-content">
 
-                <h3>وكيل المرشدين السياحيين</h3>
+                <h3>وكيل المرشد المحلي</h3>
 
                 <p>
-                    اختر مرشدًا سياحيًا يساعدك على استكشاف
-                    الطبيعة والتراث وأجمل مواقع عسير.
+                    يربطك بالمرشدين والجولات والتجارب المحلية.
                 </p>
 
                 <div class="tags">
@@ -342,7 +387,7 @@
 
                 <button
                     class="agent-button purple-button"
-                    onclick="openAgent('وكيل المرشدين السياحيين','guides')">
+                    onclick="openAgent('وكيل المرشد المحلي','guides')">
                     استكشف الآن
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
@@ -354,7 +399,7 @@
 
         <!-- Entertainment -->
 
-        <article class="agent-card entertainment-card">
+        <article class="agent-card entertainment-card prototype-experience-card">
 
             <div class="card-visual visual-entertainment">
 
@@ -382,11 +427,10 @@
 
             <div class="card-content">
 
-                <h3>وكيل الترفيه</h3>
+                <h3>وكيل التجارب</h3>
 
                 <p>
-                    اكتشف الفعاليات والأماكن والأنشطة
-                    الترفيهية القريبة منك.
+                    يكتشف لك الفعاليات والمغامرات والمطاعم والتجارب المحلية.
                 </p>
 
                 <div class="tags">
@@ -398,7 +442,7 @@
 
                 <button
                     class="agent-button orange-button"
-                    onclick="openAgent('وكيل الترفيه','entertainment')">
+                    onclick="openAgent('وكيل التجارب','entertainment')">
                     استكشف الآن
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
@@ -407,8 +451,33 @@
 
         </article>
 
+        <article class="agent-card aseer-now-agent-card">
+            <div class="card-visual aseer-now-visual"><img class="agent-photo" src="assets/entities/high-city-abha.jpg" alt="إطلالة عسير في الوقت الحالي" loading="lazy"><div class="floating-icon"><i class="fa-solid fa-location-crosshairs"></i></div><span>محاكاة تجريبية</span></div>
+            <div class="card-content"><h3>وكيل عسير اللحظي</h3><p>يكتشف أفضل تجربة لك الآن حسب الوقت والطقس وحالة الرحلة.</p><div class="tags"><span>الآن</span><span>أقل ازدحامًا</span><span>قريب منك</span></div><a class="agent-button now-agent-button" href="#aseerNow">وش يناسبني الآن؟ <i class="fa-solid fa-arrow-left"></i></a></div>
+        </article>
+
     </div>
 
+</section>
+
+<section class="rebalance-section" id="rebalanceAseer">
+    <div class="prototype-section-heading"><span>محاكاة الأثر على الوجهة</span><h2>إعادة موازنة عسير</h2><p>نحو تجربة أفضل للزائر وفرص أوسع للوجهات المحلية.</p></div>
+    <div class="rebalance-demo" id="rebalanceDemo">
+        <div class="rebalance-map"><span class="map-label before-label">قبل</span><div class="destination-node crowded" style="--x:18%;--y:27%"><b>السودة</b><i></i><i></i><i></i><i></i><i></i></div><div class="destination-node crowded" style="--x:66%;--y:28%"><b>الحبلة</b><i></i><i></i><i></i><i></i></div><div class="destination-node" style="--x:38%;--y:66%"><b>طبب</b><i></i></div><div class="destination-node" style="--x:76%;--y:69%"><b>تنومة</b><i></i></div><div class="destination-node" style="--x:52%;--y:46%"><b>رجال ألمع</b><i></i></div></div>
+        <button class="rebalance-button" id="rebalanceButton" type="button"><i class="fa-solid fa-shuffle"></i> إعادة موازنة عسير</button>
+        <div class="rebalance-metrics"><span>↓ الازدحام المتوقع</span><span>↑ انتشار الزوار</span><span>↑ استفادة الوجهات الأقل زيارة</span><span>↑ جودة التجربة المتوقعة</span></div>
+        <small>نتائج محاكاة تجريبية لأغراض النموذج الأولي، وليست بيانات تشغيلية حقيقية.</small>
+    </div>
+</section>
+
+<section class="impact-section">
+    <div class="prototype-section-heading"><span>قيمة مشتركة</span><h2>أثر يتجاوز رحلة السائح</h2></div>
+    <div class="impact-grid"><article><i class="fa-solid fa-person-walking-luggage"></i><h3>للسائح</h3><p>رحلة شخصية وأسهل وأكثر مرونة.</p></article><article><i class="fa-solid fa-people-group"></i><h3>للمجتمع المحلي</h3><p>وصول أكبر للمرشدين والتجارب والمشاريع المحلية.</p></article><article><i class="fa-solid fa-mountain-sun"></i><h3>لعسير</h3><p>توزيع أفضل للحركة وتقليل الضغط على الوجهات المشهورة.</p></article></div>
+</section>
+
+<section class="ecosystem-section">
+    <div class="prototype-section-heading"><span>قابلة للتحول إلى سوق سياحي</span><h2>منظومة تربط السياحة المحلية</h2></div>
+    <div class="ecosystem-flow"><div><i class="fa-solid fa-user"></i><strong>السائح</strong></div><b>↔</b><div class="ecosystem-core"><img src="assets/brand/duof-asir-logo-v2.png" alt=""><strong>ضيوف عسير</strong></div><b>↔</b><div><i class="fa-solid fa-store"></i><strong>مقدمو الخدمات</strong><small>مرشدون · إقامة · تجارب · مطاعم · نقل</small></div></div>
 </section>
 
 
@@ -782,7 +851,7 @@
 </div>
 
 
-<script src="main.js?v=253"></script>
+<script src="main.js?v=260"></script>
 
 </body>
 </html>
