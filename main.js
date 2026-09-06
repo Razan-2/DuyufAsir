@@ -2699,6 +2699,22 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", (event) =>
     result.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
+document.querySelector("#tourPackages")?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-package]");
+    if (!button) return;
+    const form = document.querySelector("#journeyDnaForm");
+    if (!form) return;
+    const adventurePackage = button.dataset.style === "adventure";
+    const pace = form.querySelector(`[name="pace"][value="${adventurePackage ? "adventure" : "nature"}"]`);
+    const heritage = form.querySelector(`[name="style"][value="${button.dataset.style === "heritage" ? "heritage" : "modern"}"]`);
+    const duration = form.querySelector('[name="duration"]');
+    if (pace) pace.checked = true;
+    if (heritage) heritage.checked = true;
+    if (duration) duration.value = button.dataset.duration;
+    button.innerHTML = `<i class="fa-solid fa-circle-check"></i> تم اختيار ${escapeHtml(button.dataset.package)}`;
+    window.setTimeout(() => document.querySelector("#journeyDna")?.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+});
+
 const conditionChanges = {
     rain: { icon: "🌧️", before: "إطلالة السودة", after: "قصور أبو سراح", reason: "استبدلنا الموقع المكشوف بتجربة تراثية داخلية مناسبة للمطر.", stop: { time: "18:00", name: "قصور أبو سراح", type: "تجربة داخلية", reason: "بديل مناسب للمطر", match: 92, image: "assets/entertainment/productive-families-abha.jpg" } },
     traffic: { icon: "🚗", before: "ممشى الضباب", after: "قرية طبب", reason: "اخترنا وجهة بديلة لتقليل وقت الانتظار على المسار.", stop: { time: "09:00", name: "قرية طبب", type: "وجهة أقل ازدحامًا", reason: "مسار أكثر هدوءًا", match: 89, image: "assets/agents/housing-abha-authentic.jpg" } },
