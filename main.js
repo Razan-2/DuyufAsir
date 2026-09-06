@@ -1833,6 +1833,47 @@ function openUtility(title, icon, content) {
     openSimpleModal(utilityModal);
 }
 
+const userPreferencesKey = "duof-asir-user-preferences";
+
+function getUserPreferences() {
+    return JSON.parse(localStorage.getItem(userPreferencesKey) || "null");
+}
+
+function openUserPreferences(firstVisit = false) {
+    const saved = getUserPreferences() || {};
+    const selected = new Set(saved.interests || []);
+    const interests = [
+        ["nature", "fa-mountain-sun", "الطبيعة والجبال"], ["heritage", "fa-landmark", "التراث والثقافة"],
+        ["adventure", "fa-person-hiking", "المغامرات والمشي"], ["family", "fa-people-roof", "الجولات العائلية"],
+        ["restaurants", "fa-utensils", "المطاعم"], ["cafes", "fa-mug-hot", "المقاهي"],
+        ["events", "fa-ticket", "الفعاليات"], ["guides", "fa-map-location-dot", "المرشدون السياحيون"]
+    ];
+    openUtility(firstVisit ? "اختر تفضيلاتك" : "تفضيلاتي", "fa-sliders", `
+        <form id="userPreferencesForm" class="user-preferences-form">
+            <header><i class="fa-solid fa-compass"></i><div><h3>${firstVisit ? "لنرتب تجربتك في عسير" : "عدّل تفضيلاتك"}</h3><p>اختر ما يناسبك لتظهر لك اقتراحات أقرب لاهتماماتك.</p></div></header>
+            <fieldset><legend>ما الذي تحب استكشافه؟</legend><div class="preference-choice-grid">${interests.map(([value, icon, label]) => `<label><input type="checkbox" name="interests" value="${value}" ${selected.has(value) ? "checked" : ""}><span><i class="fa-solid ${icon}"></i>${label}</span></label>`).join("")}</div></fieldset>
+            <div class="preference-details-grid">
+                <label><span>المدينة المفضلة</span><select name="city"><option>أبها</option><option ${saved.city === "خميس مشيط" ? "selected" : ""}>خميس مشيط</option><option ${saved.city === "السودة" ? "selected" : ""}>السودة</option><option ${saved.city === "رجال ألمع" ? "selected" : ""}>رجال ألمع</option><option ${saved.city === "جميع مدن عسير" ? "selected" : ""}>جميع مدن عسير</option></select></label>
+                <label><span>أسافر مع</span><select name="companions"><option>بمفردي</option><option ${saved.companions === "العائلة" ? "selected" : ""}>العائلة</option><option ${saved.companions === "الأصدقاء" ? "selected" : ""}>الأصدقاء</option><option ${saved.companions === "أطفال" ? "selected" : ""}>أطفال</option><option ${saved.companions === "كبار السن" ? "selected" : ""}>كبار السن</option></select></label>
+                <label><span>الميزانية</span><select name="budget"><option value="economy">اقتصادية</option><option value="medium" ${saved.budget === "medium" ? "selected" : ""}>متوسطة</option><option value="premium" ${saved.budget === "premium" ? "selected" : ""}>مفتوحة</option></select></label>
+            </div>
+            <p class="preferences-error" hidden>اختر اهتمامًا واحدًا على الأقل.</p>
+            <button type="submit"><i class="fa-solid fa-check"></i> ${firstVisit ? "حفظ وبدء الاستكشاف" : "حفظ التعديلات"}</button>
+        </form>`);
+    const form = utilityContent.querySelector("#userPreferencesForm");
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const interestsValue = [...form.querySelectorAll('input[name="interests"]:checked')].map((input) => input.value);
+        if (!interestsValue.length) {
+            form.querySelector(".preferences-error").hidden = false;
+            return;
+        }
+        localStorage.setItem(userPreferencesKey, JSON.stringify({ interests: interestsValue, city: form.elements.city.value, companions: form.elements.companions.value, budget: form.elements.budget.value, updatedAt: new Date().toISOString() }));
+        closeSimpleModal(utilityModal);
+        addNotification("تم حفظ تفضيلاتك وتخصيص اقتراحات ضيوف عسير لك.");
+    });
+}
+
 function showProfile() {
     const account = JSON.parse(localStorage.getItem("wakala-account") || "null");
     const email = localStorage.getItem("wakala-user");
@@ -1847,9 +1888,11 @@ function showProfile() {
             <span><i class="fa-solid fa-shield-check"></i> حساب محلي محفوظ بأمان على هذا الجهاز</span>
         </div>
         <div class="simple-profile-actions">
+            <button id="profilePreferencesBtn" type="button"><i class="fa-solid fa-sliders"></i><span><strong>تفضيلاتي</strong><small>عدّل اهتماماتك وميزانيتك</small></span></button>
             <button id="profileRewardsBtn" class="profile-rewards-button" type="button"><i class="fa-solid fa-ticket"></i><span><strong>المكافآت والكوبونات</strong><small>تابع تقدمك واستعرض كوبوناتك</small></span></button>
             <button id="profileFavoritesBtn" type="button"><i class="fa-solid fa-heart"></i><span><strong>المفضلة</strong><small>${favoriteCount} عناصر محفوظة</small></span></button>
         </div>`);
+    utilityContent.querySelector("#profilePreferencesBtn").addEventListener("click", () => openUserPreferences(false));
     utilityContent.querySelector("#profileRewardsBtn").addEventListener("click", showRewards);
     utilityContent.querySelector("#profileFavoritesBtn").addEventListener("click", showAllFavorites);
 }
@@ -2613,3 +2656,7 @@ prayerTimesForm?.addEventListener("submit", async (event) => {
 document.querySelector("#refreshApiHistory")?.addEventListener("click", loadApiConversations);
 loadApiAgents();
 loadApiConversations();
+
+if (!getUserPreferences()) {
+    window.setTimeout(() => openUserPreferences(true), 500);
+}

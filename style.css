@@ -4627,6 +4627,30 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 
 .modal-link-button { width: 100%; margin-top: 10px; padding: 8px; border: 0; color: #20543d; background: transparent; font-family: inherit; font-weight: 800; cursor: pointer; }
 .utility-modal-box { max-height: 88vh; overflow: auto; }
+
+.utility-modal-box:has(.user-preferences-form) { width: min(760px, 95vw); }
+.user-preferences-form { display: grid; gap: 20px; text-align: right; }
+.user-preferences-form > header { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 16px; background: #edf5ef; }
+.user-preferences-form > header > i { display: grid; width: 50px; height: 50px; place-items: center; flex: 0 0 auto; border-radius: 14px; color: #fff; background: #205c43; font-size: 22px; }
+.user-preferences-form h3, .user-preferences-form p { margin: 0; }
+.user-preferences-form header p { margin-top: 4px; color: #7d746d; }
+.user-preferences-form fieldset { margin: 0; padding: 0; border: 0; }
+.user-preferences-form legend, .preference-details-grid label > span { margin-bottom: 10px; color: #432b1c; font-weight: 800; }
+.preference-choice-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.preference-choice-grid label { cursor: pointer; }
+.preference-choice-grid input { position: absolute; opacity: 0; pointer-events: none; }
+.preference-choice-grid span { display: grid; min-height: 92px; place-items: center; gap: 7px; padding: 12px 8px; border: 1px solid #e3cdb3; border-radius: 14px; color: #654535; background: #fffaf4; text-align: center; font-weight: 700; transition: .2s ease; }
+.preference-choice-grid span i { color: #207052; font-size: 22px; }
+.preference-choice-grid input:checked + span { border-color: #205c43; color: #fff; background: #205c43; box-shadow: 0 9px 20px rgba(32,92,67,.2); }
+.preference-choice-grid input:checked + span i { color: #fff; }
+.preference-details-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.preference-details-grid label { display: grid; }
+.preference-details-grid select { min-height: 48px; padding: 0 12px; border: 1px solid #e3cdb3; border-radius: 12px; color: #432b1c; background: #fff; font: inherit; }
+.user-preferences-form > button { min-height: 52px; border: 0; border-radius: 14px; color: #fff; background: #205c43; font: inherit; font-weight: 900; cursor: pointer; }
+.preferences-error { padding: 10px; border-radius: 10px; color: #a32626; background: #fff0f0; text-align: center; font-weight: 700; }
+.dark-mode .user-preferences-form > header, .dark-mode .preference-choice-grid span { background: #202722; }
+.dark-mode .preference-details-grid select { color: #eee; background: #191919; }
+@media (max-width: 650px) { .preference-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .preference-details-grid { grid-template-columns: 1fr; } }
 .profile-summary { text-align: center; }
 .profile-summary > div { width: 72px; height: 72px; display: grid; place-items: center; margin: auto; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #2b684e, #17452f); font-size: 28px; font-weight: 900; }
 .profile-summary h3 { margin: 10px 0 2px; }
