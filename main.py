@@ -266,7 +266,7 @@ async def index_page() -> FileResponse:
 
 @app.get("/{page_name}.html", include_in_schema=False)
 async def html_page(page_name: str) -> FileResponse:
-    if page_name not in {"agents", "services", "about", "contact", "payment-preview"}:
+    if page_name not in {"agents", "services", "about", "contact", "payment-preview", "journey", "now"}:
         raise HTTPException(status_code=404, detail="Page not found.")
     return page_response(f"{page_name}.html")
 
