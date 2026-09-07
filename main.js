@@ -1845,8 +1845,23 @@ function openUtility(title, icon, content) {
 
 const userPreferencesKey = "duof-asir-user-preferences";
 
+function activePreferenceIdentity() {
+    const account = JSON.parse(localStorage.getItem("wakala-account") || "null");
+    return String(localStorage.getItem("wakala-user") || account?.email || "guest").trim().toLowerCase();
+}
+
+function activePreferencesKey() {
+    return `${userPreferencesKey}:${activePreferenceIdentity()}`;
+}
+
 function getUserPreferences() {
-    return JSON.parse(localStorage.getItem(userPreferencesKey) || "null");
+    const scopedKey = activePreferencesKey();
+    const scoped = localStorage.getItem(scopedKey);
+    if (scoped) return JSON.parse(scoped);
+    const legacy = localStorage.getItem(userPreferencesKey);
+    if (!legacy || activePreferenceIdentity() === "guest") return null;
+    localStorage.setItem(scopedKey, legacy);
+    return JSON.parse(legacy);
 }
 
 function openUserPreferences(firstVisit = false) {
@@ -1878,7 +1893,7 @@ function openUserPreferences(firstVisit = false) {
             form.querySelector(".preferences-error").hidden = false;
             return;
         }
-        localStorage.setItem(userPreferencesKey, JSON.stringify({ interests: interestsValue, city: form.elements.city.value, companions: form.elements.companions.value, budget: form.elements.budget.value, updatedAt: new Date().toISOString() }));
+        localStorage.setItem(activePreferencesKey(), JSON.stringify({ account: activePreferenceIdentity(), interests: interestsValue, city: form.elements.city.value, companions: form.elements.companions.value, budget: form.elements.budget.value, updatedAt: new Date().toISOString() }));
         closeSimpleModal(utilityModal);
         addNotification("تم حفظ تفضيلاتك وتخصيص اقتراحات ضيوف عسير لك.");
     });
@@ -1898,7 +1913,7 @@ function showProfile() {
             <span><i class="fa-solid fa-shield-check"></i> حساب محلي محفوظ بأمان على هذا الجهاز</span>
         </div>
         <div class="simple-profile-actions">
-            <button id="profilePreferencesBtn" type="button"><i class="fa-solid fa-sliders"></i><span><strong>تفضيلاتي</strong><small>عدّل اهتماماتك وميزانيتك</small></span></button>
+            <button id="profilePreferencesBtn" type="button"><i class="fa-solid fa-sliders"></i><span><strong>تعديل التفضيلات</strong><small>عدّل اهتماماتك وميزانيتك في أي وقت</small></span></button>
             <button id="profileRewardsBtn" class="profile-rewards-button" type="button"><i class="fa-solid fa-ticket"></i><span><strong>المكافآت والكوبونات</strong><small>تابع تقدمك واستعرض كوبوناتك</small></span></button>
             <button id="profileFavoritesBtn" type="button"><i class="fa-solid fa-heart"></i><span><strong>المفضلة</strong><small>${favoriteCount} عناصر محفوظة</small></span></button>
         </div>`);
@@ -2227,6 +2242,14 @@ function restoreRememberedEmail() {
     signupEmailInput.value = rememberedEmail;
 }
 
+function showPreferencesAfterLogin() {
+    window.setTimeout(() => {
+        closeSimpleModal(loginModal);
+        closeSimpleModal(signupModal);
+        if (!getUserPreferences()) openUserPreferences(true);
+    }, 750);
+}
+
 loginIdentityInput.addEventListener("change", () => rememberEmail(loginIdentityInput.value));
 signupEmailInput.addEventListener("change", () => rememberEmail(signupEmailInput.value));
 restoreRememberedEmail();
@@ -2275,7 +2298,7 @@ loginForm.addEventListener("submit", async (event) => {
     logoutButton.hidden = false;
     profileBtn.hidden = false;
     addNotification("تم تسجيل الدخول إلى حسابك بنجاح.");
-    window.setTimeout(() => closeSimpleModal(loginModal), 700);
+    showPreferencesAfterLogin();
 });
 
 logoutButton.addEventListener("click", () => {
@@ -2382,7 +2405,7 @@ signupForm.addEventListener("submit", async (event) => {
     logoutButton.hidden = false;
     profileBtn.hidden = false;
     addNotification(`مرحبًا ${account.name}، تم إنشاء حسابك بنجاح.`);
-    window.setTimeout(() => closeSimpleModal(signupModal), 800);
+    showPreferencesAfterLogin();
 });
 
 profileBtn.addEventListener("click", showProfile);
@@ -2667,36 +2690,218 @@ document.querySelector("#refreshApiHistory")?.addEventListener("click", loadApiC
 loadApiAgents();
 loadApiConversations();
 
-if (document.body.classList.contains("home-page") && !getUserPreferences() && !new URLSearchParams(window.location.search).has("prototype")) {
-    window.setTimeout(() => openUserPreferences(true), 500);
+const smartTripPlaces = {
+    coffee: [
+        { name: "كوفي مطل أبها", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, image: "assets/entertainment/food-cafe.jpg" },
+        { name: "جلسة قهوة سعودية", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 30, image: "assets/entertainment/menu/saudi-coffee.png" }
+    ],
+    destination: [
+        { name: "إطلالة السودة", category: "وجهة سياحية", icon: "🌿", duration: 90, indoor: false, zone: "السودة", cost: 20, interest: "nature", image: "assets/agents/housing-abha-real.jpg" },
+        { name: "ممشى الضباب", category: "وجهة سياحية", icon: "🌿", duration: 75, indoor: false, zone: "أبها الجديدة", cost: 10, interest: "nature", image: "assets/entities/high-city-abha.jpg" },
+        { name: "متحف عسير الإقليمي", category: "وجهة داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 25, interest: "heritage", image: "assets/agents/housing-abha-authentic.jpg" }
+    ],
+    entertainment: [
+        { name: "شارع الفن", category: "ترفيه", icon: "🎡", duration: 75, indoor: false, zone: "وسط أبها", cost: 20, interest: "events", image: "assets/entities/art-street-abha.jpg" },
+        { name: "تجربة فنية داخلية", category: "فعالية", icon: "🎭", duration: 75, indoor: true, zone: "وسط أبها", cost: 55, interest: "events", image: "assets/entertainment/activity-art-night.jpg" }
+    ],
+    restaurant: [
+        { name: "مأكولات عسيرية", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "وسط أبها", cost: 85, interest: "food", image: "assets/entertainment/joy-venue-restaurant.jpg" },
+        { name: "مطعم بطابع جنوبي", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "أبها الجديدة", cost: 95, interest: "food", image: "assets/entertainment/veranda-abha.jpg" }
+    ],
+    experience: [
+        { name: "سوق الثلاثاء والحرف", category: "تجربة محلية", icon: "🧭", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, interest: "heritage", image: "assets/entertainment/tuesday-market-crafts.jpg" },
+        { name: "جلسة مسائية عسيرية", category: "تجربة مسائية", icon: "🌙", duration: 60, indoor: true, zone: "وسط أبها", cost: 60, interest: "heritage", image: "assets/entertainment/productive-families-abha.jpg" }
+    ]
+};
+
+const smartTripWeatherCoordinates = {
+    "وسط أبها": { latitude: 18.2164, longitude: 42.5053 },
+    "أبها الجديدة": { latitude: 18.2130, longitude: 42.4910 },
+    "السودة": { latitude: 18.2747, longitude: 42.3647 }
+};
+
+function tripDateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 }
 
-const prototypeStops = [
-    { time: "09:00", name: "ممشى الضباب", type: "وجهة طبيعية", reason: "هدوء وإطلالة صباحية", match: 94, image: "assets/entities/high-city-abha.jpg" },
-    { time: "11:30", name: "سوق الثلاثاء", type: "تجربة محلية", reason: "تراث وحرف من أهل عسير", match: 88, image: "assets/entertainment/tuesday-market-crafts.jpg" },
-    { time: "14:00", name: "مأكولات عسيرية", type: "مطعم محلي", reason: "تجربة طعام أصيلة", match: 91, image: "assets/entertainment/joy-venue-restaurant.jpg" },
-    { time: "16:30", name: "شارع الفن", type: "موقع تصوير", reason: "ألوان وهوية محلية", match: 90, image: "assets/entities/art-street-abha.jpg" },
-    { time: "18:00", name: "إطلالة السودة", type: "مشاهدة الغروب", reason: "ختام هادئ لليوم", match: 96, image: "assets/agents/housing-abha-real.jpg" }
-];
+function weatherPointId(dateKey, placeName) {
+    return `${dateKey}|${placeName}`;
+}
 
-function renderPrototypeJourney(stops = prototypeStops) {
+function weatherLabel(condition) {
+    return ({
+        "Clear": "صحو",
+        "Partly cloudy": "غائم جزئيًا",
+        "Dense fog": "ضباب كثيف",
+        "Rain expected": "أمطار متوقعة",
+        "Thunderstorms": "عواصف رعدية",
+        "Variable weather": "طقس متغير"
+    })[condition] || condition;
+}
+
+async function fetchSmartTripWeather(settings) {
+    const baseDate = new Date(`${settings.tripDate}T12:00:00`);
+    const categoryOffsets = { coffee: 0, destination: 75, entertainment: 180, restaurant: 285, experience: 390 };
+    const startMinutes = minutesFromTime(settings.dayStart);
+    const points = [];
+    for (let dayIndex = 0; dayIndex < settings.days; dayIndex += 1) {
+        const date = new Date(baseDate);
+        date.setDate(baseDate.getDate() + dayIndex);
+        const dateKey = tripDateKey(date);
+        Object.entries(smartTripPlaces).forEach(([category, places]) => {
+            const proposedMinutes = Math.min(startMinutes + categoryOffsets[category], minutesFromTime(settings.dayEnd) - 30);
+            const proposedTime = `${String(Math.floor(proposedMinutes / 60)).padStart(2, "0")}:${String(proposedMinutes % 60).padStart(2, "0")}`;
+            places.forEach((place) => {
+                const coordinates = smartTripWeatherCoordinates[place.zone] || smartTripWeatherCoordinates["وسط أبها"];
+                points.push({ point_id: weatherPointId(dateKey, place.name), name: place.name, ...coordinates, date: dateKey, time: proposedTime });
+            });
+        });
+    }
+    const response = await apiRequest("/smart-trip-weather", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ points })
+    });
+    return new Map(response.forecasts.map((forecast) => [forecast.point_id, forecast]));
+}
+
+let smartTripDays = [];
+let smartTripSettings = null;
+
+function minutesFromTime(value) {
+    const [hours, minutes] = value.split(":").map(Number);
+    return (hours * 60) + minutes;
+}
+
+function timeFromMinutes(total) {
+    const normalized = ((total % 1440) + 1440) % 1440;
+    const hours = Math.floor(normalized / 60);
+    const minutes = normalized % 60;
+    const period = hours >= 12 ? "م" : "ص";
+    return `${hours % 12 || 12}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
+function simulatedWeather(dayIndex) {
+    return [
+        { key: "clear", icon: "☀️", label: "معتدل وصافٍ", outdoor: true },
+        { key: "rain", icon: "🌧️", label: "أمطار متوقعة (Demo)", outdoor: false },
+        { key: "fog", icon: "🌫️", label: "ضباب كثيف (Demo)", outdoor: false },
+        { key: "clear", icon: "🌤️", label: "غائم جزئيًا", outdoor: true },
+        { key: "rain", icon: "🌦️", label: "زخات مطر (Demo)", outdoor: false }
+    ][dayIndex % 5];
+}
+
+function pickSmartPlace(type, dayIndex, weather, interests, previousZone, weatherMap, dateKey) {
+    const places = smartTripPlaces[type];
+    const suitable = places.filter((place) => {
+        if (place.indoor) return true;
+        const forecast = weatherMap?.get(weatherPointId(dateKey, place.name));
+        return forecast ? forecast.suitable_outdoor : weather.outdoor;
+    });
+    const ranked = [...(suitable.length ? suitable : places)].sort((a, b) => {
+        const aScore = (interests.includes(a.interest) ? 3 : 0) + (a.zone === previousZone ? 2 : 0);
+        const bScore = (interests.includes(b.interest) ? 3 : 0) + (b.zone === previousZone ? 2 : 0);
+        return bScore - aScore;
+    });
+    const selected = { ...ranked[dayIndex % ranked.length] };
+    selected.forecast = weatherMap?.get(weatherPointId(dateKey, selected.name)) || null;
+    selected.replacedForWeather = places.some((place) => !place.indoor && weatherMap?.get(weatherPointId(dateKey, place.name))?.suitable_outdoor === false) && selected.indoor;
+    return selected;
+}
+
+function buildSmartTrip(settings, weatherMap = null) {
+    const start = minutesFromTime(settings.dayStart);
+    const end = minutesFromTime(settings.dayEnd);
+    const available = end - start;
+    const fullPattern = ["coffee", "destination", "entertainment", "restaurant", "experience"];
+    const pattern = available >= 360 ? fullPattern : available >= 240 ? ["coffee", "destination", "restaurant"] : ["destination", "restaurant"];
+    const date = new Date(`${settings.tripDate}T12:00:00`);
+    return Array.from({ length: settings.days }, (_, dayIndex) => {
+        const dayDate = new Date(date);
+        dayDate.setDate(date.getDate() + dayIndex);
+        const dateKey = tripDateKey(dayDate);
+        const dayForecasts = weatherMap ? [...weatherMap.values()].filter((forecast) => forecast.date === dateKey) : [];
+        const representative = dayForecasts.find((forecast) => !forecast.suitable_outdoor) || dayForecasts[0];
+        const weather = representative
+            ? { key: "real", icon: representative.icon, label: weatherLabel(representative.condition), outdoor: representative.suitable_outdoor, source: "Open-Meteo" }
+            : { ...simulatedWeather(dayIndex), source: "Demo" };
+        let cursor = start;
+        let previousZone = "وسط أبها";
+        const stops = [];
+        pattern.forEach((type, stopIndex) => {
+            let place = pickSmartPlace(type, dayIndex + stopIndex, weather, settings.interests, previousZone, weatherMap, dateKey);
+            const travel = stopIndex === 0 ? 0 : place.zone === previousZone ? 15 : 25;
+            cursor += travel;
+            if (cursor + place.duration > end - 10) return;
+            const sunsetMatch = weather.outdoor && !place.indoor && cursor >= 1020 && cursor <= 1140;
+            place.timeMinutes = cursor;
+            place.travel = travel;
+            place.reason = place.replacedForWeather
+                ? "تم اختيار تجربة داخلية بديلة لأن التوقعات الحقيقية تشير إلى مطر أو ضباب في وجهة مكشوفة."
+                : sunsetMatch
+                    ? "وقت مناسب للغروب والتصوير، وقريب من مسار اليوم."
+                    : `مناسب لـ${settings.groupLabel} واهتماماتك، وضمن ميزانيتك ومسار اليوم.`;
+            stops.push(place);
+            cursor += place.duration;
+            previousZone = place.zone;
+        });
+        return { dayIndex, date: dayDate, weather, start, end, stops };
+    });
+}
+
+function renderPrototypeJourney(days = smartTripDays) {
     const timeline = document.querySelector("#journeyTimeline");
     if (!timeline) return;
-    timeline.innerHTML = stops.map((stop, index) => `<article style="--delay:${index * 70}ms"><time>${stop.time}</time><img src="${stop.image}" alt="${stop.name}" loading="lazy"><div><small>${stop.type}</small><h3>${stop.name}</h3><p>${stop.reason}</p></div><b>${stop.match}% مناسبة لك</b></article>`).join("");
+    if (!days.length) return;
+    timeline.innerHTML = days.map((day) => {
+        const dayName = new Intl.DateTimeFormat("ar-SA", { weekday: "long" }).format(day.date);
+        const stops = day.stops.map((stop, index) => `<article class="smart-stop-card" style="--delay:${index * 70}ms"><div class="smart-stop-time"><time>${timeFromMinutes(stop.timeMinutes)}</time><span>${stop.icon}</span></div><img src="${stop.image}" alt="${stop.name}" loading="lazy"><div class="smart-stop-details"><small>${stop.category} · ${stop.zone}</small><h3>${stop.name}</h3><div class="smart-stop-meta"><span><i class="fa-regular fa-clock"></i> ${stop.duration} دقيقة</span><span><i class="fa-solid fa-wallet"></i> نحو ${stop.cost} ر.س للشخص</span></div><p><i class="fa-solid fa-wand-magic-sparkles"></i> ${stop.reason}</p>${index < day.stops.length - 1 ? `<b><i class="fa-solid fa-car-side"></i> ${day.stops[index + 1].travel} دقيقة للمحطة التالية</b>` : `<b><i class="fa-solid fa-moon"></i> آخر محطة قبل نهاية اليوم</b>`}</div></article>`).join("");
+        return `<section class="smart-trip-day"><header><div><span>اليوم ${["الأول", "الثاني", "الثالث", "الرابع", "الخامس"][day.dayIndex]}</span><h3>${dayName} | ${timeFromMinutes(day.start)} — ${timeFromMinutes(day.end)}</h3></div><span class="weather-simulation-chip">${day.weather.icon} ${day.weather.label}<small>${day.weather.source === "Open-Meteo" ? "توقع حقيقي" : "محاكاة مؤقتة"}</small></span></header><div class="smart-day-stops">${stops}<div class="smart-day-end"><i class="fa-solid fa-flag-checkered"></i><strong>${timeFromMinutes(day.end)} — نهاية اليوم</strong></div></div></section>`;
+    }).join("");
 }
 
-document.querySelector("#journeyDnaForm")?.addEventListener("submit", (event) => {
+document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const nature = data.get("pace") === "nature";
-    const calm = data.get("mood") === "calm";
-    const heritage = data.get("style") === "heritage";
-    const scores = { "طبيعة": nature ? 92 : 72, "مغامرة": nature ? 70 : 94, "تراث": heritage ? 90 : 65, "هدوء": calm ? 85 : 58, "تصوير": 90 };
-    const result = document.querySelector("#journeyDnaResult");
-    result.innerHTML = `<div class="dna-score-grid">${Object.entries(scores).map(([name, score]) => `<div><span>${name}</span><b>${score}%</b><i><em style="width:${score}%"></em></i></div>`).join("")}</div><h3><i class="fa-solid fa-circle-check"></i> اكتشفنا نمط رحلتك، دعنا نبني عسير المناسبة لك.</h3><a href="#adaptiveJourney">شاهد رحلتي المقترحة <i class="fa-solid fa-arrow-down"></i></a>`;
-    result.hidden = false;
+    const error = document.querySelector("#tripFormError");
+    const start = minutesFromTime(data.get("dayStart"));
+    const end = minutesFromTime(data.get("dayEnd"));
+    const interests = data.getAll("interests");
+    if (end - start < 180 || !interests.length) {
+        error.textContent = !interests.length ? "اختر اهتمامًا واحدًا على الأقل." : "اجعل وقت الرحلة ثلاث ساعات على الأقل.";
+        error.hidden = false;
+        return;
+    }
+    error.hidden = true;
+    const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+    const originalButton = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ فحص الطقس الحقيقي...';
+    const groupLabels = { family: "العائلة", friends: "الأصدقاء", solo: "الرحلات الفردية" };
+    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests };
+    let weatherMap = null;
+    let weatherMessage = "توقعات حقيقية محدثة من Open-Meteo.";
+    try {
+        weatherMap = await fetchSmartTripWeather(smartTripSettings);
+    } catch (weatherError) {
+        weatherMessage = `تعذر جلب التوقعات الحقيقية لهذا التاريخ، لذلك استُخدمت محاكاة مؤقتة واضحة. (${weatherError.message})`;
+    }
+    smartTripDays = buildSmartTrip(smartTripSettings, weatherMap);
     renderPrototypeJourney();
-    result.scrollIntoView({ behavior: "smooth", block: "center" });
+    const estimated = smartTripDays.flatMap((day) => day.stops).reduce((sum, stop) => sum + stop.cost, 0) * smartTripSettings.people;
+    const weatherAdjusted = smartTripDays.filter((day) => !day.weather.outdoor).length;
+    const result = document.querySelector("#journeyDnaResult");
+    result.innerHTML = `<div class="trip-build-summary"><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span><span><small>تعديلات الطقس</small><strong>${weatherAdjusted} أيام</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> تم استبعاد الوجهات المكشوفة غير المناسبة من الأيام الممطرة أو كثيفة الضباب قبل إنشاء الجدول.</p><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>`;
+    result.hidden = false;
+    document.querySelector("#conditionLab").hidden = false;
+    document.querySelector("#weatherAdaptationForm").hidden = true;
+    document.querySelector("#adaptationResult").hidden = true;
+    document.querySelector("#adaptiveJourney").scrollIntoView({ behavior: "smooth", block: "start" });
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButton;
 });
 
 document.querySelector("#tourPackages")?.addEventListener("click", (event) => {
@@ -2704,34 +2909,131 @@ document.querySelector("#tourPackages")?.addEventListener("click", (event) => {
     if (!button) return;
     const form = document.querySelector("#journeyDnaForm");
     if (!form) return;
-    const adventurePackage = button.dataset.style === "adventure";
-    const pace = form.querySelector(`[name="pace"][value="${adventurePackage ? "adventure" : "nature"}"]`);
-    const heritage = form.querySelector(`[name="style"][value="${button.dataset.style === "heritage" ? "heritage" : "modern"}"]`);
     const duration = form.querySelector('[name="duration"]');
-    if (pace) pace.checked = true;
-    if (heritage) heritage.checked = true;
     if (duration) duration.value = button.dataset.duration;
+    const preferredInterest = button.dataset.style === "adventure" ? "adventure" : button.dataset.style === "heritage" ? "heritage" : "nature";
+    const interest = form.querySelector(`[name="interests"][value="${preferredInterest}"]`);
+    if (interest) interest.checked = true;
     button.innerHTML = `<i class="fa-solid fa-circle-check"></i> تم اختيار ${escapeHtml(button.dataset.package)}`;
     window.setTimeout(() => document.querySelector("#journeyDna")?.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
 });
 
 const conditionChanges = {
-    rain: { icon: "🌧️", before: "إطلالة السودة", after: "قصور أبو سراح", reason: "استبدلنا الموقع المكشوف بتجربة تراثية داخلية مناسبة للمطر.", stop: { time: "18:00", name: "قصور أبو سراح", type: "تجربة داخلية", reason: "بديل مناسب للمطر", match: 92, image: "assets/entertainment/productive-families-abha.jpg" } },
-    traffic: { icon: "🚗", before: "ممشى الضباب", after: "قرية طبب", reason: "اخترنا وجهة بديلة لتقليل وقت الانتظار على المسار.", stop: { time: "09:00", name: "قرية طبب", type: "وجهة أقل ازدحامًا", reason: "مسار أكثر هدوءًا", match: 89, image: "assets/agents/housing-abha-authentic.jpg" } },
-    closed: { icon: "⛔", before: "شارع الفن", after: "سوق الثلاثاء", reason: "أعدنا توزيع الوقت على تجربة محلية متاحة في المحاكاة.", stop: { time: "16:30", name: "سوق الثلاثاء", type: "تجربة محلية بديلة", reason: "بديل قريب ومناسب", match: 87, image: "assets/entertainment/tuesday-market-crafts.jpg" } },
-    late: { icon: "⏰", before: "خمس محطات", after: "أربع محطات مرنة", reason: "دمجنا محطتين وحافظنا على الغروب دون ضغط اليوم.", stop: { time: "17:00", name: "شارع الفن والغروب", type: "محطة مدمجة", reason: "توفير الوقت", match: 90, image: "assets/entities/art-street-abha.jpg" } }
+    rain: { icon: "🌧️", after: "تجربة فنية داخلية", reason: "بدأ المطر، فاستبدلنا أول محطة مكشوفة متبقية بتجربة داخلية قريبة." },
+    traffic: { icon: "🚗", after: "سوق الثلاثاء والحرف", reason: "ظهر ازدحام على المسار، فاخترنا محطة أقرب لبقية اليوم." },
+    closed: { icon: "⛔", after: "جلسة مسائية عسيرية", reason: "أُغلقت الوجهة، فاستبدلناها بتجربة محلية متاحة ضمن المحاكاة." },
+    late: { icon: "⏰", after: "إعادة ترتيب الأوقات", reason: "تأخرت ساعة، فأعدنا توقيت بقية المحطات وحذفنا آخر محطة فقط عند الحاجة." }
 };
+
+function updateWeatherAdaptationQuestions(dayIndex = 0) {
+    const day = smartTripDays[dayIndex];
+    const currentSelect = document.querySelector("#weatherCurrentLocation");
+    const plannedSelect = document.querySelector("#weatherPlannedStop");
+    if (!day || !currentSelect || !plannedSelect) return;
+    currentSelect.innerHTML = `<option value="-1">وسط أبها — قبل بدء المسار</option>${day.stops.map((stop, index) => `<option value="${index}">${escapeHtml(stop.name)}</option>`).join("")}`;
+    updateWeatherPlannedStops(dayIndex, -1);
+}
+
+function updateWeatherPlannedStops(dayIndex, currentIndex) {
+    const day = smartTripDays[dayIndex];
+    const plannedSelect = document.querySelector("#weatherPlannedStop");
+    if (!day || !plannedSelect) return;
+    const remainingStops = day.stops.map((stop, index) => ({ stop, index })).filter(({ index }) => index > currentIndex);
+    const outdoorStops = remainingStops.filter(({ stop }) => !stop.indoor);
+    const choices = outdoorStops.length ? outdoorStops : remainingStops;
+    plannedSelect.innerHTML = choices.map(({ stop, index }) => `<option value="${index}">${escapeHtml(stop.name)} — ${timeFromMinutes(stop.timeMinutes)}</option>`).join("");
+}
+
+function openWeatherAdaptationQuestions() {
+    const form = document.querySelector("#weatherAdaptationForm");
+    const daySelect = document.querySelector("#weatherDaySelect");
+    if (!form || !daySelect) return;
+    daySelect.innerHTML = smartTripDays.map((day, index) => `<option value="${index}">اليوم ${index + 1} — ${new Intl.DateTimeFormat("ar-SA", { weekday: "long" }).format(day.date)}</option>`).join("");
+    updateWeatherAdaptationQuestions(0);
+    form.hidden = false;
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+document.querySelector("#weatherDaySelect")?.addEventListener("change", (event) => updateWeatherAdaptationQuestions(Number(event.target.value)));
+document.querySelector("#weatherCurrentLocation")?.addEventListener("change", (event) => {
+    updateWeatherPlannedStops(Number(document.querySelector("#weatherDaySelect").value), Number(event.target.value));
+});
+document.querySelector("#weatherAdaptationCancel")?.addEventListener("click", () => {
+    document.querySelector("#weatherAdaptationForm").hidden = true;
+    document.querySelectorAll("#conditionButtons button").forEach((item) => item.classList.remove("active"));
+});
+
+document.querySelector("#weatherAdaptationForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const dayIndex = Number(data.get("dayIndex"));
+    const currentIndex = Number(data.get("currentLocation"));
+    const targetIndex = Number(data.get("plannedStop"));
+    const updated = structuredClone(smartTripDays);
+    const day = updated[dayIndex];
+    const target = day?.stops[targetIndex];
+    if (!target) return;
+
+    const currentName = currentIndex >= 0 ? day.stops[currentIndex].name : "وسط أبها";
+    const currentZone = currentIndex >= 0 ? day.stops[currentIndex].zone : "وسط أبها";
+    const museum = smartTripPlaces.destination.find((place) => place.name === "متحف عسير الإقليمي");
+    const alternatives = {
+        "إطلالة السودة": { name: "قصور أبو سراح التراثية", category: "تجربة تراثية داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 35, interest: "heritage", image: "assets/agents/housing-abha-authentic.jpg" },
+        "ممشى الضباب": museum,
+        "شارع الفن": { name: "قصور أبو سراح التراثية", category: "تجربة تراثية داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 35, interest: "heritage", image: "assets/agents/housing-abha-authentic.jpg" }
+    };
+    const replacement = { ...(alternatives[target.name] || museum) };
+    replacement.timeMinutes = target.timeMinutes;
+    replacement.travel = currentZone === replacement.zone ? 15 : 25;
+    replacement.reason = `اختير كبديل داخلي قريب من ${currentName} بعد تغير الطقس في ${target.name}، مع الحفاظ على بقية الخطة.`;
+    day.stops[targetIndex] = replacement;
+
+    for (let index = targetIndex + 1; index < day.stops.length; index += 1) {
+        const previous = day.stops[index - 1];
+        const stop = day.stops[index];
+        stop.travel = stop.zone === previous.zone ? 15 : 25;
+        stop.timeMinutes = previous.timeMinutes + previous.duration + stop.travel;
+    }
+    day.stops = day.stops.filter((stop, index) => index <= targetIndex || stop.timeMinutes + stop.duration <= day.end);
+    smartTripDays = updated;
+    renderPrototypeJourney();
+
+    const result = document.querySelector("#adaptationResult");
+    result.innerHTML = `<h3><i class="fa-solid fa-arrows-rotate"></i> تم تكييف بقية رحلتك حسب موقعك والطقس الجديد.</h3><p>موقعك الحالي: <strong>${escapeHtml(currentName)}</strong></p><div><span><small>قبل</small><del>${escapeHtml(target.name)} — طقس غير مناسب</del></span><i class="fa-solid fa-arrow-left"></i><span><small>بعد</small><strong>${escapeHtml(replacement.name)}</strong></span></div><p>🌧️ ${escapeHtml(replacement.reason)}</p><small>لم نغيّر المحطات التي أنهيتها، وتم تعديل المحطة المقصودة وما بعدها فقط.</small>`;
+    result.hidden = false;
+    event.currentTarget.hidden = true;
+    result.scrollIntoView({ behavior: "smooth", block: "center" });
+});
 
 document.querySelector("#conditionButtons")?.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-condition]");
     if (!button) return;
-    const change = conditionChanges[button.dataset.condition];
+    if (!smartTripDays.length) return;
+    const condition = button.dataset.condition;
+    const change = conditionChanges[condition];
     document.querySelectorAll("#conditionButtons button").forEach((item) => item.classList.toggle("active", item === button));
-    const updated = [...prototypeStops];
-    updated[button.dataset.condition === "rain" ? 4 : button.dataset.condition === "traffic" ? 0 : 3] = change.stop;
+    if (condition === "rain") {
+        openWeatherAdaptationQuestions();
+        return;
+    }
+    const updated = structuredClone(smartTripDays);
+    const day = updated[0];
+    const targetIndex = Math.max(1, day.stops.findIndex((stop, index) => index > 0 && !stop.indoor));
+    const before = day.stops[targetIndex]?.name || day.stops[1]?.name;
+    if (condition === "late") {
+        day.stops.slice(1).forEach((stop) => { stop.timeMinutes += 60; stop.reason = "أعيد ترتيب وقتها بعد تأخر بداية الرحلة، مع الحفاظ على المحطات السابقة."; });
+        day.stops = day.stops.filter((stop) => stop.timeMinutes + stop.duration <= day.end);
+    } else {
+        const replacementType = condition === "traffic" ? "experience" : condition === "closed" ? "experience" : "entertainment";
+        const replacement = pickSmartPlace(replacementType, condition === "closed" ? 1 : 0, { outdoor: false }, smartTripSettings.interests, day.stops[targetIndex - 1]?.zone);
+        replacement.timeMinutes = day.stops[targetIndex].timeMinutes;
+        replacement.travel = 15;
+        replacement.reason = change.reason;
+        day.stops[targetIndex] = replacement;
+    }
     renderPrototypeJourney(updated);
     const result = document.querySelector("#adaptationResult");
-    result.innerHTML = `<h3><i class="fa-solid fa-arrows-rotate"></i> تكيفت رحلتك مع الظروف الجديدة.</h3><div><span><small>قبل</small><del>${change.before}</del></span><i class="fa-solid fa-arrow-left"></i><span><small>بعد</small><strong>${change.after}</strong></span></div><p>${change.icon} ${change.reason}</p><small>تغيير توضيحي ضمن محاكاة النموذج الأولي.</small>`;
+    result.innerHTML = `<h3><i class="fa-solid fa-arrows-rotate"></i> تم تكييف رحلتك حسب الظروف الجديدة.</h3><div><span><small>قبل</small><del>${before}</del></span><i class="fa-solid fa-arrow-left"></i><span><small>بعد</small><strong>${change.after}</strong></span></div><p>${change.icon} ${change.reason}</p><small>تم تعديل بقية اليوم الأول فقط. هذه محاكاة توضيحية وليست بيانات حية.</small>`;
     result.hidden = false;
 });
 
@@ -2743,4 +3045,5 @@ document.querySelector("#rebalanceButton")?.addEventListener("click", (event) =>
     label.textContent = demo.classList.contains("balanced") ? "بعد" : "قبل";
 });
 
-renderPrototypeJourney();
+const smartTripDateInput = document.querySelector('[name="tripDate"]');
+if (smartTripDateInput && !smartTripDateInput.value) smartTripDateInput.value = new Date().toISOString().slice(0, 10);

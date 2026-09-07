@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ضيوف عسير | عسير رحلة تتكيّف معك</title>
 
-    <link rel="stylesheet" href="style.css?v=271">
+    <link rel="stylesheet" href="style.css?v=275">
     <link rel="icon" type="image/png" href="assets/brand/duof-asir-sun-logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -209,7 +209,7 @@
             <div class="tour-package-content">
                 <div class="tour-package-title"><div><small>3 أيام / ليلتان</small><h3>سحر أبها</h3></div><b>ابتداءً من 1,290 ر.س</b></div>
                 <ul><li><i class="fa-solid fa-mountain-sun"></i> السودة ورجال ألمع</li><li><i class="fa-solid fa-bed"></i> إقامة مميزة</li><li><i class="fa-solid fa-car"></i> تنقلات يومية</li></ul>
-                <button type="button" data-package="سحر أبها" data-duration="3 أيام" data-style="nature">ابدأ بهذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" data-package="سحر أبها" data-duration="3" data-style="nature">ابدأ بهذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </article>
         <article class="tour-package-card">
@@ -217,7 +217,7 @@
             <div class="tour-package-content">
                 <div class="tour-package-title"><div><small>يومان / ليلة</small><h3>روح عسير</h3></div><b>ابتداءً من 790 ر.س</b></div>
                 <ul><li><i class="fa-solid fa-landmark"></i> قرى ومتاحف تراثية</li><li><i class="fa-solid fa-house"></i> إقامة تراثية</li><li><i class="fa-solid fa-utensils"></i> مذاقات محلية</li></ul>
-                <button type="button" data-package="روح عسير" data-duration="يوم واحد" data-style="heritage">خصص هذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" data-package="روح عسير" data-duration="1" data-style="heritage">خصص هذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </article>
         <article class="tour-package-card">
@@ -225,7 +225,7 @@
             <div class="tour-package-content">
                 <div class="tour-package-title"><div><small>5 أيام / 4 ليالٍ</small><h3>مغامرة الجنوب</h3></div><b>ابتداءً من 1,890 ر.س</b></div>
                 <ul><li><i class="fa-solid fa-person-hiking"></i> مسارات ومغامرات</li><li><i class="fa-solid fa-camera"></i> مواقع تصوير مختارة</li><li><i class="fa-solid fa-star"></i> فعاليات مسائية</li></ul>
-                <button type="button" data-package="مغامرة الجنوب" data-duration="5 أيام" data-style="adventure">خصص هذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" data-package="مغامرة الجنوب" data-duration="5" data-style="adventure">خصص هذه الباقة <i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </article>
     </div>
@@ -234,27 +234,42 @@
 
 <section class="journey-dna-section" id="journeyDna">
     <div class="dna-intro">
-        <span class="prototype-kicker"><i class="fa-solid fa-fingerprint"></i> وكيل الرحلة الذكية</span>
-        <h2>اكتشف DNA رحلتك</h2>
-        <p>اختيارات سريعة، ثم نبني لك يومًا يشبهك.</p>
-        <small>محاكاة تجريبية لأغراض النموذج الأولي</small>
+        <span class="prototype-kicker"><i class="fa-solid fa-route"></i> رحلتي الذكية</span>
+        <h2>ابنِ جدول رحلتك</h2>
+        <p>أدخل وقتك واهتماماتك وسنبني جدولًا يوميًا متوازنًا يناسبك.</p>
+        <div class="weather-demo-notice weather-live-notice"><i class="fa-solid fa-cloud-sun-rain"></i><span><strong>توقعات طقس حقيقية</strong><small>نفحص توقعات كل وجهة في وقت الزيارة عبر Open-Meteo. عند تعذر الاتصال تظهر المحاكاة المؤقتة بوضوح.</small></span></div>
     </div>
     <form class="dna-form" id="journeyDnaForm">
-        <div class="dna-question"><strong>تفضّل؟</strong><label><input type="radio" name="pace" value="nature" checked><span>🌿 طبيعة</span></label><label><input type="radio" name="pace" value="adventure"><span>🥾 مغامرة</span></label></div>
-        <div class="dna-question"><strong>أجواؤك؟</strong><label><input type="radio" name="mood" value="calm" checked><span>☁️ هدوء</span></label><label><input type="radio" name="mood" value="events"><span>✨ فعاليات</span></label></div>
-        <div class="dna-question"><strong>التجربة؟</strong><label><input type="radio" name="style" value="heritage" checked><span>🏛️ تراث</span></label><label><input type="radio" name="style" value="modern"><span>🌇 حديثة</span></label></div>
-        <div class="dna-selects"><label>مع من؟<select name="group"><option>العائلة</option><option>الأصدقاء</option><option>فردي</option></select></label><label>الميزانية<select name="budget"><option>اقتصادية</option><option selected>متوسطة</option><option>مفتوحة</option></select></label><label>المدة<select name="duration"><option>يوم واحد</option><option selected>3 أيام</option><option>5 أيام</option></select></label><label>مستوى المشي<select name="walking"><option>خفيف</option><option selected>متوسط</option><option>مرتفع</option></select></label></div>
-        <button type="submit"><i class="fa-solid fa-wand-magic-sparkles"></i> اكتشف نمط رحلتي</button>
+        <div class="smart-trip-fields">
+            <label>تاريخ الرحلة<input type="date" name="tripDate" required></label>
+            <label>عدد الأيام<select name="duration"><option value="1">يوم واحد</option><option value="3" selected>3 أيام</option><option value="5">5 أيام</option></select></label>
+            <label>بداية كل يوم<input type="time" name="dayStart" value="16:00" required></label>
+            <label>نهاية كل يوم<input type="time" name="dayEnd" value="23:00" required></label>
+            <label>الميزانية<select name="budget"><option value="economy">اقتصادية</option><option value="medium" selected>متوسطة</option><option value="open">مفتوحة</option></select></label>
+            <label>عدد الأشخاص<input type="number" name="people" value="2" min="1" max="20" required></label>
+            <label>نوع الرحلة<select name="group"><option value="family">عائلة</option><option value="friends">أصدقاء</option><option value="solo">فردي</option></select></label>
+        </div>
+        <fieldset class="interest-fieldset"><legend>ما اهتماماتك؟ <small>اختر اهتمامًا واحدًا على الأقل</small></legend><div class="interest-options"><label><input type="checkbox" name="interests" value="nature" checked><span>🌿 الطبيعة</span></label><label><input type="checkbox" name="interests" value="heritage"><span>🏛️ التراث</span></label><label><input type="checkbox" name="interests" value="coffee"><span>☕ الكوفيهات</span></label><label><input type="checkbox" name="interests" value="food"><span>🍽️ الطعام</span></label><label><input type="checkbox" name="interests" value="events"><span>🎭 الفعاليات</span></label><label><input type="checkbox" name="interests" value="adventure"><span>🥾 المغامرة</span></label></div></fieldset>
+        <p class="trip-form-error" id="tripFormError" hidden></p>
+        <button type="submit"><i class="fa-solid fa-wand-magic-sparkles"></i> إنشاء جدول رحلتي</button>
     </form>
     <div class="dna-result" id="journeyDnaResult" hidden aria-live="polite"></div>
 </section>
 
 <section class="adaptive-journey-section" id="adaptiveJourney">
-    <div class="prototype-section-heading"><span>رحلتك تتغير معك</span><h2>رحلة ذكية ذاتية التكيّف</h2><p>خطة يومية مرنة مبنية على نمط رحلتك.</p></div>
-    <div class="journey-timeline" id="journeyTimeline"></div>
-    <div class="condition-lab">
-        <div><strong>ماذا لو؟</strong><span>جرّب تغير الظروف</span><small>اختر حالة لترى رحلتك قبل وبعد</small></div>
+    <div class="prototype-section-heading"><span>رحلتك تتغير معك</span><h2>جدول الرحلة الذكية</h2><p>خطة زمنية متنوعة، مع سبب واضح لكل محطة ووقت الانتقال.</p><small>الطقس توقعات حقيقية من Open-Meteo، أما الازدحام وساعات العمل فتبقى محاكاة توضيحية.</small></div>
+    <div class="journey-timeline smart-trip-timeline" id="journeyTimeline"><div class="journey-empty-state"><i class="fa-solid fa-calendar-plus"></i><strong>أدخل بياناتك أولًا</strong><span>سيظهر هنا جدول واضح لكل يوم.</span></div></div>
+    <div class="condition-lab" id="conditionLab" hidden>
+        <div><strong>ماذا لو تغيرت الظروف؟</strong><span>نعدّل خطتك بناءً على موقعك</span><small>سنطلب موقعك والمحطة المقصودة قبل أي تعديل</small></div>
         <div class="condition-buttons" id="conditionButtons"><button data-condition="rain">🌧️ بدأ المطر</button><button data-condition="traffic">🚗 ازدحام</button><button data-condition="closed">⛔ إغلاق وجهة</button><button data-condition="late">⏰ تأخرت ساعة</button></div>
+        <form class="weather-adaptation-form" id="weatherAdaptationForm" hidden>
+            <div class="weather-adaptation-heading"><i class="fa-solid fa-location-dot"></i><span><strong>أين أنت الآن؟</strong><small>أجب عن السؤالين لنعدّل المحطة الصحيحة فقط.</small></span></div>
+            <label>اليوم الذي أنت فيه<select name="dayIndex" id="weatherDaySelect" required></select></label>
+            <label>موقعك الحالي<select name="currentLocation" id="weatherCurrentLocation" required></select></label>
+            <label>المحطة التي كنت متجهًا إليها<select name="plannedStop" id="weatherPlannedStop" required></select></label>
+            <button type="submit"><i class="fa-solid fa-cloud-arrow-down"></i> افحص البديل وعدّل بقية الخطة</button>
+            <button type="button" class="weather-adaptation-cancel" id="weatherAdaptationCancel">إلغاء</button>
+        </form>
     </div>
     <div class="adaptation-result" id="adaptationResult" hidden></div>
 </section>
@@ -897,7 +912,7 @@
 </div>
 
 
-<script src="main.js?v=271"></script>
+<script src="main.js?v=275"></script>
 
 </body>
 </html>

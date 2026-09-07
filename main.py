@@ -124,6 +124,19 @@ class UserRegistration(BaseModel):
         return " ".join(value.split())
 
 
+class WeatherPoint(BaseModel):
+    point_id: str = Field(min_length=1, max_length=120)
+    name: str = Field(min_length=1, max_length=120)
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
+    date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    time: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+
+
+class SmartTripWeatherRequest(BaseModel):
+    points: list[WeatherPoint] = Field(min_length=1, max_length=75)
+
+
 class PaymentCheckoutRequest(BaseModel):
     provider: Literal["tabby", "tamara", "applepay"]
     amount: float = Field(gt=0, le=100000)
@@ -462,6 +475,92 @@ async def prayer_times(city: str) -> dict[str, object]:
     except (httpx.HTTPError, KeyError, TypeError, ValueError) as error:
         raise HTTPException(status_code=502, detail="Prayer times are unavailable right now.") from error
     return {"city": cleaned_city, "Fajr": timings["Fajr"], "Dhuhr": timings["Dhuhr"], "Asr": timings["Asr"], "Maghrib": timings["Maghrib"], "Isha": timings["Isha"]}
+
+
+def describe_weather(code: int) -> tuple[str, str]:
+    if code == 0:
+        return "Clear", "☀️"
+    if code in {1, 2, 3}:
+        return "Partly cloudy", "⛅"
+    if code in {45, 48}:
+        return "Dense fog", "🌫️"
+    if 51 <= code <= 67 or 80 <= code <= 82:
+        return "Rain expected", "🌧️"
+    if 95 <= code <= 99:
+        return "Thunderstorms", "⛈️"
+    return "Variable weather", "🌤️"
+
+
+async def fetch_weather_series(
+    client: httpx.AsyncClient, latitude: float, longitude: float, forecast_date: str
+) -> dict[str, object]:
+    response = await client.get(
+        "https://api.open-meteo.com/v1/forecast",
+        params={
+            "latitude": latitude,
+            "longitude": longitude,
+            "hourly": "weather_code,precipitation_probability,visibility",
+            "timezone": "Asia/Riyadh",
+            "start_date": forecast_date,
+            "end_date": forecast_date,
+        },
+    )
+    response.raise_for_status()
+    return response.json()["hourly"]
+
+
+def weather_point_from_series(point: WeatherPoint, hourly: dict[str, object]) -> dict[str, object]:
+    target_hour = f"{point.date}T{point.time[:2]}:00"
+    try:
+        index = hourly["time"].index(target_hour)
+        code = int(hourly["weather_code"][index])
+        rain_probability = int(hourly["precipitation_probability"][index] or 0)
+        visibility = float(hourly["visibility"][index] or 0)
+    except (KeyError, TypeError, ValueError, IndexError) as error:
+        raise ValueError("The requested forecast hour is unavailable.") from error
+
+    condition, icon = describe_weather(code)
+    unsafe_code = code in {45, 48} or 51 <= code <= 67 or 80 <= code <= 82 or 95 <= code <= 99
+    suitable_outdoor = not unsafe_code and rain_probability < 55 and visibility >= 1500
+    return {
+        "point_id": point.point_id,
+        "name": point.name,
+        "date": point.date,
+        "time": point.time,
+        "condition": condition,
+        "icon": icon,
+        "weather_code": code,
+        "precipitation_probability": rain_probability,
+        "visibility_meters": round(visibility),
+        "suitable_outdoor": suitable_outdoor,
+    }
+
+
+@app.post("/smart-trip-weather")
+async def smart_trip_weather(payload: SmartTripWeatherRequest) -> dict[str, object]:
+    try:
+        grouped_points: dict[tuple[float, float, str], list[WeatherPoint]] = {}
+        for point in payload.points:
+            key = (round(point.latitude, 4), round(point.longitude, 4), point.date)
+            grouped_points.setdefault(key, []).append(point)
+        async with httpx.AsyncClient(timeout=20, follow_redirects=True) as client:
+            series = await asyncio.gather(
+                *(
+                    fetch_weather_series(client, latitude, longitude, forecast_date)
+                    for latitude, longitude, forecast_date in grouped_points
+                )
+            )
+        forecasts = []
+        for points, hourly in zip(grouped_points.values(), series):
+            forecasts.extend(weather_point_from_series(point, hourly) for point in points)
+    except (httpx.HTTPError, KeyError, TypeError, ValueError) as error:
+        raise HTTPException(status_code=502, detail="Weather forecasts are unavailable for the selected date.") from error
+    return {
+        "source": "Open-Meteo",
+        "is_demo": False,
+        "timezone": "Asia/Riyadh",
+        "forecasts": forecasts,
+    }
 
 
 initialize_database()
