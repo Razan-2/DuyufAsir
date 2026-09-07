@@ -164,10 +164,11 @@ agents.guides = {
         ["fa-calendar-check", "طلب موعد لجولة سياحية"]
     ],
     items: [
-        { name: "نفس للرحلات السياحية", location: "عسير · رحلات وتجارب سياحية", website: "https://nafas.sa/" },
-        { name: "تماشي لتنظيم الرحلات السياحية", location: "أبها · جولات خاصة مع مرشدين محليين", website: "https://tmashi.sa/" },
-        { name: "جمعية تكارا السياحية", location: "أبها · برامج ومرشدون سياحيون", website: "https://touristca.com/" },
-        { name: "إيفا ترافل", location: "عسير · رحلات خاصة وجماعية بإشراف مرشدين", website: "https://abha-travel.com/" }
+        { name: "أحمد العسيري", location: "أبها والسودة · طبيعة ومسارات جبلية", rating: 4.9, reviews: 128, languages: ["العربية", "الإنجليزية"], specialty: "الطبيعة والمغامرات" },
+        { name: "نورة الشهراني", location: "أبها ورجال ألمع · تراث وتجارب محلية", rating: 4.8, reviews: 96, languages: ["العربية", "الإنجليزية"], specialty: "التراث والثقافة" },
+        { name: "محمد القحطاني", location: "خميس مشيط وأحد رفيدة · جولات عائلية", rating: 4.7, reviews: 84, languages: ["العربية"], specialty: "العائلات والوجهات الريفية" },
+        { name: "خالد الأسمري", location: "ريف عسير · مزارع وكشتات ومدرجات", rating: 4.9, reviews: 73, languages: ["العربية", "الإنجليزية"], specialty: "السياحة الزراعية" },
+        { name: "سارة الألمعي", location: "رجال ألمع · تصوير وعمارة عسيرية", rating: 4.8, reviews: 67, languages: ["العربية", "الفرنسية"], specialty: "التصوير والقرى التراثية" }
     ],
     description: "اختر نوع الجولة والمدينة واللغة والموعد لأعرض لك المرشد المناسب.",
     reply: "يسعدني مساعدتك في اختيار مرشد سياحي. ما المدينة ونوع الجولة والموعد وعدد الأشخاص؟"
@@ -688,7 +689,7 @@ function renderRecommendations(agent, educationGroup = "universities") {
             : visual
                 ? `${entry.featuredLocal ? `<span class="productive-family-symbol"><i class="fa-solid fa-house-chimney-heart"></i></span><span class="productive-family-badge">منتج محلي من أسر عسير</span>` : `<img src="${entry.image}" alt="${name}" loading="lazy">`}<span class="visual-option-content"><strong>${name}</strong>${entry.featuredLocal ? "" : entry.mapUrl ? `<span class="entity-location" data-map="${entry.mapUrl}"><i class="fa-solid fa-location-dot"></i> ${detail}</span>` : `<small><i class="fa-solid fa-location-dot"></i> ${detail}</small>`}${entry.type ? `<span class="education-type">${entry.type}</span>` : ""}${entry.details ? `<span class="education-details">${entry.details.map((item) => `<em>${item}</em>`).join("")}</span>` : ""}${entry.fee ? `<b class="education-fee"><i class="fa-solid fa-coins"></i> ${entry.fee}</b>` : ""}${entry.phone && agent !== agents.hr ? `<span class="entity-phone" data-phone="${entry.phoneDial}"><i class="fa-solid fa-phone"></i><b dir="ltr">${entry.phone}</b><em>اضغط للاتصال</em></span>` : ""}${agent === agents.hr ? `<span class="company-application-actions"><button class="company-apply-button" type="button" data-company-apply><i class="fa-solid fa-arrow-up-right-from-square"></i> الموقع الرسمي</button><button class="company-apply-button future" type="button" data-company-future-apply><i class="fa-solid fa-file-arrow-up"></i> التقديم داخل ضيوف عسير <small>قريبًا</small></button></span>` : ""}${agent === agents.education && entry.group === "universities" ? `<button class="education-primary-action" type="button" data-education-action="admission"><i class="fa-solid fa-calendar-days"></i> مواعيد التسجيل والتنبيه</button>` : ""}${agent === agents.education && entry.group === "courses" ? `<button class="education-primary-action future" type="button" data-education-action="course"><i class="fa-solid fa-calendar-check"></i> التسجيل والدفع <small>قريبًا</small></button>` : ""}${agent === agents.education && entry.group === "private-schools" ? `<span class="education-registration-actions"><button class="education-primary-action" type="button" data-education-official><i class="fa-solid fa-arrow-up-right-from-square"></i> موقع المدرسة</button><button class="education-primary-action future" type="button" data-education-action="school"><i class="fa-solid fa-file-pen"></i> التسجيل والدفع <small>قريبًا</small></button></span>` : ""}${agent === agents.entertainment ? `<span class="entertainment-card-actions">${entry.featuredLocal ? `<button type="button" data-entertainment-action="families"><i class="fa-solid fa-store"></i> عرض الأسر والمنتجات</button>` : ["cafes", "restaurants"].includes(entry.group) ? `<button type="button" data-entertainment-action="table"><i class="fa-solid fa-chair"></i> احجز طاولة</button><button class="entertainment-order-future" type="button" data-entertainment-action="order"><i class="fa-solid fa-bag-shopping"></i> اطلب الآن <small>قريبًا</small></button>` : `<button type="button" data-entertainment-official><i class="fa-solid fa-arrow-up-right-from-square"></i> الحجز عبر الموقع الرسمي</button><button type="button" data-entertainment-action="${entry.group === "activities" ? "activity" : "movie"}"><i class="fa-solid fa-ticket"></i> الحجز داخل ضيوف عسير <small>قريبًا</small></button>`}</span>` : ""}</span>`
                 : agent === agents.guides
-                    ? `<span class="guide-list-number">${String(visibleItems.indexOf(entry) + 1).padStart(2, "0")}</span><i class="fa-solid ${agent.icon}"></i><span><strong>${name}</strong><small>${detail}</small></span>${entry.website ? '<b>زيارة الموقع <i class="fa-solid fa-arrow-up-right-from-square"></i></b>' : ""}`
+                    ? `<span class="guide-list-number">${String(visibleItems.indexOf(entry) + 1).padStart(2, "0")}</span><i class="fa-solid ${agent.icon}"></i><span><strong>${name}</strong><small>${detail}</small><em class="guide-profile-meta"><b><i class="fa-solid fa-star"></i> ${entry.rating} (${entry.reviews})</b><b>${entry.specialty}</b><b><i class="fa-solid fa-language"></i> ${entry.languages.join("، ")}</b></em></span><b class="guide-request-label">طلب المرشد <i class="fa-solid fa-arrow-left"></i></b>`
                     : `<i class="fa-solid ${agent.icon}"></i><span><strong>${name}</strong><small>${detail}</small></span>`;
         if (agent === agents.hr && !entry.careersUrl) button.querySelector("[data-company-apply]")?.remove();
         if (agent === agents.hr && entry.careersUrl) {
@@ -767,8 +768,8 @@ function renderRecommendations(agent, educationGroup = "universities") {
                 }
                 return;
             }
-            if (agent === agents.guides && entry.website) {
-                window.open(entry.website, "_blank", "noopener,noreferrer");
+            if (agent === agents.guides) {
+                openGuideRequest(entry);
                 return;
             }
             userInput.value = rich
@@ -1186,6 +1187,28 @@ function openMovieSelection(entry) {
         if (!selectButton) return;
         const movie = movies[Number(selectButton.dataset.movieSelect)];
         openEntertainmentBooking({ ...entry, name: movie.name }, "movie", { name: movie.name, price: movie.price });
+    });
+}
+
+function openGuideRequest(guide) {
+    const savedPlan = JSON.parse(localStorage.getItem("smartTripPlan") || "null");
+    if (!savedPlan) {
+        openUtility("طلب مرشد سياحي", "fa-person-hiking", `<div class="guide-no-trip"><i class="fa-solid fa-route"></i><h3>ابنِ رحلتك أولًا</h3><p>يرتبط المرشد بجدول رحلتك وتاريخها ومحطاتها، لذلك أنشئ الرحلة ثم عد لاختيار المرشد المناسب.</p><a href="/journey.html"><i class="fa-solid fa-wand-magic-sparkles"></i> بناء رحلتي الذكية</a></div>`);
+        return;
+    }
+    const settings = savedPlan.settings;
+    const tripType = settings.tripSetting === "agritourism" ? "سياحة زراعية" : "سياحة داخل المدينة";
+    openUtility("طلب مرشد للرحلة", "fa-person-hiking", `<div class="guide-request-page"><header><i class="fa-solid fa-user-check"></i><span><small>المرشد المختار</small><h3>${escapeHtml(guide.name)}</h3><div class="guide-request-rating"><i class="fa-solid fa-star"></i> ${guide.rating} من 5 · ${guide.reviews} تقييمًا تجريبيًا</div></span></header><div class="guide-linked-trip"><strong><i class="fa-solid fa-link"></i> مرتبط برحلتك الذكية</strong><dl><div><dt>تاريخ البداية</dt><dd dir="ltr">${escapeHtml(settings.tripDate)}</dd></div><div><dt>مدة الرحلة</dt><dd>${settings.days} ${settings.days === 1 ? "يوم" : "أيام"}</dd></div><div><dt>عدد الأشخاص</dt><dd>${settings.people}</dd></div><div><dt>نوع الرحلة</dt><dd>${tripType}</dd></div><div class="wide"><dt>تخصص المرشد</dt><dd>${escapeHtml(guide.specialty)}</dd></div></dl></div><form class="guide-request-form"><label><span>اليوم المطلوب</span><select name="day">${Array.from({ length: settings.days }, (_, index) => `<option value="${index + 1}">اليوم ${index + 1}</option>`).join("")}</select></label><label><span>وقت بدء الإرشاد</span><input name="time" type="time" value="${escapeHtml(settings.dayStart)}" required></label><label class="wide"><span>ملاحظات للمرشد</span><textarea name="notes" rows="3" placeholder="مثال: نفضل جولة مناسبة للأطفال"></textarea></label><button type="submit"><i class="fa-solid fa-calendar-check"></i> طلب هذا المرشد</button></form><p class="guide-prototype-note"><i class="fa-solid fa-circle-info"></i> ملفات المرشدين والتقييمات وطلبات الحجز في هذه المرحلة بيانات Prototype للعرض، ولا تعني تأكيد حجز حقيقي.</p></div>`);
+    const form = utilityContent.querySelector(".guide-request-form");
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const values = Object.fromEntries(new FormData(form));
+        const requestId = createFutureOrderId("GUIDE");
+        const requests = JSON.parse(localStorage.getItem("guideRequests") || "[]");
+        requests.push({ id: requestId, guide: guide.name, trip: settings, ...values, createdAt: new Date().toISOString(), status: "pending-prototype" });
+        localStorage.setItem("guideRequests", JSON.stringify(requests));
+        utilityContent.innerHTML = `<div class="transport-booking-confirmation"><i class="fa-solid fa-circle-check"></i><h4>تم إنشاء طلب المرشد</h4><strong>${escapeHtml(guide.name)}</strong><span class="transport-order-number"><small>رقم الطلب الداخلي</small><strong dir="ltr">${requestId}</strong></span><p>تم ربط الطلب برحلتك الذكية ليوم ${escapeHtml(values.day)} الساعة <span dir="ltr">${escapeHtml(values.time)}</span>.</p><b>طلب تجريبي</b><small>سيتم تأكيد طلب المرشد فعليًا بعد الربط الرسمي مع المرشدين ونظام الحجز.</small></div>`;
+        addNotification(`تم إنشاء طلب تجريبي للمرشد ${guide.name}.`);
     });
 }
 
@@ -3087,7 +3110,7 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ فحص الطقس الحقيقي...';
     const groupLabels = { family: "العائلة", friends: "الأصدقاء", solo: "الرحلات الفردية" };
-    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests, tripSetting: data.get("tripSetting"), rainPreference: data.get("rainPreference"), details: data.getAll("tripDetails") };
+    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests, tripSetting: data.get("tripSetting"), rainPreference: data.get("rainPreference"), details: data.getAll("tripDetails"), guideNeeded: data.get("guideNeeded") === "yes" };
     let weatherMap = null;
     let weatherMessage = "توقعات حقيقية محدثة من Open-Meteo.";
     try {
@@ -3096,12 +3119,13 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
         weatherMessage = `تعذر جلب التوقعات الحقيقية لهذا التاريخ، لذلك استُخدمت محاكاة مؤقتة واضحة. (${weatherError.message})`;
     }
     smartTripDays = buildSmartTrip(smartTripSettings, weatherMap);
+    localStorage.setItem("smartTripPlan", JSON.stringify({ settings: smartTripSettings, days: smartTripDays }));
     renderPrototypeJourney();
     renderContinuityEngine("ready");
     const estimated = smartTripDays.flatMap((day) => day.stops).reduce((sum, stop) => sum + stop.cost, 0) * smartTripSettings.people;
     const weatherAdjusted = smartTripDays.filter((day) => !day.weather.outdoor).length;
     const result = document.querySelector("#journeyDnaResult");
-    result.innerHTML = `<div class="trip-build-summary"><span><small>نمط الرحلة</small><strong>${smartTripSettings.tripSetting === "agritourism" ? "سياحة زراعية" : "داخل المدينة"}</strong></span><span><small>أجواء المطر</small><strong>${smartTripSettings.rainPreference === "yes" ? "يفضلها" : "لا يفضلها"}</strong></span><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span><span><small>تعديلات الطقس</small><strong>${weatherAdjusted} أيام</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> حب المطر تفضيل للتجربة فقط؛ ما زلنا نستبعد أي وجهة مكشوفة إذا كانت حالة الطقس غير آمنة.</p><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>`;
+    result.innerHTML = `<div class="trip-build-summary"><span><small>نمط الرحلة</small><strong>${smartTripSettings.tripSetting === "agritourism" ? "سياحة زراعية" : "داخل المدينة"}</strong></span><span><small>المرشد السياحي</small><strong>${smartTripSettings.guideNeeded ? "مطلوب" : "غير مطلوب"}</strong></span><span><small>أجواء المطر</small><strong>${smartTripSettings.rainPreference === "yes" ? "يفضلها" : "لا يفضلها"}</strong></span><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> حب المطر تفضيل للتجربة فقط؛ ما زلنا نستبعد أي وجهة مكشوفة إذا كانت حالة الطقس غير آمنة.</p><div class="journey-result-actions"><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>${smartTripSettings.guideNeeded ? '<a class="choose-trip-guide" href="/agents.html?agent=guides"><i class="fa-solid fa-person-hiking"></i> اختيار مرشد لرحلتي</a>' : ""}</div>`;
     result.hidden = false;
     document.querySelector("#conditionLab").hidden = false;
     document.querySelector("#weatherAdaptationForm").hidden = true;
