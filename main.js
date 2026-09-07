@@ -268,8 +268,8 @@ function clearAgentMemory(agentType) {
 
 const loyaltyMilestones = [
     { milestone: 2, key: "coffee", icon: "fa-mug-hot", title: "كوب قهوة مجاني", place: "مقهى رشفة — أبها", prefix: "COFFEE" },
-    { milestone: 5, key: "nafas", icon: "fa-person-hiking", title: "تجربة سياحية مع نَفَس للسياحة", place: "تنسيق الموعد بعد طلب المكافأة", prefix: "NAFAS" },
-    { milestone: 7, key: "discount", icon: "fa-percent", title: "خصم 50%", place: "على تجربة سياحية مختارة", prefix: "SAVE50" }
+    { milestone: 5, key: "discount", icon: "fa-percent", title: "خصم 50%", place: "على تجربة سياحية مختارة", prefix: "SAVE50" },
+    { milestone: 7, key: "nafas", icon: "fa-person-hiking", title: "تجربة سياحية مع نَفَس للسياحة", place: "تنسيق الموعد بعد طلب المكافأة", prefix: "NAFAS" }
 ];
 
 function syncLoyaltyRewards(count, notifyNew = false) {
@@ -290,6 +290,16 @@ function syncLoyaltyRewards(count, notifyNew = false) {
     });
     localStorage.setItem("asirRewardCoupons", JSON.stringify(coupons));
     return coupons;
+}
+
+if (localStorage.getItem("loyaltyDemoStateV3") !== "done") {
+    localStorage.setItem("loyaltyRequestCount", "2");
+    localStorage.setItem("asirRewardCoupons", "[]");
+    const demoCoupons = syncLoyaltyRewards(2);
+    const coffeeCoupon = demoCoupons.find((coupon) => coupon.rewardKey === "coffee");
+    if (coffeeCoupon) coffeeCoupon.usedAt = new Date().toISOString();
+    localStorage.setItem("asirRewardCoupons", JSON.stringify(demoCoupons));
+    localStorage.setItem("loyaltyDemoStateV3", "done");
 }
 
 function registerLoyaltyRequest() {
