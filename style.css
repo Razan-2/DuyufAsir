@@ -4777,6 +4777,23 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 }
 
 .about { padding-inline: 12px; }
+
+.contact-only-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-only-page > main { display: none; }
+.contact-only-page .navbar { flex: 0 0 auto; }
+.contact-only-page .contact-page-panel {
+    min-height: 470px;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.contact-only-page footer { flex: 0 0 auto; }
 .profile-summary { text-align: center; }
 .profile-summary > div { width: 72px; height: 72px; display: grid; place-items: center; margin: auto; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #2b684e, #17452f); font-size: 28px; font-weight: 900; }
 .profile-summary h3 { margin: 10px 0 2px; }
