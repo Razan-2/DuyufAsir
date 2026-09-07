@@ -4279,8 +4279,8 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 
 /* Immersive Asir home hero */
 .home-page .navbar {
-    width: calc(100% - 80px);
-    max-width: 1450px;
+    width: calc(100% - 24px);
+    max-width: none;
     min-height: 76px;
     margin: 0;
     padding: 0 clamp(20px, 4vw, 70px);
@@ -4319,8 +4319,8 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .home-page .navbar .nav-actions { gap: 8px; }
 
 .home-page .hero {
-    width: calc(100% - 80px);
-    max-width: 1450px;
+    width: calc(100% - 24px);
+    max-width: none;
     min-height: 100vh;
     height: 100dvh;
     margin: 0 auto;
