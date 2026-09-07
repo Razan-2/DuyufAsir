@@ -3780,7 +3780,9 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .productive-families-intro span { color: #f3ca8c; font-size: 11px; font-weight: 900; }
 .productive-families-intro h3 { margin: 4px 0; font-size: 22px; }
 .productive-families-intro p { margin: 0; color: #edf4ef; font-size: 12px; }
+.productive-city-picker { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; }.productive-city-picker>button { display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:10px; min-height:76px; padding:12px; border:2px solid #e2d1bd; border-radius:15px; color:#3f3026; background:#fff; font:inherit; text-align:right; cursor:pointer; transition:.2s; }.productive-city-picker>button>i:first-child { display:grid; width:42px; height:42px; place-items:center; border-radius:12px; color:#fff; background:#a36239; }.productive-city-picker>button>span { display:grid; gap:3px; }.productive-city-picker small { color:#83766b; font-size:11px; }.productive-city-picker>button>i:last-child { color:#a36239; }.productive-city-picker>button:hover,.productive-city-picker>button.active { border-color:#205c43; background:#edf7f1; transform:translateY(-2px); }
 .productive-vendors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.productive-vendors[hidden] { display:none; }
 .productive-vendors > button { padding: 12px; display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; border: 1px solid #dbc4a8; border-radius: 17px; background: #fffaf2; color: #3f3026; text-align: right; cursor: pointer; transition: .2s; }
 .productive-vendors > button:hover,
 .productive-vendors > button.active { border-color: #20543d; background: #eef5f0; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(32, 84, 61, .13); }
@@ -3855,7 +3857,7 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .dark-mode .productive-cart { border-color: #47765b; background: #112219; }
 .dark-mode .productive-cart-items > div { background: #181818; }
 @media (max-width: 600px) {
-    .productive-vendors { grid-template-columns: 1fr; }
+    .productive-city-picker,.productive-vendors { grid-template-columns: 1fr; }
     .productive-products article { grid-template-columns: 1fr auto; }
     .productive-products article button { grid-column: 1 / -1; }
     .product-quantity input { width: 100%; }

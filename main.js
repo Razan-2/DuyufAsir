@@ -1191,27 +1191,40 @@ function openMovieSelection(entry) {
 
 function openProductiveFamilies(entry) {
     const families = [
-        { name: "أم سعود", specialty: "مأكولات جنوبية منزلية", image: "assets/entertainment/productive-families-abha.jpg", products: [
+        { name: "أم سعود", city: "أبها", specialty: "مأكولات جنوبية منزلية", image: "assets/entertainment/productive-families-abha.jpg", products: [
             { name: "عريكة عسيرية", description: "عريكة طازجة بالعسل والسمن", price: 28 },
             { name: "خبز بر جنوبي", description: "خبز منزلي طازج", price: 12 }
         ] },
-        { name: "أم محمد", specialty: "حلويات وأطباق شعبية", image: "assets/entertainment/tuesday-market-crafts.jpg", products: [
+        { name: "أم محمد", city: "أبها", specialty: "حلويات وأطباق شعبية", image: "assets/entertainment/tuesday-market-crafts.jpg", products: [
             { name: "عريكة بالقشطة", description: "عريكة بالقشطة والعسل", price: 32 },
             { name: "حنيني عسيري", description: "حنيني منزلي بالتمر", price: 24 }
         ] },
-        { name: "أم عبدالله", specialty: "مخبوزات جنوبية", products: [
+        { name: "أم عبدالله", city: "خميس مشيط", specialty: "مخبوزات جنوبية", products: [
             { name: "خبز مسمن", description: "خبز مسمن منزلي طازج", price: 15 },
             { name: "ميفا جنوبي", description: "خبز ميفا بالطريقة التقليدية", price: 10 }
         ] },
-        { name: "أم خالد", specialty: "وجبات وأطباق شعبية", products: [
+        { name: "أم خالد", city: "خميس مشيط", specialty: "وجبات وأطباق شعبية", products: [
             { name: "مرقوق جنوبي", description: "طبق مرقوق منزلي", price: 35 },
             { name: "عصيدة", description: "عصيدة بالسمن والعسل", price: 26 }
         ] },
-        { name: "أم نورة", specialty: "حلويات منزلية", products: [
+        { name: "أم نورة", city: "أبها", specialty: "حلويات منزلية", products: [
             { name: "حنيني بالتمر", description: "حنيني طازج بالتمر والسمن", price: 24 },
             { name: "كليجا منزلية", description: "علبة كليجا محشوة", price: 22 }
+        ] },
+        { name: "أم فهد", city: "خميس مشيط", specialty: "فطور ومأكولات شعبية", products: [
+            { name: "عريكة جنوبية", description: "عريكة بالعسل والسمن البلدي", price: 30 },
+            { name: "فتة تمر", description: "فتة منزلية بالتمر", price: 22 }
+        ] },
+        { name: "أم صالح", city: "أحد رفيدة", specialty: "أكلات تراثية ومخبوزات", products: [
+            { name: "خبز ميفا", description: "خبز ميفا طازج بالطريقة التقليدية", price: 12 },
+            { name: "مشغوثة", description: "طبق جنوبي منزلي", price: 28 }
+        ] },
+        { name: "أم علي", city: "أحد رفيدة", specialty: "حلويات ومنتجات محلية", products: [
+            { name: "كليجا بالعسل", description: "كليجا منزلية محشوة", price: 24 },
+            { name: "سمن بلدي", description: "عبوة سمن بلدي محلي", price: 38 }
         ] }
     ];
+    const familyCities = ["أبها", "خميس مشيط", "أحد رفيدة"];
     const cart = new Map();
     openUtility("أسر عسير المنتجة", "fa-house-chimney-heart", `
         <div class="productive-families-page">
@@ -1221,6 +1234,7 @@ function openProductiveFamilies(entry) {
                 <form id="productiveFamilyRegister" class="productive-family-portal-form" hidden>
                     <h4>طلب تسجيل أسرة منتجة</h4>
                     <div><label><span>اسم الأسرة أو المشروع</span><input name="familyName" required></label><label><span>اسم صاحبة المشروع</span><input name="ownerName" required></label></div>
+                    <label><span>المدينة</span><select name="city" required>${familyCities.map((city) => `<option>${city}</option>`).join("")}</select></label>
                     <div><label><span>البريد الإلكتروني</span><input name="email" type="email" required></label><label><span>رقم الجوال</span><input name="phone" type="tel" inputmode="tel" pattern="05[0-9]{8}" placeholder="05XXXXXXXX" required></label></div>
                     <label><span>نوع المنتجات</span><textarea name="products" rows="3" placeholder="مثال: عريكة، خبز بر، حلويات منزلية" required></textarea></label>
                     <button type="submit"><i class="fa-solid fa-paper-plane"></i> إرسال طلب التسجيل</button><p role="status" hidden></p>
@@ -1232,8 +1246,9 @@ function openProductiveFamilies(entry) {
                     <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> دخول</button><p role="status" hidden></p>
                 </form>
             </section>
-            <div class="productive-families-intro"><span>منتجات منزلية محلية</span><h3>اختر الأسرة ثم اطلب المنتج</h3><p>تُجهّز الطلبات منزليًا ويظهر السعر قبل الانتقال للدفع.</p></div>
-            <div class="productive-vendors">${families.map((family, familyIndex) => `<button type="button" data-family-index="${familyIndex}"><span class="family-letter">${family.name.replace("أم ", "")}</span><span><strong>${family.name}</strong><small>${family.specialty}</small><em>عرض المنتجات <i class="fa-solid fa-arrow-left"></i></em></span></button>`).join("")}</div>
+            <div class="productive-families-intro"><span>أسر منتجة في منطقة عسير</span><h3>اختر المدينة أولًا</h3><p>توجد أسر منتجة في أبها وخميس مشيط وأحد رفيدة. بعد اختيار المدينة ستظهر لك الأسر ومنتجاتها.</p></div>
+            <div class="productive-city-picker">${familyCities.map((city) => `<button type="button" data-family-city="${city}"><i class="fa-solid fa-location-dot"></i><span><strong>${city}</strong><small>${families.filter((family) => family.city === city).length} أسر منتجة</small></span><i class="fa-solid fa-arrow-left"></i></button>`).join("")}</div>
+            <div class="productive-vendors" hidden></div>
             <div id="productiveProducts" class="productive-products" hidden></div>
             <div id="productiveCart" class="productive-cart" hidden></div>
         </div>`);
@@ -1241,6 +1256,19 @@ function openProductiveFamilies(entry) {
     const cartArea = utilityContent.querySelector("#productiveCart");
     const registerForm = utilityContent.querySelector("#productiveFamilyRegister");
     const familyLoginForm = utilityContent.querySelector("#productiveFamilyLogin");
+    const vendorsArea = utilityContent.querySelector(".productive-vendors");
+    const renderFamiliesByCity = (city) => {
+        const cityFamilies = families.map((family, familyIndex) => ({ family, familyIndex })).filter(({ family }) => family.city === city);
+        vendorsArea.hidden = false;
+        vendorsArea.innerHTML = cityFamilies.map(({ family, familyIndex }) => `<button type="button" data-family-index="${familyIndex}"><span class="family-letter">${family.name.replace("أم ", "")}</span><span><strong>${family.name}</strong><small>${family.specialty}</small><em><i class="fa-solid fa-location-dot"></i> ${family.city} · عرض المنتجات <i class="fa-solid fa-arrow-left"></i></em></span></button>`).join("");
+        productsArea.hidden = true;
+        utilityContent.querySelectorAll("[data-family-city]").forEach((button) => button.classList.toggle("active", button.dataset.familyCity === city));
+        vendorsArea.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+    utilityContent.querySelector(".productive-city-picker").addEventListener("click", (event) => {
+        const cityButton = event.target.closest("[data-family-city]");
+        if (cityButton) renderFamiliesByCity(cityButton.dataset.familyCity);
+    });
     utilityContent.querySelector(".productive-family-portal-actions").addEventListener("click", (event) => {
         const button = event.target.closest("[data-family-portal]");
         if (!button) return;
@@ -1261,7 +1289,7 @@ function openProductiveFamilies(entry) {
             const response = await fetch("https://formsubmit.co/ajax/razanalqobti@gmail.com", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                body: JSON.stringify({ _subject: `طلب تسجيل أسرة منتجة: ${values.familyName}`, "اسم الأسرة أو المشروع": values.familyName, "صاحبة المشروع": values.ownerName, "البريد الإلكتروني": values.email, "رقم الجوال": values.phone, "المنتجات": values.products })
+                body: JSON.stringify({ _subject: `طلب تسجيل أسرة منتجة: ${values.familyName}`, "اسم الأسرة أو المشروع": values.familyName, "صاحبة المشروع": values.ownerName, "المدينة": values.city, "البريد الإلكتروني": values.email, "رقم الجوال": values.phone, "المنتجات": values.products })
             });
             if (!response.ok) throw new Error("Registration delivery failed");
             localStorage.setItem("productiveFamilyRegistration", JSON.stringify({ ...values, status: "pending", createdAt: new Date().toISOString() }));
@@ -1295,7 +1323,7 @@ function openProductiveFamilies(entry) {
         const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         cartArea.innerHTML = `<div class="productive-cart-heading"><span><small>سلة الطلب</small><strong>${items.length} منتجات مختارة</strong></span><b>${total.toLocaleString("ar-SA")} ر.س</b></div><div class="productive-cart-items">${items.map((item) => `<div><span><strong>${item.name}</strong><small>${item.family}</small></span><label><button type="button" data-cart-minus="${item.key}">−</button><b>${item.quantity}</b><button type="button" data-cart-plus="${item.key}">+</button></label><em>${(item.price * item.quantity).toLocaleString("ar-SA")} ر.س</em><button type="button" data-cart-remove="${item.key}" aria-label="حذف"><i class="fa-solid fa-xmark"></i></button></div>`).join("")}</div><button class="productive-cart-checkout" type="button"><i class="fa-solid fa-bag-shopping"></i> إكمال الطلب والدفع</button>`;
     };
-    utilityContent.querySelector(".productive-vendors").addEventListener("click", (event) => {
+    vendorsArea.addEventListener("click", (event) => {
         const familyButton = event.target.closest("[data-family-index]");
         if (!familyButton) return;
         const family = families[Number(familyButton.dataset.familyIndex)];
