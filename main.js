@@ -3052,6 +3052,28 @@ function updateTripSettingPreferences(setting) {
 document.querySelectorAll('[name="tripSetting"]').forEach((input) => input.addEventListener("change", () => updateTripSettingPreferences(input.value)));
 updateTripSettingPreferences(document.querySelector('[name="tripSetting"]:checked')?.value || "city");
 
+function updateJourneyGuidePicker() {
+    const picker = document.querySelector("#journeyGuidePicker");
+    const options = document.querySelector("#journeyGuideOptions");
+    if (!picker || !options) return;
+    const needsGuide = document.querySelector('[name="guideNeeded"]:checked')?.value === "yes";
+    picker.hidden = !needsGuide;
+    if (!needsGuide) {
+        options.querySelectorAll('input[name="selectedGuide"]').forEach((input) => { input.checked = false; input.required = false; });
+        return;
+    }
+    if (!options.childElementCount) {
+        options.innerHTML = agents.guides.items.map((guide, index) => `<label><input type="radio" name="selectedGuide" value="${index}"><span><i class="fa-solid fa-person-hiking"></i><b>${escapeHtml(guide.name)}</b><small>${escapeHtml(guide.specialty)} · ${escapeHtml(guide.location)}</small><em><i class="fa-solid fa-star"></i> ${guide.rating} <small>(${guide.reviews} تقييمًا تجريبيًا)</small></em></span></label>`).join("");
+    }
+    options.querySelectorAll('input[name="selectedGuide"]').forEach((input) => { input.required = true; });
+    picker.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+document.querySelectorAll('[name="guideNeeded"]').forEach((input) => input.addEventListener("change", updateJourneyGuidePicker));
+updateJourneyGuidePicker();
+const tripDetailsStep = document.querySelector(".trip-details-fieldset legend span");
+if (tripDetailsStep) tripDetailsStep.textContent = "4";
+
 // محرك الاستمرارية: الطقس الأساسي يأتي من Open-Meteo عند توفره.
 // سيناريو التنبيه الاستباقي والازدحام أدناه Simulation مخصص لعرض الـPrototype وليس بيانات حية.
 const continuityInterestLabels = { nature: "طبيعة", events: "ترفيه", food: "مطاعم", heritage: "تراث", coffee: "كوفيهات", adventure: "مغامرة" };
@@ -3124,7 +3146,16 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ فحص الطقس الحقيقي...';
     const groupLabels = { family: "العائلة", friends: "الأصدقاء", solo: "الرحلات الفردية" };
-    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests, tripSetting: data.get("tripSetting"), rainPreference: data.get("rainPreference"), details: data.getAll("tripDetails"), guideNeeded: data.get("guideNeeded") === "yes" };
+    const guideNeeded = data.get("guideNeeded") === "yes";
+    const selectedGuideIndex = guideNeeded ? Number(data.get("selectedGuide")) : -1;
+    const selectedGuide = guideNeeded ? agents.guides.items[selectedGuideIndex] : null;
+    if (guideNeeded && !selectedGuide) {
+        error.textContent = "اختاري المرشد السياحي أولًا لإكمال بناء الرحلة.";
+        error.hidden = false;
+        document.querySelector("#journeyGuidePicker")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests, tripSetting: data.get("tripSetting"), rainPreference: data.get("rainPreference"), details: data.getAll("tripDetails"), guideNeeded, selectedGuide };
     let weatherMap = null;
     let weatherMessage = "توقعات حقيقية محدثة من Open-Meteo.";
     try {
@@ -3139,7 +3170,8 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     const estimated = smartTripDays.flatMap((day) => day.stops).reduce((sum, stop) => sum + stop.cost, 0) * smartTripSettings.people;
     const weatherAdjusted = smartTripDays.filter((day) => !day.weather.outdoor).length;
     const result = document.querySelector("#journeyDnaResult");
-    result.innerHTML = `<div class="trip-build-summary"><span><small>نمط الرحلة</small><strong>${smartTripSettings.tripSetting === "agritourism" ? "سياحة زراعية" : "داخل المدينة"}</strong></span><span><small>المرشد السياحي</small><strong>${smartTripSettings.guideNeeded ? "مطلوب" : "غير مطلوب"}</strong></span><span><small>أجواء المطر</small><strong>${smartTripSettings.rainPreference === "yes" ? "يفضلها" : "لا يفضلها"}</strong></span><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> حب المطر تفضيل للتجربة فقط؛ ما زلنا نستبعد أي وجهة مكشوفة إذا كانت حالة الطقس غير آمنة.</p><div class="journey-result-actions"><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>${smartTripSettings.guideNeeded ? '<a class="choose-trip-guide" href="/agents.html?agent=guides"><i class="fa-solid fa-person-hiking"></i> اختيار مرشد لرحلتي</a>' : ""}</div>`;
+    result.innerHTML = `<div class="trip-build-summary"><span><small>نمط الرحلة</small><strong>${smartTripSettings.tripSetting === "agritourism" ? "سياحة زراعية" : "داخل المدينة"}</strong></span><span><small>المرشد السياحي</small><strong>${selectedGuide ? escapeHtml(selectedGuide.name) : "غير مطلوب"}</strong></span><span><small>أجواء المطر</small><strong>${smartTripSettings.rainPreference === "yes" ? "يفضلها" : "لا يفضلها"}</strong></span><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span></div>${selectedGuide ? `<div class="selected-journey-guide"><i class="fa-solid fa-user-check"></i><span><small>تم اختيار مرشد لجدولك</small><strong>${escapeHtml(selectedGuide.name)}</strong><em><i class="fa-solid fa-star"></i> ${selectedGuide.rating} · ${escapeHtml(selectedGuide.specialty)}</em></span></div>` : ""}<p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> حب المطر تفضيل للتجربة فقط؛ ما زلنا نستبعد أي وجهة مكشوفة إذا كانت حالة الطقس غير آمنة.</p><div class="journey-result-actions"><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>${selectedGuide ? '<button class="choose-trip-guide" type="button" data-complete-guide-request><i class="fa-solid fa-calendar-check"></i> إكمال طلب المرشد</button>' : ""}</div>`;
+    result.querySelector("[data-complete-guide-request]")?.addEventListener("click", () => openGuideRequest(selectedGuide));
     result.hidden = false;
     document.querySelector("#conditionLab").hidden = false;
     document.querySelector("#weatherAdaptationForm").hidden = true;
