@@ -4744,6 +4744,39 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.impact-grid article{padding:30px;border:1px solid #e6d3bc;border-radius:22px;text-align:center;background:#fff}.impact-grid i{color:#b36738;font-size:34px}.impact-grid h3{color:#27543d}.impact-grid p{color:#766b63}.ecosystem-section{padding:44px;border-radius:32px;background:#fff7ed}.ecosystem-flow{display:flex;align-items:center;justify-content:center;gap:28px}.ecosystem-flow>div{display:grid;min-width:190px;min-height:130px;place-items:center;padding:18px;border:1px solid #dfc7aa;border-radius:20px;background:#fff;text-align:center}.ecosystem-flow i{color:#256148;font-size:32px}.ecosystem-flow img{width:56px;height:56px;object-fit:contain}.ecosystem-flow small{display:block;color:#83756a}.ecosystem-flow>b{color:#b46b3d;font-size:30px}
 @media(max-width:900px){.experience-hub-grid,.tour-packages-grid{grid-template-columns:1fr 1fr}.journey-dna-section{grid-template-columns:1fr}.journey-timeline{grid-template-columns:repeat(2,1fr)}.now-grid{grid-template-columns:repeat(2,1fr)}.dna-score-grid{grid-template-columns:repeat(3,1fr)}.agents-grid .smart-trip-agent-card{grid-template-columns:1fr}.rebalance-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.prototype-how,.experience-hub,.tour-packages-section,.journey-dna-section,.adaptive-journey-section,.now-section,.rebalance-section,.impact-section,.ecosystem-section{width:calc(100% - 24px);margin:45px auto;padding:24px 16px}.prototype-how{padding:0}.prototype-how-grid,.experience-hub-grid,.tour-packages-grid,.impact-grid,.journey-timeline,.now-grid,.dna-score-grid{grid-template-columns:1fr}.experience-hub-grid>a{min-height:190px}.tour-package-image{height:170px}.tour-package-title{align-items:start;flex-direction:column}.dna-question{grid-template-columns:1fr 1fr}.dna-question>strong{grid-column:1/-1}.dna-selects{grid-template-columns:1fr}.condition-lab{align-items:stretch;flex-direction:column}.condition-buttons{display:grid;grid-template-columns:1fr 1fr}.ecosystem-flow{flex-direction:column}.ecosystem-flow>b{transform:rotate(90deg)}.rebalance-metrics{grid-template-columns:1fr}.rebalance-map{height:300px}.home-page .hero{width:100%;min-height:620px;padding-inline:18px;border-radius:0 0 24px 24px}.home-page .hero h1{font-size:clamp(34px,10vw,44px);letter-spacing:-1px}.home-page .hero-text{width:100%;min-width:0}.home-page .hero-text>p{width:100%;max-width:360px;padding-inline:4px;font-size:13px;overflow-wrap:anywhere}.home-page .hero-actions{width:min(100%,360px);margin-inline:auto}}
+
+/* Full-width layouts across the platform */
+.section-page .navbar,
+.section-page .agents-section,
+.contact-page-panel {
+    width: calc(100% - 24px);
+    max-width: none;
+}
+
+.prototype-how,
+.experience-hub,
+.tour-packages-section,
+.journey-dna-section,
+.adaptive-journey-section,
+.now-section,
+.rebalance-section,
+.impact-section,
+.ecosystem-section {
+    width: calc(100% - 24px);
+    max-width: none;
+}
+
+.main-assistant-section { padding-inline: 12px; }
+.main-assistant-card,
+.service-grid,
+.about-container,
+.footer-container,
+.copyright {
+    width: 100%;
+    max-width: none;
+}
+
+.about { padding-inline: 12px; }
 .profile-summary { text-align: center; }
 .profile-summary > div { width: 72px; height: 72px; display: grid; place-items: center; margin: auto; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #2b684e, #17452f); font-size: 28px; font-weight: 900; }
 .profile-summary h3 { margin: 10px 0 2px; }
