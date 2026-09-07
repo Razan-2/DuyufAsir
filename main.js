@@ -2667,7 +2667,7 @@ document.querySelector("#refreshApiHistory")?.addEventListener("click", loadApiC
 loadApiAgents();
 loadApiConversations();
 
-if (!getUserPreferences() && !new URLSearchParams(window.location.search).has("prototype")) {
+if (document.body.classList.contains("home-page") && !getUserPreferences() && !new URLSearchParams(window.location.search).has("prototype")) {
     window.setTimeout(() => openUserPreferences(true), 500);
 }
 
