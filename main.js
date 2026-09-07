@@ -218,7 +218,7 @@ function escapeHtml(value) {
 }
 
 const mainAgentRoutes = [
-    { type: "smart-trip", title: "وكيل الرحلة الذكية", icon: "fa-route", keywords: ["رحلة", "خطط", "برنامج", "جدول", "مسار", "يتكيف"] },
+    { type: "smart-trip", title: "وكيل الرحلة الذكية", icon: "fa-route", keywords: ["رحلة", "رحله", "خطط", "برنامج", "جدول", "مسار", "يتكيف", "يوم واحد", "يومين", "أيام"] },
     { type: "housing", title: "وكيل الإقامة", icon: "fa-house", keywords: ["سكن", "إقامة", "شقة", "فندق", "نزل", "فيلا", "إيجار", "غرفة"] },
     { type: "transport", title: "وكيل التنقل", icon: "fa-bus", keywords: ["مواصلات", "تنقل", "نقل", "سيارة", "تاكسي", "حافلة", "محطة", "توصيل"] },
     { type: "entertainment", title: "وكيل التجارب", icon: "fa-ticket", keywords: ["تجربة", "فعالية", "مطعم", "مقهى", "سياحة", "مغامرة", "فيلم", "حديقة"] },
@@ -302,7 +302,35 @@ function showRewards() {
     });
 }
 
+function extractSmartTripRequest(requestText) {
+    const text = String(requestText || "").toLowerCase();
+    let duration = 1;
+    if (/يومين|يومان|2\s*(?:يوم|أيام)/.test(text)) duration = 2;
+    else if (/ثلاث(?:ة|ه)?\s*أيام|3\s*(?:يوم|أيام)/.test(text)) duration = 3;
+    else if (/أربع(?:ة|ه)?\s*أيام|4\s*(?:يوم|أيام)/.test(text)) duration = 4;
+    else if (/خمس(?:ة|ه)?\s*أيام|5\s*(?:يوم|أيام)/.test(text)) duration = 5;
+
+    const group = /عائل|أطفال|اطفال/.test(text) ? "family" : /أصدقاء|اصدقاء|شباب/.test(text) ? "friends" : /فردي|لوحدي|وحدي/.test(text) ? "solo" : "family";
+    const interests = [];
+    if (/طبيع|جبل|السودة|ممشى|غابة/.test(text)) interests.push("nature");
+    if (/تراث|قرية|قصر|متاحف|متحف/.test(text)) interests.push("heritage");
+    if (/قهوة|كوفي|كافيه/.test(text)) interests.push("coffee");
+    if (/مطعم|أكل|اكل|طعام/.test(text)) interests.push("food");
+    if (/فعال|ترفيه|سينما/.test(text)) interests.push("events");
+    if (/مغامر|هايكنج|تسلق/.test(text)) interests.push("adventure");
+    return { duration, group, interests: interests.length ? interests : ["nature", "food"] };
+}
+
+function openSmartTripFromAssistant(requestText) {
+    sessionStorage.setItem("duofAsirSmartTripRequest", JSON.stringify(extractSmartTripRequest(requestText)));
+    window.location.href = "/journey.html?autobuild=1";
+}
+
 function getMainAssistantItems(type, requestText = "") {
+    if (type === "smart-trip") {
+        const trip = extractSmartTripRequest(requestText);
+        return `<li class="main-result-item smart-trip-main-result" tabindex="0" role="button" data-build-smart-trip><i class="fa-solid fa-calendar-days"></i><span><strong>جدول رحلة لمدة ${trip.duration === 1 ? "يوم واحد" : `${trip.duration} أيام`}</strong><small>مبني على طلبك مع فحص الطقس الحقيقي</small></span><i class="fa-solid fa-arrow-left"></i></li>`;
+    }
     const ignoredSearchWords = new Set(["شركة", "فندق", "فنادق", "شقة", "سكن", "جامعة", "مدرسة", "وكيل", "أبها", "خميس", "مشيط"]);
     const normalizedRequest = requestText.trim().toLowerCase();
     const exactEntries = agents[type].items.filter((entry) => {
@@ -346,6 +374,7 @@ function runMainAssistant(requestText) {
     if (!selectedRoutes.length) selectedRoutes = mainAgentRoutes;
     saveConversation("المستخدم", requestText, "المساعد الرئيسي");
     registerLoyaltyRequest();
+    mainAssistantOutput.dataset.requestText = requestText;
 
     mainAssistantOutput.hidden = false;
     mainAssistantOutput.innerHTML = `
@@ -368,7 +397,7 @@ function runMainAssistant(requestText) {
                     <header><i class="fa-solid ${route.icon}"></i><span><strong>${route.title}</strong><small>${agents[route.type].description}</small></span></header>
                     <ul>${getMainAssistantItems(route.type, requestText)}</ul>
                     <div class="result-card-actions"><button type="button" data-rate-result="up" aria-label="إعجاب"><i class="fa-regular fa-thumbs-up"></i></button><button type="button" data-rate-result="down" aria-label="عدم إعجاب"><i class="fa-regular fa-thumbs-down"></i></button></div>
-                    <button type="button" data-open-main-agent="${route.type}" data-agent-title="${route.title}">فتح الوكيل والتفاصيل <i class="fa-solid fa-arrow-left"></i></button>
+                    <button type="button" data-open-main-agent="${route.type}" data-agent-title="${route.title}">${route.type === "smart-trip" ? "إنشاء جدول الرحلة" : "فتح الوكيل والتفاصيل"} <i class="fa-solid fa-arrow-left"></i></button>
                 </article>`).join("")}
             </div><button class="share-results-btn" type="button"><i class="fa-solid fa-share-nodes"></i> مشاركة النتائج</button>`;
         saveConversation("المساعد", `تم تشغيل: ${selectedRoutes.map((route) => route.title).join("، ")}`, "المساعد الرئيسي");
@@ -2489,10 +2518,15 @@ mainAssistantOutput?.addEventListener("click", (event) => {
         mainAssistantInput.focus();
         return;
     }
+    const smartTripResult = event.target.closest("[data-build-smart-trip]");
+    if (smartTripResult) return openSmartTripFromAssistant(mainAssistantOutput.dataset.requestText);
     const exactResult = event.target.closest("[data-result-agent]");
     if (exactResult) return openExactAgentResult(exactResult.dataset.resultAgent, exactResult.dataset.resultName, exactResult.dataset.resultGroup);
     const agentButton = event.target.closest("[data-open-main-agent]");
-    if (agentButton) return openAgent(agentButton.dataset.agentTitle, agentButton.dataset.openMainAgent);
+    if (agentButton) {
+        if (agentButton.dataset.openMainAgent === "smart-trip") return openSmartTripFromAssistant(mainAssistantOutput.dataset.requestText);
+        return openAgent(agentButton.dataset.agentTitle, agentButton.dataset.openMainAgent);
+    }
     const ratingButton = event.target.closest("[data-rate-result]");
     if (ratingButton) {
         ratingButton.parentElement.querySelectorAll("button").forEach((button) => button.classList.remove("active"));
@@ -2903,6 +2937,31 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     submitButton.disabled = false;
     submitButton.innerHTML = originalButton;
 });
+
+function buildSmartTripFromAssistantRequest() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("autobuild") !== "1") return;
+    const form = document.querySelector("#journeyDnaForm");
+    const savedRequest = sessionStorage.getItem("duofAsirSmartTripRequest");
+    if (!form || !savedRequest) return;
+    try {
+        const trip = JSON.parse(savedRequest);
+        const today = new Date();
+        form.elements.tripDate.value = tripDateKey(today);
+        form.elements.duration.value = String(Math.min(5, Math.max(1, Number(trip.duration) || 1)));
+        form.elements.group.value = trip.group || "family";
+        form.querySelectorAll('[name="interests"]').forEach((input) => {
+            input.checked = trip.interests.includes(input.value);
+        });
+        sessionStorage.removeItem("duofAsirSmartTripRequest");
+        window.history.replaceState({}, "", "/journey.html");
+        window.setTimeout(() => form.requestSubmit(), 180);
+    } catch (error) {
+        sessionStorage.removeItem("duofAsirSmartTripRequest");
+    }
+}
+
+buildSmartTripFromAssistantRequest();
 
 document.querySelector("#tourPackages")?.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-package]");
