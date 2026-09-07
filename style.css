@@ -4661,7 +4661,7 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .dark-mode .heritage-stay-description { color: #dec4a7; }
 
 /* Tourism prototype experience */
-.home-page .hero { min-height: 690px; background: linear-gradient(118deg, rgba(20,62,44,.96), rgba(40,88,61,.88)), url("assets/agents/entertainment-abha-real.jpg") center/cover; overflow: hidden; }
+.home-page .hero { min-height: 690px; background: linear-gradient(90deg, rgba(16,55,39,.88), rgba(23,67,48,.68) 52%, rgba(20,54,39,.48)), url("assets/brand/asir-sunset-hero-v2.png") center/cover; overflow: hidden; }
 .home-page .hero::before { opacity: .15; }
 .home-page .hero-text { position: relative; z-index: 2; margin: auto; color: #fff; }
 .home-page .hero h1 { color: #fff; font-size: clamp(48px, 7vw, 88px); line-height: 1.05; }
