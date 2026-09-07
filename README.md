@@ -36,6 +36,20 @@ AI_PROVIDER = "ollama"
 
 Use `"ollama"` for local Gemma 3 or `"gemini"` for the Gemini API.
 
+## Smart Trip Agent (OpenAI tool calling)
+
+The dedicated `POST /api/agent/chat` endpoint uses the OpenAI Responses API and a restricted registry of application tools. Add these server-side values to `.env`:
+
+```text
+OPENAI_API_KEY=your_real_server_side_key
+OPENAI_MODEL=gpt-5-mini
+OPENAI_TIMEOUT_SECONDS=25
+```
+
+The key is never sent to the browser. The agent can only call `get_weather`, `search_destinations`, `search_restaurants`, `search_events`, `search_accommodation`, `build_trip`, and `update_trip`; it has no shell, SQL, `eval`, or arbitrary-code tool.
+
+`get_weather` uses live Open-Meteo forecasts when available and labels its temporary fallback. Catalog searches read the project database first and use the clearly labelled local demo catalog only when a table has no results.
+
 For Ollama, install the model and start Ollama:
 
 ```powershell

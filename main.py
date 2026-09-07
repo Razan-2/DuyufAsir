@@ -24,6 +24,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from app.database import initialize_orm_database
 from app.routers.api import router as tourism_api_router
+from app.routers.smart_trip_agent import router as smart_trip_agent_router
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -99,6 +100,7 @@ app.add_middleware(
 )
 app.mount("/assets", StaticFiles(directory=BASE_DIR / "assets"), name="assets")
 app.include_router(tourism_api_router)
+app.include_router(smart_trip_agent_router)
 
 
 class ChatRequest(BaseModel):

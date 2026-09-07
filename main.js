@@ -1833,7 +1833,16 @@ function appendMessage(text, className, save = true) {
     item.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function sendMessage() {
+function appendAgentTrip(trip, actions = [], sources = {}) {
+    if (!Array.isArray(trip) || !trip.length) return;
+    const card = document.createElement("section");
+    card.className = "real-agent-trip";
+    card.innerHTML = `<header><i class="fa-solid fa-wand-magic-sparkles"></i><span><strong>جدول أنشأه Smart Trip Agent</strong><small>${actions.map((action) => ({ weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action)).join(" · ")}</small></span></header>${trip.map((day) => `<article><h4>اليوم ${day.day} <small>${day.start_time} — ${day.end_time}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(stop.time)}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><i class="fa-solid fa-database"></i> الطقس: ${escapeHtml(sources.weather || "غير مستخدم")} · البيانات: ${escapeHtml(sources.catalog || "بيانات المشروع")}</footer>`;
+    messages.appendChild(card);
+    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) {
         userInput.focus();
@@ -1851,6 +1860,28 @@ function sendMessage() {
     typing.innerHTML = `<span></span><span></span><span></span>`;
     messages.appendChild(typing);
     typing.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (activeAgent === "smart-trip") {
+        typing.insertAdjacentHTML("beforeend", "<b>جاري بناء رحلتك…</b>");
+        try {
+            const existingTrip = JSON.parse(localStorage.getItem("smartTripAgentTrip") || "null");
+            const preferences = JSON.parse(localStorage.getItem("duofAsirPreferences") || "null");
+            const response = await fetch("/api/agent/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text, trip: existingTrip, preferences })
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(payload.detail || "تعذر تشغيل وكيل الرحلة الذكية.");
+            typing.remove();
+            appendMessage(payload.reply, "bot-message");
+            appendAgentTrip(payload.trip, payload.actions, payload.data_sources);
+            if (payload.trip?.length) localStorage.setItem("smartTripAgentTrip", JSON.stringify(payload.trip));
+        } catch (error) {
+            typing.remove();
+            appendMessage(error.message || "تعذر الاتصال بوكيل الرحلة الذكية حاليًا.", "bot-message");
+        }
+        return;
+    }
     window.setTimeout(() => {
         typing.remove();
         const contextualReply = previousUserMessage ? `${agents[activeAgent].reply} وسأراعي أيضًا سياق طلبك السابق: «${previousUserMessage}».` : agents[activeAgent].reply;
@@ -3083,6 +3114,37 @@ document.querySelectorAll('[name="guideNeeded"]').forEach((input) => input.addEv
 updateJourneyGuidePicker();
 const tripDetailsStep = document.querySelector(".trip-details-fieldset legend span");
 if (tripDetailsStep) tripDetailsStep.textContent = "4";
+
+document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const message = new FormData(form).get("message").trim();
+    const status = document.querySelector("#smartAgentStatus");
+    const output = document.querySelector("#smartAgentOutput");
+    const button = form.querySelector('button[type="submit"]');
+    status.hidden = false;
+    status.className = "smart-agent-status loading";
+    status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span><strong>جاري بناء رحلتك…</strong><small>الوكيل يختار الأدوات المناسبة وينفذها الآن</small></span>';
+    output.hidden = true;
+    button.disabled = true;
+    try {
+        const existingTrip = JSON.parse(localStorage.getItem("smartTripAgentTrip") || "null");
+        const preferences = JSON.parse(localStorage.getItem("duofAsirPreferences") || "null");
+        const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message, trip: existingTrip, preferences }) });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || "تعذر تشغيل الوكيل.");
+        status.className = "smart-agent-status success";
+        status.innerHTML = '<i class="fa-solid fa-circle-check"></i><span><strong>اكتملت مهمة الوكيل</strong><small>تم استخدام الأدوات وإرجاع نتيجة منظمة</small></span>';
+        output.innerHTML = `<p class="smart-agent-reply">${escapeHtml(payload.reply)}</p><div class="smart-agent-actions">${payload.actions.map((action) => `<span><i class="fa-solid fa-check"></i>${escapeHtml(({ weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", accommodation_searched: "بحث السكن", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action))}</span>`).join("")}</div>${payload.trip?.length ? payload.trip.map((day) => `<article><h4>اليوم ${day.day} <small>${escapeHtml(day.start_time)} — ${escapeHtml(day.end_time)}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(stop.time)}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة · ${stop.estimated_cost} ر.س</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("") : '<p class="smart-agent-empty">لم تُنشأ رحلة من النتائج الحالية.</p>'}<footer><b>مصادر البيانات:</b> الطقس: ${escapeHtml(payload.data_sources.weather)} · الكتالوج: ${escapeHtml(payload.data_sources.catalog)}</footer>`;
+        output.hidden = false;
+        if (payload.trip?.length) localStorage.setItem("smartTripAgentTrip", JSON.stringify(payload.trip));
+    } catch (error) {
+        status.className = "smart-agent-status error";
+        status.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span><strong>تعذر تشغيل الوكيل</strong><small>${escapeHtml(error.message)}</small></span>`;
+    } finally {
+        button.disabled = false;
+    }
+});
 
 // محرك الاستمرارية: الطقس الأساسي يأتي من Open-Meteo عند توفره.
 // سيناريو التنبيه الاستباقي والازدحام أدناه Simulation مخصص لعرض الـPrototype وليس بيانات حية.
