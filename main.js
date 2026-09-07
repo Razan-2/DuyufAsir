@@ -164,9 +164,10 @@ agents.guides = {
         ["fa-calendar-check", "طلب موعد لجولة سياحية"]
     ],
     items: [
-        { name: "مرشد الجولات الطبيعية", location: "أبها والسودة", image: "assets/agents/entertainment-abha-authentic.jpg", type: "طبيعة ومشي جبلي", details: ["السودة", "ممشى الضباب", "المنتزهات"], mapUrl: "https://www.google.com/maps/search/?api=1&query=tourist+guide+Abha" },
-        { name: "مرشد التراث والثقافة", location: "أبها ورجال ألمع", image: "assets/agents/housing-abha-authentic.jpg", type: "تراث وثقافة عسيرية", details: ["القرية التراثية", "الأسواق الشعبية", "الفنون المحلية"], mapUrl: "https://www.google.com/maps/search/?api=1&query=heritage+guide+Asir" },
-        { name: "مرشد الجولات العائلية", location: "منطقة عسير", image: "assets/agents/entertainment-abha-real.jpg", type: "جولات مناسبة للعائلات", details: ["برنامج مرن", "مواقع مناسبة للأطفال", "اقتراح مسار يومي"], mapUrl: "https://www.google.com/maps/search/?api=1&query=tour+guide+Asir" }
+        { name: "نفس للرحلات السياحية", location: "عسير · رحلات وتجارب سياحية", website: "https://nafas.sa/" },
+        { name: "تماشي لتنظيم الرحلات السياحية", location: "أبها · جولات خاصة مع مرشدين محليين", website: "https://tmashi.sa/" },
+        { name: "جمعية تكارا السياحية", location: "أبها · برامج ومرشدون سياحيون", website: "https://touristca.com/" },
+        { name: "إيفا ترافل", location: "عسير · رحلات خاصة وجماعية بإشراف مرشدين", website: "https://abha-travel.com/" }
     ],
     description: "اختر نوع الجولة والمدينة واللغة والموعد لأعرض لك المرشد المناسب.",
     reply: "يسعدني مساعدتك في اختيار مرشد سياحي. ما المدينة ونوع الجولة والموعد وعدد الأشخاص؟"
@@ -219,8 +220,8 @@ function escapeHtml(value) {
 
 const mainAgentRoutes = [
     { type: "smart-trip", title: "وكيل الرحلة الذكية", icon: "fa-route", keywords: ["رحلة", "رحله", "خطط", "برنامج", "جدول", "مسار", "يتكيف", "يوم واحد", "يومين", "أيام"] },
-    { type: "housing", title: "وكيل الإقامة", icon: "fa-house", keywords: ["سكن", "إقامة", "شقة", "فندق", "نزل", "فيلا", "إيجار", "غرفة"] },
     { type: "transport", title: "وكيل التنقل", icon: "fa-bus", keywords: ["مواصلات", "تنقل", "نقل", "سيارة", "تاكسي", "حافلة", "محطة", "توصيل"] },
+    { type: "housing", title: "وكيل الإقامة", icon: "fa-house", keywords: ["سكن", "إقامة", "شقة", "فندق", "نزل", "فيلا", "إيجار", "غرفة"] },
     { type: "entertainment", title: "وكيل التجارب", icon: "fa-ticket", keywords: ["تجربة", "فعالية", "مطعم", "مقهى", "سياحة", "مغامرة", "فيلم", "حديقة"] },
     { type: "guides", title: "وكيل المرشد المحلي", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "السودة", "تراث"] },
     { type: "aseer-now", title: "وكيل عسير اللحظي", icon: "fa-location-crosshairs", keywords: ["الآن", "لحظي", "طقس", "ازدحام", "قريب", "تصوير"] }
@@ -495,6 +496,11 @@ function renderRecommendations(agent, educationGroup = "universities") {
             { label: "جيني", icon: "fa-route", url: "https://www.jeeny.me/ar/home", note: "خيارات اقتصادية للمشاوير" },
             { label: "كيان", icon: "fa-taxi", url: "https://kaiian.net/Indexkaian.aspx", note: "توصيل وتتبع مباشر للرحلة" }
         ];
+        const classicCarExperiences = [
+            { name: "مرسيدس كلاسيكية", era: "السبعينيات", use: "جولة تصوير تراثية" },
+            { name: "لاندكروزر كلاسيكي", era: "الثمانينيات", use: "تجربة ريفية في عسير" },
+            { name: "فولكس فاجن بيتل", era: "طابع كلاسيكي", use: "جولة وتصوير داخل أبها" }
+        ];
         const rentalCategoryLabels = { economy: "اقتصادية", sedan: "سيدان", "family-small": "عائلية صغيرة", "family-large": "عائلية واسعة" };
         const rentalToday = new Date();
         const rentalTomorrow = new Date(rentalToday);
@@ -509,12 +515,13 @@ function renderRecommendations(agent, educationGroup = "universities") {
         const controls = document.createElement("div");
         controls.className = "transport-controls simple-transport-filters";
         controls.innerHTML = `
-            <div class="transport-mode-tabs"><button type="button" data-transport-mode="rental" class="${transportState.mode === "rental" ? "active" : ""}"><i class="fa-solid fa-key"></i><span><strong>تأجير سيارات</strong><small>اختر شركة ثم شاهد السيارات</small></span></button><button type="button" data-transport-mode="ride" class="${transportState.mode === "ride" ? "active" : ""}"><i class="fa-solid fa-taxi"></i><span><strong>طلب سيارة</strong><small>أوبر وكريم وجيني وكيان</small></span></button></div>
+            <div class="transport-mode-tabs"><button type="button" data-transport-mode="rental" class="${transportState.mode === "rental" ? "active" : ""}"><i class="fa-solid fa-key"></i><span><strong>تأجير سيارات</strong><small>اختر شركة ثم شاهد السيارات</small></span></button><button type="button" data-transport-mode="ride" class="${transportState.mode === "ride" ? "active" : ""}"><i class="fa-solid fa-taxi"></i><span><strong>طلب سيارة</strong><small>أوبر وكريم وجيني وكيان</small></span></button><button type="button" data-transport-mode="classic" class="${transportState.mode === "classic" ? "active" : ""}"><i class="fa-solid fa-car-side"></i><span><strong>سيارات كلاسيكية</strong><small>تجربة استئجار السيارات القديمة</small></span></button></div>
             ${transportState.mode === "rental" ? `
                 <form class="rental-search-form"><label><span>المدينة</span><select id="rentalCity">${["أبها", "خميس مشيط", "أحد رفيدة", "محايل عسير"].map((city) => `<option ${transportState.rentalCity === city ? "selected" : ""}>${city}</option>`).join("")}</select></label><label><span>تاريخ الاستلام</span><input id="rentalPickup" type="date" min="${rentalDateValue(rentalToday)}" value="${transportState.pickupDate}" required></label><label><span>تاريخ التسليم</span><input id="rentalReturn" type="date" min="${transportState.pickupDate}" value="${transportState.returnDate}" required></label><label><span>نوع السيارة</span><select id="rentalCategory">${Object.entries(rentalCategoryLabels).map(([value, label]) => `<option value="${value}" ${transportState.category === value ? "selected" : ""}>${label}</option>`).join("")}</select></label><div class="rental-search-actions"><button type="submit" data-rental-search="best"><i class="fa-solid fa-wand-magic-sparkles"></i> اقتراح أفضل الشركات</button></div></form>
                 ${transportState.rentalSearchReady ? `<section class="transport-company-filter"><h4>الشركات المناسبة لطلبك</h4><div class="rental-company-grid">${suitableRentalCompanies.map((company, index) => `<article class="${index === 0 ? "recommended" : ""}">${index === 0 ? `<em class="best-company-badge">أفضل سعر</em>` : ""}<img src="${company.logo}" alt="شعار ${company.label}"><strong>${company.label}</strong><small>يبدأ من ${company.lowestRate} ر.س يوميًا</small><button type="button" data-select-rental-company="${company.value}"><i class="fa-solid fa-circle-check"></i> اختيار الشركة</button></article>`).join("")}</div></section>` : ""}` : transportState.mode === "ride" ? `
                 <div class="ride-company-grid">${rideCompanies.map((company, index) => `<article class="ride-service-card"><i class="fa-${company.brand ? "brands" : "solid"} ${company.icon}"></i><span><strong>${company.label}</strong><small>${company.note}</small></span><div><a href="${company.url}" target="_blank" rel="noopener noreferrer">اطلب من الموقع <i class="fa-solid fa-arrow-up-right-from-square"></i></a><button type="button" data-ride-payment="${index}"><i class="fa-solid fa-lock"></i> الدفع داخل التطبيق <small>قريبًا</small></button></div></article>`).join("")}</div>
-                <div class="ride-payment-note"><i class="fa-solid fa-shield-halved"></i><span><strong>الحجز والدفع حاليًا عبر الموقع الرسمي</strong><small>اختاري التطبيق أعلاه لإكمال الرحلة بأمان. مستقبلًا سيتوفر الدفع مباشرة داخل ضيوف عسير بعد التكامل الرسمي.</small></span></div>` : ""}`;
+                <div class="ride-payment-note"><i class="fa-solid fa-shield-halved"></i><span><strong>الحجز والدفع حاليًا عبر الموقع الرسمي</strong><small>اختاري التطبيق أعلاه لإكمال الرحلة بأمان. مستقبلًا سيتوفر الدفع مباشرة داخل ضيوف عسير بعد التكامل الرسمي.</small></span></div>` : transportState.mode === "classic" ? `
+                <div class="classic-car-experience"><header><i class="fa-solid fa-car-rear"></i><span><strong>تجربة السيارات القديمة</strong><small>نموذج لتجربة سياحية مستقبلية في عسير</small></span><b>قريبًا</b></header><div>${classicCarExperiences.map((car) => `<article><i class="fa-solid fa-car-side"></i><span><strong>${car.name}</strong><small>${car.era} · ${car.use}</small></span><button type="button" data-classic-interest="${car.name}">سجّل اهتمامك</button></article>`).join("")}</div><p>لا يتم تنفيذ استئجار حقيقي حاليًا. ستتاح التجربة بعد الربط مع مزوّدين معتمدين.</p></div>` : ""}`;
         recommendationsList.before(controls);
         controls.querySelector(".transport-mode-tabs").addEventListener("click", (event) => {
             const modeButton = event.target.closest("[data-transport-mode]");
@@ -552,6 +559,13 @@ function renderRecommendations(agent, educationGroup = "universities") {
             const requestId = createFutureOrderId("RIDE");
             openFuturePaymentPreview({ id: requestId, company: company.label, service: "طلب سيارة", summary: company.note, city: "منطقة عسير", total: 0, createdAt: new Date().toISOString() });
         });
+        controls.querySelector(".classic-car-experience")?.addEventListener("click", (event) => {
+            const interestButton = event.target.closest("[data-classic-interest]");
+            if (!interestButton) return;
+            interestButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> تم تسجيل الاهتمام';
+            interestButton.disabled = true;
+            addNotification(`تم تسجيل اهتمامك بتجربة ${interestButton.dataset.classicInterest}. سنخبرك عند توفرها.`);
+        });
         controls.querySelector("#transportPrice")?.addEventListener("input", (event) => {
             controls.querySelector("#transportPriceOutput").textContent = `حتى ${event.target.value} ر.س`;
         });
@@ -566,7 +580,7 @@ function renderRecommendations(agent, educationGroup = "universities") {
             renderRecommendations(agent);
         });
         visibleItems = [];
-        listTitle.textContent = transportState.mode === "ride" ? "اختر تطبيق طلب السيارة" : transportState.mode === "rental" ? transportState.rentalSearchReady ? "اختاري الشركة المناسبة" : "أدخلي بيانات التأجير" : "اختر تأجير سيارات أو طلب سيارة";
+        listTitle.textContent = transportState.mode === "ride" ? "اختر تطبيق طلب السيارة" : transportState.mode === "classic" ? "تجربة السيارات القديمة" : transportState.mode === "rental" ? transportState.rentalSearchReady ? "اختاري الشركة المناسبة" : "أدخلي بيانات التأجير" : "اختر خدمة المواصلات";
     } else if (agent === agents.housing) {
         const controls = document.createElement("form");
         controls.className = "housing-controls simple-housing-controls";
@@ -671,7 +685,7 @@ function renderRecommendations(agent, educationGroup = "universities") {
             ? `<img src="${entry.image}" alt="${name}" loading="lazy"><span class="property-content"><span class="property-top"><strong>${name}</strong>${entry.heritageStay ? `<b class="heritage-stay-badge"><i class="fa-solid fa-landmark"></i> تجربة إقامة تراثية</b>` : ""}</span><small class="property-location"><i class="fa-solid fa-location-dot"></i> ${entry.location}</small>${entry.heritageStay ? `<p class="heritage-stay-description">عِش تفاصيل الضيافة والعمارة والحياة العسيرية التقليدية.</p>` : ""}<span class="hotel-availability"><i class="fa-solid fa-circle-check"></i><span><strong>الحجز متاح عبر الجهة الخارجية</strong><small>السعر والتوفر يظهران لدى مقدم الإقامة</small></span></span><span class="property-actions simple-property-actions"><button type="button" data-action="map"><i class="fa-solid fa-map-location-dot"></i> الموقع</button><button type="button" data-action="favorite" class="${housingState.favorites.has(name) ? "active" : ""}"><i class="fa-${housingState.favorites.has(name) ? "solid" : "regular"} fa-heart"></i> حفظ</button>${entry.bookable ? `<button class="official-hotel-booking" type="button" data-action="book"><i class="fa-solid fa-arrow-up-right-from-square"></i> عرض الإقامة والحجز</button><button class="hotel-future-payment" type="button" data-action="future-payment"><i class="fa-solid fa-lock"></i> الدفع داخل التطبيق <small>قريبًا</small></button>` : ""}</span></span>`
             : visual
                 ? `${entry.featuredLocal ? `<span class="productive-family-symbol"><i class="fa-solid fa-house-chimney-heart"></i></span><span class="productive-family-badge">منتج محلي من أسر عسير</span>` : `<img src="${entry.image}" alt="${name}" loading="lazy">`}<span class="visual-option-content"><strong>${name}</strong>${entry.featuredLocal ? "" : entry.mapUrl ? `<span class="entity-location" data-map="${entry.mapUrl}"><i class="fa-solid fa-location-dot"></i> ${detail}</span>` : `<small><i class="fa-solid fa-location-dot"></i> ${detail}</small>`}${entry.type ? `<span class="education-type">${entry.type}</span>` : ""}${entry.details ? `<span class="education-details">${entry.details.map((item) => `<em>${item}</em>`).join("")}</span>` : ""}${entry.fee ? `<b class="education-fee"><i class="fa-solid fa-coins"></i> ${entry.fee}</b>` : ""}${entry.phone && agent !== agents.hr ? `<span class="entity-phone" data-phone="${entry.phoneDial}"><i class="fa-solid fa-phone"></i><b dir="ltr">${entry.phone}</b><em>اضغط للاتصال</em></span>` : ""}${agent === agents.hr ? `<span class="company-application-actions"><button class="company-apply-button" type="button" data-company-apply><i class="fa-solid fa-arrow-up-right-from-square"></i> الموقع الرسمي</button><button class="company-apply-button future" type="button" data-company-future-apply><i class="fa-solid fa-file-arrow-up"></i> التقديم داخل ضيوف عسير <small>قريبًا</small></button></span>` : ""}${agent === agents.education && entry.group === "universities" ? `<button class="education-primary-action" type="button" data-education-action="admission"><i class="fa-solid fa-calendar-days"></i> مواعيد التسجيل والتنبيه</button>` : ""}${agent === agents.education && entry.group === "courses" ? `<button class="education-primary-action future" type="button" data-education-action="course"><i class="fa-solid fa-calendar-check"></i> التسجيل والدفع <small>قريبًا</small></button>` : ""}${agent === agents.education && entry.group === "private-schools" ? `<span class="education-registration-actions"><button class="education-primary-action" type="button" data-education-official><i class="fa-solid fa-arrow-up-right-from-square"></i> موقع المدرسة</button><button class="education-primary-action future" type="button" data-education-action="school"><i class="fa-solid fa-file-pen"></i> التسجيل والدفع <small>قريبًا</small></button></span>` : ""}${agent === agents.entertainment ? `<span class="entertainment-card-actions">${entry.featuredLocal ? `<button type="button" data-entertainment-action="families"><i class="fa-solid fa-store"></i> عرض الأسر والمنتجات</button>` : ["cafes", "restaurants"].includes(entry.group) ? `<button type="button" data-entertainment-action="table"><i class="fa-solid fa-chair"></i> احجز طاولة</button><button class="entertainment-order-future" type="button" data-entertainment-action="order"><i class="fa-solid fa-bag-shopping"></i> اطلب الآن <small>قريبًا</small></button>` : `<button type="button" data-entertainment-official><i class="fa-solid fa-arrow-up-right-from-square"></i> الحجز عبر الموقع الرسمي</button><button type="button" data-entertainment-action="${entry.group === "activities" ? "activity" : "movie"}"><i class="fa-solid fa-ticket"></i> الحجز داخل ضيوف عسير <small>قريبًا</small></button>`}</span>` : ""}</span>`
-                : `<i class="fa-solid ${agent.icon}"></i><span><strong>${name}</strong><small>${detail}</small></span>`;
+                : `<i class="fa-solid ${agent.icon}"></i><span><strong>${name}</strong><small>${detail}</small></span>${agent === agents.guides && entry.website ? '<i class="fa-solid fa-arrow-up-right-from-square"></i>' : ""}`;
         if (agent === agents.hr && !entry.careersUrl) button.querySelector("[data-company-apply]")?.remove();
         if (agent === agents.hr && entry.careersUrl) {
             const officialApplyButton = button.querySelector("[data-company-apply]");
@@ -747,6 +761,10 @@ function renderRecommendations(agent, educationGroup = "universities") {
                 if (action === "future-payment") {
                     openHotelFuturePayment(entry);
                 }
+                return;
+            }
+            if (agent === agents.guides && entry.website) {
+                window.open(entry.website, "_blank", "noopener,noreferrer");
                 return;
             }
             userInput.value = rich

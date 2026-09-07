@@ -47,6 +47,24 @@ fetch("/")
             brand.href = pageLinks.home;
         }
 
+        if (pageName === "journey") {
+            document.querySelector(".header-journey-btn")?.remove();
+        }
+
+        const navbar = document.querySelector(".navbar");
+        if (navbar && !document.querySelector(".section-back-button")) {
+            const backButton = document.createElement("button");
+            backButton.type = "button";
+            backButton.className = "section-back-button";
+            backButton.innerHTML = '<i class="fa-solid fa-arrow-right"></i><span>رجوع للخلف</span>';
+            backButton.addEventListener("click", () => {
+                const previousPage = document.referrer ? new URL(document.referrer) : null;
+                if (previousPage?.origin === window.location.origin && window.history.length > 1) window.history.back();
+                else window.location.href = pageName === "agents" ? "/" : "/agents.html";
+            });
+            navbar.insertAdjacentElement("afterend", backButton);
+        }
+
         const navRoutes = [
             ["الرئيسية", "home"],
             ["الوكلاء", "agents"],
@@ -154,7 +172,7 @@ fetch("/")
 
         const script = document.createElement("script");
 
-        script.src = "/main.js?v=276";
+        script.src = "/main.js?v=277";
         script.defer = true;
 
         document.body.appendChild(script);
