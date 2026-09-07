@@ -1987,7 +1987,7 @@ function showQuickSearch() {
 }
 
 const interfaceTranslations = {
-    "ضيوف عسير": "Guests of Asir", "دليلك الذكي في أبها": "Your smart guide in Abha", "دليلك الذكي في عسير": "Your smart guide in Asir",
+    "ضيوف عسير": "Guests of Asir", "دليلك الذكي في عسير": "Your smart guide in Asir",
     "الرئيسية": "Home", "الوكلاء": "Agents", "الخدمات": "Services", "عن المنصة": "About", "الدعم الفني": "Support",
     "تسجيل الدخول": "Sign in", "تسجيل الخروج": "Sign out", "الملف الشخصي": "Profile", "إنشاء حساب": "Create account", "إنشاء الحساب": "Create account",
     "عسير أقرب": "Asir is closer", "بتفاصيلها وأهلها": "Through its details and people",

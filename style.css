@@ -2754,11 +2754,17 @@ footer {
 }
 
 .about-circle img {
-    width: 100%;
-    height: 100%;
+    width: 82%;
+    height: 82%;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
     border-radius: 50%;
+}
+
+.about-circle {
+    overflow: hidden;
+    background: #fff;
 }
 
 .recommendations-heading span { color: #858ca5; font-size: 10px; }
