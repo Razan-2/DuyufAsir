@@ -2795,19 +2795,20 @@ loadApiConversations();
 
 const smartTripPlaces = {
     coffee: [
-        { name: "كوفي مطل أبها", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, setting: "city", image: "assets/entertainment/food-cafe.jpg" },
-        { name: "جلسة قهوة سعودية", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 30, setting: "city", image: "assets/entertainment/menu/saudi-coffee.png" },
+        { name: "كوفي مطل أبها", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, setting: "city", cafes: true, image: "assets/entertainment/food-cafe.jpg" },
+        { name: "جلسة قهوة سعودية", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 30, setting: "city", cafes: true, image: "assets/entertainment/menu/saudi-coffee.png" },
         { name: "قهوة ريفية وسط المزرعة", category: "تجربة قهوة زراعية", icon: "☕", duration: 60, indoor: true, zone: "ريف أبها", cost: 30, setting: "agritourism", quiet: true, localFood: true, image: "assets/entertainment/productive-families-abha.jpg" }
     ],
     destination: [
-        { name: "إطلالة السودة", category: "وجهة سياحية", icon: "🌿", duration: 90, indoor: false, zone: "السودة", cost: 20, interest: "nature", image: "assets/agents/housing-abha-real.jpg" },
-        { name: "ممشى الضباب", category: "وجهة سياحية", icon: "🌿", duration: 75, indoor: false, zone: "أبها الجديدة", cost: 10, interest: "nature", image: "assets/entities/high-city-abha.jpg" },
-        { name: "متحف عسير الإقليمي", category: "وجهة داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 25, interest: "heritage", setting: "city", image: "assets/agents/housing-abha-authentic.jpg" },
-        { name: "تجربة مزرعة عسيرية والقطاف", category: "سياحة زراعية", icon: "🌱", duration: 90, indoor: false, zone: "ريف أبها", cost: 45, interest: "nature", setting: "agritourism", quiet: true, walking: true, children: true, image: "assets/brand/abha-mountains-center.png" }
+        { name: "إطلالة السودة", category: "وجهة سياحية", icon: "🌿", duration: 90, indoor: false, zone: "السودة", cost: 20, interest: "nature", setting: "city", cityWalks: true, image: "assets/agents/housing-abha-real.jpg" },
+        { name: "ممشى الضباب", category: "وجهة سياحية", icon: "🌿", duration: 75, indoor: false, zone: "أبها الجديدة", cost: 10, interest: "nature", setting: "city", cityWalks: true, image: "assets/entities/high-city-abha.jpg" },
+        { name: "متحف عسير الإقليمي", category: "وجهة داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 25, interest: "heritage", setting: "city", museums: true, image: "assets/agents/housing-abha-authentic.jpg" },
+        { name: "تجربة مزرعة عسيرية والقطاف", category: "سياحة زراعية", icon: "🌱", duration: 90, indoor: false, zone: "ريف أبها", cost: 45, interest: "nature", setting: "agritourism", farm: true, harvesting: true, terraces: true, image: "assets/brand/abha-mountains-center.png" }
     ],
     entertainment: [
         { name: "شارع الفن", category: "ترفيه", icon: "🎡", duration: 75, indoor: false, zone: "وسط أبها", cost: 20, interest: "events", image: "assets/entities/art-street-abha.jpg" },
-        { name: "تجربة فنية داخلية", category: "فعالية", icon: "🎭", duration: 75, indoor: true, zone: "وسط أبها", cost: 55, interest: "events", image: "assets/entertainment/activity-art-night.jpg" }
+        { name: "تجربة فنية داخلية", category: "فعالية", icon: "🎭", duration: 75, indoor: true, zone: "وسط أبها", cost: 55, interest: "events", setting: "city", events: true, image: "assets/entertainment/activity-art-night.jpg" },
+        { name: "كشتة ريفية بين المدرجات", category: "كشتة زراعية", icon: "⛺", duration: 90, indoor: false, zone: "ريف أبها", cost: 55, interest: "nature", setting: "agritourism", camping: true, terraces: true, image: "assets/brand/asir-girl-hero.jpeg" }
     ],
     restaurant: [
         { name: "مأكولات عسيرية", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "وسط أبها", cost: 85, interest: "food", image: "assets/entertainment/joy-venue-restaurant.jpg" },
@@ -2817,7 +2818,8 @@ const smartTripPlaces = {
     experience: [
         { name: "سوق الثلاثاء والحرف", category: "تجربة محلية", icon: "🧭", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, interest: "heritage", image: "assets/entertainment/tuesday-market-crafts.jpg" },
         { name: "جلسة مسائية عسيرية", category: "تجربة مسائية", icon: "🌙", duration: 60, indoor: true, zone: "وسط أبها", cost: 60, interest: "heritage", setting: "city", image: "assets/entertainment/productive-families-abha.jpg" },
-        { name: "جولة المدرجات الزراعية", category: "تجربة ريفية", icon: "🧭", duration: 60, indoor: false, zone: "ريف أبها", cost: 25, interest: "nature", setting: "agritourism", quiet: true, walking: true, photography: true, image: "assets/agents/tourist-guide-asir-v2.png" }
+        { name: "جولة المدرجات الزراعية", category: "تجربة ريفية", icon: "🧭", duration: 60, indoor: false, zone: "ريف أبها", cost: 25, interest: "nature", setting: "agritourism", terraces: true, farm: true, image: "assets/agents/tourist-guide-asir-v2.png" },
+        { name: "زيارة منحل وتجربة العسل", category: "تجربة زراعية", icon: "🍯", duration: 60, indoor: true, zone: "ريف أبها", cost: 40, interest: "heritage", setting: "agritourism", honey: true, localFood: true, image: "assets/entertainment/productive-families-abha.jpg" }
     ]
 };
 
@@ -2910,7 +2912,8 @@ function pickSmartPlace(type, dayIndex, weather, interests, previousZone, weathe
         return forecast ? forecast.suitable_outdoor : weather.outdoor;
     });
     const ranked = [...(suitable.length ? suitable : places)].sort((a, b) => {
-        const detailScore = (place) => (tripProfile.details || []).reduce((score, detail) => score + Number(Boolean(place[({ "local-food": "localFood" })[detail] || detail])), 0);
+        const detailKeys = { "local-food": "localFood", "city-walks": "cityWalks" };
+        const detailScore = (place) => (tripProfile.details || []).reduce((score, detail) => score + Number(Boolean(place[detailKeys[detail] || detail])) * 2, 0);
         const profileScore = (place) => (place.setting === tripProfile.tripSetting ? 6 : place.setting ? -2 : 0) + detailScore(place) + (tripProfile.rainPreference === "yes" && place.indoor ? 1 : 0);
         const aScore = (interests.includes(a.interest) ? 3 : 0) + (a.zone === previousZone ? 2 : 0) + profileScore(a);
         const bScore = (interests.includes(b.interest) ? 3 : 0) + (b.zone === previousZone ? 2 : 0) + profileScore(b);
@@ -2972,6 +2975,17 @@ function renderPrototypeJourney(days = smartTripDays) {
         return `<section class="smart-trip-day"><header><div><span>اليوم ${["الأول", "الثاني", "الثالث", "الرابع", "الخامس"][day.dayIndex]}</span><h3>${dayName} | ${timeFromMinutes(day.start)} — ${timeFromMinutes(day.end)}</h3></div><span class="weather-simulation-chip">${day.weather.icon} ${day.weather.label}<small>${day.weather.source === "Open-Meteo" ? "توقع حقيقي" : "محاكاة مؤقتة"}</small></span></header><div class="smart-day-stops">${stops}<div class="smart-day-end"><i class="fa-solid fa-flag-checkered"></i><strong>${timeFromMinutes(day.end)} — نهاية اليوم</strong></div></div></section>`;
     }).join("");
 }
+
+function updateTripSettingPreferences(setting) {
+    document.querySelectorAll("[data-setting-preferences]").forEach((section) => {
+        const active = section.dataset.settingPreferences === setting;
+        section.hidden = !active;
+        if (!active) section.querySelectorAll('input[type="checkbox"]').forEach((input) => { input.checked = false; });
+    });
+}
+
+document.querySelectorAll('[name="tripSetting"]').forEach((input) => input.addEventListener("change", () => updateTripSettingPreferences(input.value)));
+updateTripSettingPreferences(document.querySelector('[name="tripSetting"]:checked')?.value || "city");
 
 // محرك الاستمرارية: الطقس الأساسي يأتي من Open-Meteo عند توفره.
 // سيناريو التنبيه الاستباقي والازدحام أدناه Simulation مخصص لعرض الـPrototype وليس بيانات حية.
