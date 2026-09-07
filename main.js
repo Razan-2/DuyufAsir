@@ -495,11 +495,9 @@ function renderRecommendations(agent, educationGroup = "universities") {
             { label: "جيني", icon: "fa-route", url: "https://www.jeeny.me/ar/home", note: "خيارات اقتصادية للمشاوير" },
             { label: "كيان", icon: "fa-taxi", url: "https://kaiian.net/Indexkaian.aspx", note: "توصيل وتتبع مباشر للرحلة" }
         ];
-        const classicCarExperiences = [
-            { name: "مرسيدس كلاسيكية", era: "السبعينيات", use: "جولة تصوير تراثية" },
-            { name: "لاندكروزر كلاسيكي", era: "الثمانينيات", use: "تجربة ريفية في عسير" },
-            { name: "فولكس فاجن بيتل", era: "طابع كلاسيكي", use: "جولة وتصوير داخل أبها" }
-        ];
+        const classicMeetupDate = new Date();
+        classicMeetupDate.setDate(classicMeetupDate.getDate() + ((6 - classicMeetupDate.getDay() + 7) % 7 || 7));
+        const classicMeetupDateLabel = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(classicMeetupDate);
         const rentalCategoryLabels = { economy: "اقتصادية", sedan: "سيدان", "family-small": "عائلية صغيرة", "family-large": "عائلية واسعة" };
         const rentalToday = new Date();
         const rentalTomorrow = new Date(rentalToday);
@@ -520,7 +518,7 @@ function renderRecommendations(agent, educationGroup = "universities") {
                 ${transportState.rentalSearchReady ? `<section class="transport-company-filter"><h4>الشركات المناسبة لطلبك</h4><div class="rental-company-grid">${suitableRentalCompanies.map((company, index) => `<article class="${index === 0 ? "recommended" : ""}">${index === 0 ? `<em class="best-company-badge">أفضل سعر</em>` : ""}<img src="${company.logo}" alt="شعار ${company.label}"><strong>${company.label}</strong><small>يبدأ من ${company.lowestRate} ر.س يوميًا</small><button type="button" data-select-rental-company="${company.value}"><i class="fa-solid fa-circle-check"></i> اختيار الشركة</button></article>`).join("")}</div></section>` : ""}` : transportState.mode === "ride" ? `
                 <div class="ride-company-grid">${rideCompanies.map((company, index) => `<article class="ride-service-card"><i class="fa-${company.brand ? "brands" : "solid"} ${company.icon}"></i><span><strong>${company.label}</strong><small>${company.note}</small></span><div><a href="${company.url}" target="_blank" rel="noopener noreferrer">اطلب من الموقع <i class="fa-solid fa-arrow-up-right-from-square"></i></a><button type="button" data-ride-payment="${index}"><i class="fa-solid fa-lock"></i> الدفع داخل التطبيق <small>قريبًا</small></button></div></article>`).join("")}</div>
                 <div class="ride-payment-note"><i class="fa-solid fa-shield-halved"></i><span><strong>الحجز والدفع حاليًا عبر الموقع الرسمي</strong><small>اختاري التطبيق أعلاه لإكمال الرحلة بأمان. مستقبلًا سيتوفر الدفع مباشرة داخل ضيوف عسير بعد التكامل الرسمي.</small></span></div>` : transportState.mode === "classic" ? `
-                <div class="classic-car-experience"><header><i class="fa-solid fa-car-rear"></i><span><strong>تجربة السيارات القديمة</strong><small>نموذج لتجربة سياحية مستقبلية في عسير</small></span><b>قريبًا</b></header><div>${classicCarExperiences.map((car) => `<article><i class="fa-solid fa-car-side"></i><span><strong>${car.name}</strong><small>${car.era} · ${car.use}</small></span><button type="button" data-classic-interest="${car.name}">سجّل اهتمامك</button></article>`).join("")}</div><p>لا يتم تنفيذ استئجار حقيقي حاليًا. ستتاح التجربة بعد الربط مع مزوّدين معتمدين.</p></div>` : ""}`;
+                <div class="classic-car-experience"><header><i class="fa-solid fa-car-rear"></i><span><strong>السيارات الكلاسيكية</strong><small>شارك سيارتك أو تعرّف على موعد تجمع السيارات القديمة</small></span><b>تجربة أولية</b></header><div class="classic-choice-grid"><details class="classic-choice-card"><summary><i class="fa-solid fa-key"></i><span><strong>اعرض سيارتك للإيجار</strong><small>أرسل بيانات سيارتك الكلاسيكية لمراجعتها</small></span><i class="fa-solid fa-chevron-down"></i></summary><form class="classic-listing-form"><label><span>الاسم</span><input name="owner" required placeholder="اسم مالك السيارة"></label><label><span>رقم الجوال</span><input name="phone" required inputmode="tel" placeholder="05xxxxxxxx"></label><label><span>نوع السيارة</span><input name="car" required placeholder="مثال: مرسيدس كلاسيكية"></label><label><span>سنة الصنع</span><input name="year" required inputmode="numeric" placeholder="مثال: 1978"></label><label><span>المدينة</span><select name="city"><option>أبها</option><option>خميس مشيط</option><option>أحد رفيدة</option><option>محايل عسير</option></select></label><label><span>السعر اليومي المقترح</span><input name="price" type="number" min="1" required placeholder="ر.س"></label><label class="full"><span>ملاحظات</span><textarea name="notes" rows="3" placeholder="حالة السيارة وشروط الاستخدام"></textarea></label><button type="submit"><i class="fa-solid fa-paper-plane"></i> إرسال طلب العرض</button></form></details><article class="classic-choice-card classic-meetup-card"><i class="fa-solid fa-people-group"></i><span><strong>نقطة تجمع السيارات القديمة</strong><small>تجمع للعرض والتصوير فقط، ولا يتطلب حجزًا</small></span><dl><div><dt>اليوم</dt><dd>${classicMeetupDateLabel}</dd></div><div><dt>الوقت</dt><dd>4:30 عصرًا — 8:30 مساءً</dd></div><div><dt>الموقع</dt><dd>ساحة المفتاحة، أبها</dd></div></dl><a href="https://www.google.com/maps/search/?api=1&query=Al+Muftaha+Village+Abha" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-location-dot"></i> فتح نقطة التجمع</a></article></div><p>طلب عرض السيارة يُحفظ كتجربة أولية داخل المنصة، ولا يبدأ تأجيرًا حقيقيًا قبل المراجعة والربط الرسمي.</p></div>` : ""}`;
         recommendationsList.before(controls);
         controls.querySelector(".transport-mode-tabs").addEventListener("click", (event) => {
             const modeButton = event.target.closest("[data-transport-mode]");
@@ -558,12 +556,16 @@ function renderRecommendations(agent, educationGroup = "universities") {
             const requestId = createFutureOrderId("RIDE");
             openFuturePaymentPreview({ id: requestId, company: company.label, service: "طلب سيارة", summary: company.note, city: "منطقة عسير", total: 0, createdAt: new Date().toISOString() });
         });
-        controls.querySelector(".classic-car-experience")?.addEventListener("click", (event) => {
-            const interestButton = event.target.closest("[data-classic-interest]");
-            if (!interestButton) return;
-            interestButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> تم تسجيل الاهتمام';
-            interestButton.disabled = true;
-            addNotification(`تم تسجيل اهتمامك بتجربة ${interestButton.dataset.classicInterest}. سنخبرك عند توفرها.`);
+        controls.querySelector(".classic-listing-form")?.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const listing = Object.fromEntries(formData.entries());
+            const listingId = createFutureOrderId("CLASSIC");
+            const savedListings = JSON.parse(localStorage.getItem("classicCarListings") || "[]");
+            savedListings.push({ ...listing, id: listingId, createdAt: new Date().toISOString() });
+            localStorage.setItem("classicCarListings", JSON.stringify(savedListings));
+            event.currentTarget.innerHTML = `<div class="classic-listing-success"><i class="fa-solid fa-circle-check"></i><strong>تم استلام طلب عرض السيارة</strong><span>رقم الطلب: <b dir="ltr">${listingId}</b></span><small>سيتم التواصل معك بعد مراجعة البيانات. لم يبدأ أي تأجير فعلي.</small></div>`;
+            addNotification(`تم استلام طلب عرض السيارة رقم ${listingId}.`);
         });
         controls.querySelector("#transportPrice")?.addEventListener("input", (event) => {
             controls.querySelector("#transportPriceOutput").textContent = `حتى ${event.target.value} ر.س`;
@@ -2914,6 +2916,60 @@ function renderPrototypeJourney(days = smartTripDays) {
     }).join("");
 }
 
+// محرك الاستمرارية: الطقس الأساسي يأتي من Open-Meteo عند توفره.
+// سيناريو التنبيه الاستباقي والازدحام أدناه Simulation مخصص لعرض الـPrototype وليس بيانات حية.
+const continuityInterestLabels = { nature: "طبيعة", events: "ترفيه", food: "مطاعم", heritage: "تراث", coffee: "كوفيهات", adventure: "مغامرة" };
+
+function continuityDna(interests = []) {
+    const preferred = interests.length ? interests.slice(0, 4) : ["nature", "events", "food", "heritage"];
+    const fallbacks = ["nature", "events", "food", "heritage"].filter((item) => !preferred.includes(item));
+    const categories = [...preferred, ...fallbacks].slice(0, 4);
+    return categories.map((key, index) => ({ key, label: continuityInterestLabels[key], value: [40, 25, 20, 15][index] }));
+}
+
+function healthGauge(score, label) {
+    const colorClass = score >= 80 ? "healthy" : score >= 60 ? "watch" : "danger";
+    return `<div class="journey-health ${colorClass}" style="--health:${score}"><div><strong>${score}%</strong><small>${label}</small></div></div>`;
+}
+
+function continuityFactors(risk = false) {
+    const factors = risk
+        ? [["الطقس", 28], ["الوقت", 51], ["المسافة", 58], ["ملاءمة الوجهات", 44], ["ساعات العمل", 75], ["الاهتمامات", 89], ["الميزانية", 86], ["ترتيب الأنشطة", 47], ["الظروف المتغيرة", 25]]
+        : [["الطقس", 95], ["الوقت", 91], ["المسافة", 88], ["ملاءمة الوجهات", 94], ["ساعات العمل", 90], ["الاهتمامات", 96], ["الميزانية", 89], ["ترتيب الأنشطة", 93], ["الظروف المتغيرة", 90]];
+    return factors.map(([name, score]) => `<span class="continuity-factor ${score < 60 ? "at-risk" : ""}"><small>${name}</small><b>${score}%</b></span>`).join("");
+}
+
+function renderContinuityEngine(stage = "ready") {
+    const engine = document.querySelector("#continuityEngine");
+    if (!engine || !smartTripSettings) return;
+    const dna = continuityDna(smartTripSettings.interests);
+    const dnaMarkup = dna.map((item) => `<span style="--dna:${item.value}%"><i></i><b>${item.value}%</b> ${item.label}</span>`).join("");
+    const sharedHeader = `<header class="continuity-heading"><span><i class="fa-solid fa-heart-pulse"></i><b>محرك استمرارية الرحلة الذكي</b></span><em>محاكاة تجريبية</em></header>`;
+
+    if (stage === "ready") {
+        engine.innerHTML = `${sharedHeader}<div class="continuity-overview">${healthGauge(92, "صحة الرحلة")}<div><h3>رحلتك مستقرة وجاهزة</h3><p>يراقب المحرك تسعة عوامل حتى يتنبأ بالمشكلة قبل أن تعطل بقية اليوم.</p><div class="continuity-factors">${continuityFactors(false)}</div></div></div><div class="journey-dna-card"><strong><i class="fa-solid fa-dna"></i> DNA الرحلة</strong><div>${dnaMarkup}</div><small>سنحافظ على هذا الطابع عند اختيار أي بديل.</small></div><button class="continuity-demo-trigger" type="button" data-continuity-action="predict"><i class="fa-solid fa-bolt"></i> تشغيل سيناريو التنبيه الاستباقي</button>`;
+    } else if (stage === "risk") {
+        engine.innerHTML = `${sharedHeader}<div class="proactive-alert"><i class="fa-solid fa-triangle-exclamation"></i><div><strong>تنبيه استباقي</strong><p>متوقع تغير الطقس في السودة بعد ساعة، وستصل إليها بعد 50 دقيقة، مما قد يخفض ملاءمة الزيارة.</p><small>توقع الطقس في سيناريو العرض محاكاة توضيحية، وليس تنبيهًا حيًا.</small></div></div><div class="health-transition"><span>${healthGauge(92, "الحالية")}</span><i class="fa-solid fa-arrow-left-long"></i><span>${healthGauge(48, "المتوقعة")}</span></div><div class="continuity-factors compact">${continuityFactors(true)}</div><div class="domino-impact"><header><span><i class="fa-solid fa-link"></i><strong>تأثير الدومينو</strong></span><b>سيتأثر 3 محطات</b></header><div><article><i>🌧️</i><strong>مطر في السودة</strong></article><i class="fa-solid fa-arrow-left"></i><article><i>⏱️</i><strong>تأخير الرحلة</strong></article><i class="fa-solid fa-arrow-left"></i><article><i>🍽️</i><strong>الوصول متأخرًا للمطعم</strong></article><i class="fa-solid fa-arrow-left"></i><article><i>🎭</i><strong>تفويت الفعالية</strong></article></div></div><div class="suitability-comparison"><span><small>السودة</small><strong>34% ❌</strong><em>طقس غير مناسب</em></span><span><small>قصور أبو سراح</small><strong>87% ✓</strong><em>قريبة وتحافظ على الطابع التراثي</em></span><span class="best"><small>تجربة داخلية</small><strong>91% ⭐</strong><em>أفضل توازن للطقس والوقت والمسار</em></span></div><button class="rescue-journey-button" type="button" data-continuity-action="rescue"><i class="fa-solid fa-shield-heart"></i> أنقذ رحلتي</button>`;
+    } else {
+        engine.innerHTML = `${sharedHeader}<div class="rescue-success"><i class="fa-solid fa-circle-check"></i><div><strong>تم إنقاذ الرحلة</strong><p>حافظنا على أكبر جزء من خطتك وعدّلنا المحطات المتأثرة فقط.</p></div>${healthGauge(90, "بعد الإصلاح")}</div><div class="repair-comparison"><section><h3>قبل</h3><ul><li class="failed"><time>5:00 م</time><span>السودة</span><b>❌</b></li><li class="warning"><time>7:00 م</time><span>المطعم</span><b>⚠️</b></li><li class="warning"><time>8:30 م</time><span>الفعالية</span><b>⚠️</b></li></ul></section><i class="fa-solid fa-arrow-left-long"></i><section class="after"><h3>بعد الإصلاح</h3><ul><li><time>5:00 م</time><span>قصور أبو سراح — بديل تراثي داخلي</span><b>✓</b></li><li><time>6:45 م</time><span>كوفي قريب</span><b>✓</b></li><li><time>8:00 م</time><span>الفعالية</span><b>✓</b></li><li><time>9:30 م</time><span>المطعم</span><b>✓</b></li></ul></section></div><div class="preserved-journey"><i class="fa-solid fa-code-branch"></i><span><strong>تغييران فقط بدل إعادة بناء الرحلة كاملة</strong><small>حُفظت المحطات المنجزة، والميزانية، وDNA الرحلة الأصلي.</small></span></div><button class="continuity-reset-button" type="button" data-continuity-action="reset"><i class="fa-solid fa-arrow-rotate-right"></i> إعادة عرض السيناريو</button>`;
+    }
+    engine.hidden = false;
+}
+
+document.querySelector("#continuityEngine")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-continuity-action]");
+    if (!button) return;
+    const action = button.dataset.continuityAction;
+    button.disabled = true;
+    if (action === "predict") {
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> تحليل أثر التغير...';
+        window.setTimeout(() => { renderContinuityEngine("risk"); document.querySelector("#continuityEngine")?.scrollIntoView({ behavior: "smooth", block: "center" }); }, 700);
+    } else if (action === "rescue") {
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> إصلاح الجزء المتأثر...';
+        window.setTimeout(() => { renderContinuityEngine("rescued"); document.querySelector("#continuityEngine")?.scrollIntoView({ behavior: "smooth", block: "start" }); }, 850);
+    } else renderContinuityEngine("ready");
+});
+
 document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -2942,6 +2998,7 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     }
     smartTripDays = buildSmartTrip(smartTripSettings, weatherMap);
     renderPrototypeJourney();
+    renderContinuityEngine("ready");
     const estimated = smartTripDays.flatMap((day) => day.stops).reduce((sum, stop) => sum + stop.cost, 0) * smartTripSettings.people;
     const weatherAdjusted = smartTripDays.filter((day) => !day.weather.outdoor).length;
     const result = document.querySelector("#journeyDnaResult");
