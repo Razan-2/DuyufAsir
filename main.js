@@ -266,30 +266,44 @@ function clearAgentMemory(agentType) {
     localStorage.setItem("agentMemories", JSON.stringify(memories));
 }
 
+const loyaltyMilestones = [
+    { milestone: 2, key: "coffee", icon: "fa-mug-hot", title: "كوب قهوة مجاني", place: "مقهى رشفة — أبها", prefix: "COFFEE" },
+    { milestone: 5, key: "nafas", icon: "fa-person-hiking", title: "تجربة سياحية مع نَفَس للسياحة", place: "تنسيق الموعد بعد طلب المكافأة", prefix: "NAFAS" },
+    { milestone: 7, key: "discount", icon: "fa-percent", title: "خصم 50%", place: "على تجربة سياحية مختارة", prefix: "SAVE50" }
+];
+
+function syncLoyaltyRewards(count, notifyNew = false) {
+    const coupons = JSON.parse(localStorage.getItem("asirRewardCoupons") || "[]");
+    loyaltyMilestones.forEach((reward) => {
+        if (count < reward.milestone || coupons.some((coupon) => coupon.rewardKey === reward.key)) return;
+        coupons.unshift({
+            id: `ASIR-${reward.prefix}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`,
+            rewardKey: reward.key,
+            milestone: reward.milestone,
+            title: reward.title,
+            place: reward.place,
+            icon: reward.icon,
+            createdAt: new Date().toISOString(),
+            usedAt: null
+        });
+        if (notifyNew) addNotification(`مبروك! أكملت ${reward.milestone} طلبات وفزت بـ ${reward.title}.`);
+    });
+    localStorage.setItem("asirRewardCoupons", JSON.stringify(coupons));
+    return coupons;
+}
+
 function registerLoyaltyRequest() {
     const requestCount = Number(localStorage.getItem("loyaltyRequestCount") || 0) + 1;
     localStorage.setItem("loyaltyRequestCount", String(requestCount));
-    if (requestCount % 5 !== 0) return;
-    const coupons = JSON.parse(localStorage.getItem("asirRewardCoupons") || "[]").map((coupon) => ({ ...coupon, title: "جولة مع نفس للسياحة لمدة يوم واحد مجانًا" }));
-    localStorage.setItem("asirRewardCoupons", JSON.stringify(coupons));
-    const coupon = {
-        id: `ASIR-RIDE-${String(requestCount / 5).padStart(2, "0")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
-        title: "جولة مع نفس للسياحة لمدة يوم واحد مجانًا",
-        createdAt: new Date().toISOString(),
-        usedAt: null
-    };
-    coupons.unshift(coupon);
-    localStorage.setItem("asirRewardCoupons", JSON.stringify(coupons));
-    addNotification(`مبروك! حصلت على كوبون ${coupon.title}.`);
+    syncLoyaltyRewards(requestCount, true);
 }
 
 function showRewards() {
     const count = Number(localStorage.getItem("loyaltyRequestCount") || 0);
-    const progress = count % 5;
-    const remaining = progress === 0 && count > 0 ? 5 : 5 - progress;
-    const coupons = JSON.parse(localStorage.getItem("asirRewardCoupons") || "[]").map((coupon) => ({ ...coupon, title: "جولة مع نفس للسياحة لمدة يوم واحد مجانًا" }));
-    localStorage.setItem("asirRewardCoupons", JSON.stringify(coupons));
-    openUtility("مكافآت ضيوف عسير", "fa-ticket", `<div class="loyalty-card"><i class="fa-solid fa-route"></i><span><small>مكافأة كل 5 طلبات</small><h3>جولة مع نفس للسياحة لمدة يوم واحد مجانًا</h3><p><b>أكملت ${progress} من 5 طلبات</b> · متبقي ${remaining} للمكافأة التالية</p></span></div><div class="loyalty-progress"><span style="width:${progress / 5 * 100}%"></span></div><div class="coupon-list">${coupons.length ? coupons.map((coupon) => `<article class="reward-coupon ${coupon.usedAt ? "used" : ""}"><div><i class="fa-solid fa-ticket"></i><span><strong>${coupon.title}</strong><code>${coupon.id}</code><small>${coupon.usedAt ? `تم الاستخدام في ${new Date(coupon.usedAt).toLocaleDateString("ar-SA")}` : "متاح للاستخدام"}</small></span></div>${coupon.usedAt ? "" : `<button type="button" data-redeem-coupon="${coupon.id}">استخدام الكوبون</button>`}</article>`).join("") : `<p class="coupon-empty">أكمل 5 طلبات لدى الوكلاء للحصول على أول كوبون.</p>`}</div>`);
+    const coupons = syncLoyaltyRewards(count);
+    const nextReward = loyaltyMilestones.find((reward) => count < reward.milestone);
+    const cappedCount = Math.min(count, 7);
+    openUtility("مكافآت ضيوف عسير", "fa-ticket", `<div class="loyalty-card"><i class="fa-solid fa-gift"></i><span><small>برنامج مكافآت ضيوف عسير</small><h3>${count >= 7 ? "فتحت جميع المكافآت" : `أكملت ${count} من 7 طلبات`}</h3><p>${nextReward ? `متبقي ${nextReward.milestone - count} للوصول إلى: <b>${nextReward.title}</b>` : "مبروك! وصلت إلى أعلى مكافأة."}</p></span></div><div class="loyalty-progress"><span style="width:${cappedCount / 7 * 100}%"></span></div><div class="reward-milestones">${loyaltyMilestones.map((reward) => `<article class="${count >= reward.milestone ? "unlocked" : "locked"}"><span>${reward.milestone}</span><i class="fa-solid ${reward.icon}"></i><div><strong>${reward.title}</strong><small>${reward.place}</small></div><b>${count >= reward.milestone ? "تم الفوز ✓" : `عند إكمال ${reward.milestone}`}</b></article>`).join("")}</div><div class="coupon-list">${coupons.length ? coupons.map((coupon) => `<article class="reward-coupon ${coupon.usedAt ? "used" : ""}"><div><i class="fa-solid ${coupon.icon || "fa-ticket"}"></i><span><strong>${coupon.title}</strong><small>${coupon.place || "مكافأة ضيوف عسير"}</small><code>${coupon.id}</code><small>${coupon.usedAt ? `تم الاستخدام في ${new Date(coupon.usedAt).toLocaleDateString("ar-SA")}` : "متاح للاستخدام"}</small></span></div>${coupon.usedAt ? "" : `<button type="button" data-redeem-coupon="${coupon.id}">استخدام الكوبون</button>`}</article>`).join("") : `<p class="coupon-empty">أكمل طلبين لدى الوكلاء لتحصل على كوب القهوة.</p>`}</div><p class="rewards-prototype-note"><i class="fa-solid fa-circle-info"></i> المكافآت المعروضة نموذج تجريبي، ويتم اعتماد الأماكن وطريقة الاستفادة عند الربط الرسمي مع الشركاء.</p>`);
     utilityContent.querySelector(".coupon-list")?.addEventListener("click", (event) => {
         const redeemButton = event.target.closest("[data-redeem-coupon]");
         if (!redeemButton) return;
