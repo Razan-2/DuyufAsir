@@ -66,7 +66,15 @@ class OpenAIResponsesProvider:
                 headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
                 json={"model": self.model, **payload},
             )
-            response.raise_for_status()
+            if response.is_error:
+                try:
+                    provider_error = response.json().get("error", {})
+                    error_code = str(provider_error.get("code") or provider_error.get("type") or "provider_error")[:80]
+                    error_message = str(provider_error.get("message") or "رفض مزود الذكاء الطلب.")[:300]
+                except (ValueError, AttributeError):
+                    error_code, error_message = "provider_error", "رفض مزود الذكاء الطلب."
+                logger.warning("OpenAI request rejected (status=%s, code=%s)", response.status_code, error_code)
+                raise HTTPException(status_code=502, detail=f"تعذر تشغيل وكيل OpenAI: {error_message}")
             return response.json()
 
 
