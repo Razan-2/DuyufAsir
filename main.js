@@ -1280,7 +1280,7 @@ function openProductiveFamilies(entry) {
             const items = [...cart.values()];
             const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const summary = items.map((item) => `${item.name} × ${item.quantity}`).join("، ");
-            openEntertainmentBooking({ ...entry, name: "طلب الأسر المنتجة", image: "assets/brand/duof-asir-logo-v2.png" }, "order", { name: summary, price: total, lockedCart: true });
+            openEntertainmentBooking({ ...entry, name: "طلب الأسر المنتجة", image: "assets/brand/duof-asir-sun-logo.png" }, "order", { name: summary, price: total, lockedCart: true });
         }
     });
 }

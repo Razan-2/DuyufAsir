@@ -2291,7 +2291,7 @@ footer {
 
 /* شعار البرنامج */
 .brand-icon {
-    background: #f5ead9 url("assets/brand/duof-asir-logo-v2.png") center / contain no-repeat;
+    background: #fff url("assets/brand/duof-asir-sun-logo.png") center / contain no-repeat;
     border-radius: 50%;
     border: 2px solid #fff;
     box-shadow: 0 8px 24px rgba(60, 45, 31, .24);
@@ -3396,7 +3396,7 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .movie-options article span em { color: #887970; font-size: 11px; font-style: normal; }
 .movie-options article button { grid-column: 1 / -1; }
 .cinema-source-note { margin: 0; padding: 11px 14px; border-radius: 11px; color: #765a43; background: #f7efe4; font-size: 12px; text-align: center; }
-.productive-family-symbol { background: #fff url("assets/brand/duof-asir-logo-v2.png") center / 82% no-repeat !important; }
+.productive-family-symbol { background: #fff url("assets/brand/duof-asir-sun-logo.png") center / 82% no-repeat !important; }
 .productive-family-symbol i { display: none; }
 .free-table-booking-note { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #acd0b9; border-radius: 14px; color: #174b35; background: #edf8f1; }
 .free-table-booking-note > i { font-size: 25px; }
@@ -3730,7 +3730,7 @@ body.dark-mode { background: #000; color: #f5f5f5; }
     box-shadow: 0 16px 34px rgba(90, 62, 31, .18);
 }
 .productive-family-card .visual-option-content { height: 100%; padding: 74px 22px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.productive-family-symbol { position: absolute; top: 18px; left: 18px; z-index: 2; width: 58px; height: 58px; display: grid; place-items: center; border: 2px solid #d8c7aa; border-radius: 18px; color: #fff; background: #fff url("assets/brand/duof-asir-logo-v2.png") center / 84% no-repeat; font-size: 20px; box-shadow: 0 8px 18px rgba(90, 62, 31, .2); }
+.productive-family-symbol { position: absolute; top: 18px; left: 18px; z-index: 2; width: 58px; height: 58px; display: grid; place-items: center; border: 2px solid #d8c7aa; border-radius: 18px; color: #fff; background: #fff url("assets/brand/duof-asir-sun-logo.png") center / 84% no-repeat; font-size: 20px; box-shadow: 0 8px 18px rgba(90, 62, 31, .2); }
 .productive-family-card .education-details { justify-content: center; }
 .productive-family-card .entertainment-card-actions { width: 100%; margin-top: auto; }
 .productive-family-card::after {
