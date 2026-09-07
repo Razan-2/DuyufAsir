@@ -5411,6 +5411,8 @@ details.classic-choice-card summary::-webkit-details-marker { display: none; }
 .agents-only-page .smart-trip-agent-card { min-height: 300px; overflow: hidden; border-radius: 25px; }
 .agents-only-page .smart-trip-agent-card .card-content { display: flex; flex-direction: column; justify-content: center; padding: 34px; }
 .agents-only-page .smart-trip-agent-card .card-visual { min-height: 300px; }
+.agents-only-page .smart-trip-agent-card .agent-photo { object-position: center 48%; }
+.agents-only-page .prototype-guide-card .agent-photo { object-position: center 44%; }
 .agents-only-page .smart-trip-agent-card .agent-button { width: 100%; margin-top: 18px; }
 
 @media(max-width:1100px){.agents-only-page .agents-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.agents-only-page .smart-trip-agent-card{grid-column:1/-1}}
