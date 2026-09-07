@@ -2152,8 +2152,55 @@ function applyLanguage(language) {
     document.documentElement.dir = activeInterfaceLanguage === "en" ? "ltr" : "rtl";
     document.body.classList.toggle("english-mode", activeInterfaceLanguage === "en");
     translateInterfaceTree(document.body);
-    languageBtn.textContent = activeInterfaceLanguage === "en" ? "AR" : "EN";
+    languageBtn.textContent = activeInterfaceLanguage === "en" ? "EN" : "AR";
     localStorage.setItem("appLanguage", activeInterfaceLanguage);
+}
+
+const interfaceLanguageOptions = [
+    { code: "ar", short: "AR", name: "العربية", native: "العربية", internal: true },
+    { code: "en", short: "EN", name: "الإنجليزية", native: "English", internal: true },
+    { code: "fr", short: "FR", name: "الفرنسية", native: "Français" },
+    { code: "tr", short: "TR", name: "التركية", native: "Türkçe" },
+    { code: "ur", short: "UR", name: "الأردية", native: "اردو" },
+    { code: "es", short: "ES", name: "الإسبانية", native: "Español" },
+    { code: "de", short: "DE", name: "الألمانية", native: "Deutsch" },
+    { code: "zh-CN", short: "ZH", name: "الصينية", native: "中文" },
+    { code: "hi", short: "HI", name: "الهندية", native: "हिन्दी" },
+    { code: "id", short: "ID", name: "الإندونيسية", native: "Bahasa Indonesia" }
+];
+
+function closeLanguageMenu() {
+    document.querySelector(".language-picker-menu")?.remove();
+    languageBtn.setAttribute("aria-expanded", "false");
+}
+
+function openLanguageMenu() {
+    const existing = document.querySelector(".language-picker-menu");
+    if (existing) { closeLanguageMenu(); return; }
+    const menu = document.createElement("div");
+    menu.className = "language-picker-menu";
+    menu.setAttribute("role", "menu");
+    menu.innerHTML = `<header><i class="fa-solid fa-language"></i><span><strong>اختر اللغة</strong><small>العربية والإنجليزية داخل المنصة، وبقية اللغات عبر الترجمة الكاملة.</small></span></header><div>${interfaceLanguageOptions.map((option) => `<button type="button" role="menuitem" data-language-code="${option.code}" class="${activeInterfaceLanguage === option.code ? "active" : ""}"><b>${option.short}</b><span><strong>${option.native}</strong><small>${option.name}</small></span>${option.internal ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-arrow-up-right-from-square"></i>'}</button>`).join("")}</div>`;
+    document.body.appendChild(menu);
+    const rect = languageBtn.getBoundingClientRect();
+    menu.style.top = `${Math.min(window.innerHeight - menu.offsetHeight - 12, rect.bottom + 10)}px`;
+    menu.style.left = `${Math.max(12, Math.min(window.innerWidth - menu.offsetWidth - 12, rect.left - menu.offsetWidth + rect.width))}px`;
+    languageBtn.setAttribute("aria-expanded", "true");
+    menu.addEventListener("click", (event) => {
+        const optionButton = event.target.closest("[data-language-code]");
+        if (!optionButton) return;
+        const option = interfaceLanguageOptions.find((item) => item.code === optionButton.dataset.languageCode);
+        closeLanguageMenu();
+        if (option.internal) { applyLanguage(option.code); return; }
+        const translateUrl = new URL("https://translate.google.com/translate");
+        translateUrl.searchParams.set("sl", "ar");
+        translateUrl.searchParams.set("tl", option.code);
+        translateUrl.searchParams.set("u", window.location.href);
+        window.open(translateUrl.toString(), "_blank", "noopener,noreferrer");
+    });
+    window.setTimeout(() => document.addEventListener("click", (event) => {
+        if (!event.target.closest(".language-picker-menu,#languageBtn")) closeLanguageMenu();
+    }, { once: true }), 0);
 }
 
 const languageObserver = new MutationObserver((mutations) => {
@@ -2463,7 +2510,7 @@ profileBtn.addEventListener("click", showProfile);
 document.querySelector("#aboutRewardsBtn")?.addEventListener("click", showRewards);
 quickSearchBtn.addEventListener("click", showQuickSearch);
 notificationsBtn.addEventListener("click", showNotifications);
-languageBtn.addEventListener("click", () => applyLanguage(document.documentElement.lang === "en" ? "ar" : "en"));
+languageBtn.addEventListener("click", openLanguageMenu);
 voiceSearchBtn.addEventListener("click", () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
