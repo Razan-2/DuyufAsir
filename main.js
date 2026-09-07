@@ -2795,13 +2795,15 @@ loadApiConversations();
 
 const smartTripPlaces = {
     coffee: [
-        { name: "كوفي مطل أبها", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, image: "assets/entertainment/food-cafe.jpg" },
-        { name: "جلسة قهوة سعودية", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 30, image: "assets/entertainment/menu/saudi-coffee.png" }
+        { name: "كوفي مطل أبها", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, setting: "city", image: "assets/entertainment/food-cafe.jpg" },
+        { name: "جلسة قهوة سعودية", category: "كوفي", icon: "☕", duration: 60, indoor: true, zone: "وسط أبها", cost: 30, setting: "city", image: "assets/entertainment/menu/saudi-coffee.png" },
+        { name: "قهوة ريفية وسط المزرعة", category: "تجربة قهوة زراعية", icon: "☕", duration: 60, indoor: true, zone: "ريف أبها", cost: 30, setting: "agritourism", quiet: true, localFood: true, image: "assets/entertainment/productive-families-abha.jpg" }
     ],
     destination: [
         { name: "إطلالة السودة", category: "وجهة سياحية", icon: "🌿", duration: 90, indoor: false, zone: "السودة", cost: 20, interest: "nature", image: "assets/agents/housing-abha-real.jpg" },
         { name: "ممشى الضباب", category: "وجهة سياحية", icon: "🌿", duration: 75, indoor: false, zone: "أبها الجديدة", cost: 10, interest: "nature", image: "assets/entities/high-city-abha.jpg" },
-        { name: "متحف عسير الإقليمي", category: "وجهة داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 25, interest: "heritage", image: "assets/agents/housing-abha-authentic.jpg" }
+        { name: "متحف عسير الإقليمي", category: "وجهة داخلية", icon: "🏛️", duration: 75, indoor: true, zone: "وسط أبها", cost: 25, interest: "heritage", setting: "city", image: "assets/agents/housing-abha-authentic.jpg" },
+        { name: "تجربة مزرعة عسيرية والقطاف", category: "سياحة زراعية", icon: "🌱", duration: 90, indoor: false, zone: "ريف أبها", cost: 45, interest: "nature", setting: "agritourism", quiet: true, walking: true, children: true, image: "assets/brand/abha-mountains-center.png" }
     ],
     entertainment: [
         { name: "شارع الفن", category: "ترفيه", icon: "🎡", duration: 75, indoor: false, zone: "وسط أبها", cost: 20, interest: "events", image: "assets/entities/art-street-abha.jpg" },
@@ -2809,11 +2811,13 @@ const smartTripPlaces = {
     ],
     restaurant: [
         { name: "مأكولات عسيرية", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "وسط أبها", cost: 85, interest: "food", image: "assets/entertainment/joy-venue-restaurant.jpg" },
-        { name: "مطعم بطابع جنوبي", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "أبها الجديدة", cost: 95, interest: "food", image: "assets/entertainment/veranda-abha.jpg" }
+        { name: "مطعم بطابع جنوبي", category: "مطعم", icon: "🍽️", duration: 75, indoor: true, zone: "أبها الجديدة", cost: 95, interest: "food", setting: "city", image: "assets/entertainment/veranda-abha.jpg" },
+        { name: "مائدة ريفية من منتجات المزرعة", category: "طعام محلي", icon: "🍽️", duration: 75, indoor: true, zone: "ريف أبها", cost: 70, interest: "food", setting: "agritourism", localFood: true, image: "assets/entertainment/menu/areeka.png" }
     ],
     experience: [
         { name: "سوق الثلاثاء والحرف", category: "تجربة محلية", icon: "🧭", duration: 60, indoor: true, zone: "وسط أبها", cost: 35, interest: "heritage", image: "assets/entertainment/tuesday-market-crafts.jpg" },
-        { name: "جلسة مسائية عسيرية", category: "تجربة مسائية", icon: "🌙", duration: 60, indoor: true, zone: "وسط أبها", cost: 60, interest: "heritage", image: "assets/entertainment/productive-families-abha.jpg" }
+        { name: "جلسة مسائية عسيرية", category: "تجربة مسائية", icon: "🌙", duration: 60, indoor: true, zone: "وسط أبها", cost: 60, interest: "heritage", setting: "city", image: "assets/entertainment/productive-families-abha.jpg" },
+        { name: "جولة المدرجات الزراعية", category: "تجربة ريفية", icon: "🧭", duration: 60, indoor: false, zone: "ريف أبها", cost: 25, interest: "nature", setting: "agritourism", quiet: true, walking: true, photography: true, image: "assets/agents/tourist-guide-asir-v2.png" }
     ]
 };
 
@@ -2821,6 +2825,7 @@ const smartTripWeatherCoordinates = {
     "وسط أبها": { latitude: 18.2164, longitude: 42.5053 },
     "أبها الجديدة": { latitude: 18.2130, longitude: 42.4910 },
     "السودة": { latitude: 18.2747, longitude: 42.3647 }
+    ,"ريف أبها": { latitude: 18.2465, longitude: 42.4542 }
 };
 
 function tripDateKey(date) {
@@ -2897,7 +2902,7 @@ function simulatedWeather(dayIndex) {
     ][dayIndex % 5];
 }
 
-function pickSmartPlace(type, dayIndex, weather, interests, previousZone, weatherMap, dateKey) {
+function pickSmartPlace(type, dayIndex, weather, interests, previousZone, weatherMap, dateKey, tripProfile = {}) {
     const places = smartTripPlaces[type];
     const suitable = places.filter((place) => {
         if (place.indoor) return true;
@@ -2905,8 +2910,10 @@ function pickSmartPlace(type, dayIndex, weather, interests, previousZone, weathe
         return forecast ? forecast.suitable_outdoor : weather.outdoor;
     });
     const ranked = [...(suitable.length ? suitable : places)].sort((a, b) => {
-        const aScore = (interests.includes(a.interest) ? 3 : 0) + (a.zone === previousZone ? 2 : 0);
-        const bScore = (interests.includes(b.interest) ? 3 : 0) + (b.zone === previousZone ? 2 : 0);
+        const detailScore = (place) => (tripProfile.details || []).reduce((score, detail) => score + Number(Boolean(place[({ "local-food": "localFood" })[detail] || detail])), 0);
+        const profileScore = (place) => (place.setting === tripProfile.tripSetting ? 6 : place.setting ? -2 : 0) + detailScore(place) + (tripProfile.rainPreference === "yes" && place.indoor ? 1 : 0);
+        const aScore = (interests.includes(a.interest) ? 3 : 0) + (a.zone === previousZone ? 2 : 0) + profileScore(a);
+        const bScore = (interests.includes(b.interest) ? 3 : 0) + (b.zone === previousZone ? 2 : 0) + profileScore(b);
         return bScore - aScore;
     });
     const selected = { ...ranked[dayIndex % ranked.length] };
@@ -2935,7 +2942,7 @@ function buildSmartTrip(settings, weatherMap = null) {
         let previousZone = "وسط أبها";
         const stops = [];
         pattern.forEach((type, stopIndex) => {
-            let place = pickSmartPlace(type, dayIndex + stopIndex, weather, settings.interests, previousZone, weatherMap, dateKey);
+            let place = pickSmartPlace(type, dayIndex + stopIndex, weather, settings.interests, previousZone, weatherMap, dateKey, settings);
             const travel = stopIndex === 0 ? 0 : place.zone === previousZone ? 15 : 25;
             cursor += travel;
             if (cursor + place.duration > end - 10) return;
@@ -2946,7 +2953,7 @@ function buildSmartTrip(settings, weatherMap = null) {
                 ? "تم اختيار تجربة داخلية بديلة لأن التوقعات الحقيقية تشير إلى مطر أو ضباب في وجهة مكشوفة."
                 : sunsetMatch
                     ? "وقت مناسب للغروب والتصوير، وقريب من مسار اليوم."
-                    : `مناسب لـ${settings.groupLabel} واهتماماتك، وضمن ميزانيتك ومسار اليوم.`;
+                    : `${place.setting === "agritourism" ? "متوافق مع اختيارك للسياحة الزراعية" : "متوافق مع اختيارك للسياحة داخل المدينة"}، ومناسب لـ${settings.groupLabel} وضمن ميزانيتك ومسار اليوم${settings.rainPreference === "yes" ? " مع مراعاة تفضيلك لأجواء المطر بأمان" : ""}.`;
             stops.push(place);
             cursor += place.duration;
             previousZone = place.zone;
@@ -3038,7 +3045,7 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ فحص الطقس الحقيقي...';
     const groupLabels = { family: "العائلة", friends: "الأصدقاء", solo: "الرحلات الفردية" };
-    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests };
+    smartTripSettings = { tripDate: data.get("tripDate"), days: Number(data.get("duration")), dayStart: data.get("dayStart"), dayEnd: data.get("dayEnd"), budget: data.get("budget"), people: Number(data.get("people")), group: data.get("group"), groupLabel: groupLabels[data.get("group")], interests, tripSetting: data.get("tripSetting"), rainPreference: data.get("rainPreference"), details: data.getAll("tripDetails") };
     let weatherMap = null;
     let weatherMessage = "توقعات حقيقية محدثة من Open-Meteo.";
     try {
@@ -3052,7 +3059,7 @@ document.querySelector("#journeyDnaForm")?.addEventListener("submit", async (eve
     const estimated = smartTripDays.flatMap((day) => day.stops).reduce((sum, stop) => sum + stop.cost, 0) * smartTripSettings.people;
     const weatherAdjusted = smartTripDays.filter((day) => !day.weather.outdoor).length;
     const result = document.querySelector("#journeyDnaResult");
-    result.innerHTML = `<div class="trip-build-summary"><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span><span><small>تعديلات الطقس</small><strong>${weatherAdjusted} أيام</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> تم استبعاد الوجهات المكشوفة غير المناسبة من الأيام الممطرة أو كثيفة الضباب قبل إنشاء الجدول.</p><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>`;
+    result.innerHTML = `<div class="trip-build-summary"><span><small>نمط الرحلة</small><strong>${smartTripSettings.tripSetting === "agritourism" ? "سياحة زراعية" : "داخل المدينة"}</strong></span><span><small>أجواء المطر</small><strong>${smartTripSettings.rainPreference === "yes" ? "يفضلها" : "لا يفضلها"}</strong></span><span><small>المدة</small><strong>${smartTripSettings.days} أيام</strong></span><span><small>المسافرون</small><strong>${smartTripSettings.people}</strong></span><span><small>التكلفة التقديرية</small><strong>${estimated.toLocaleString("ar-SA")} ر.س</strong></span><span><small>تعديلات الطقس</small><strong>${weatherAdjusted} أيام</strong></span></div><p><i class="fa-solid fa-cloud-sun"></i> ${escapeHtml(weatherMessage)}</p><p><i class="fa-solid fa-shield-sun"></i> حب المطر تفضيل للتجربة فقط؛ ما زلنا نستبعد أي وجهة مكشوفة إذا كانت حالة الطقس غير آمنة.</p><a href="#adaptiveJourney">عرض الجدول اليومي <i class="fa-solid fa-arrow-down"></i></a>`;
     result.hidden = false;
     document.querySelector("#conditionLab").hidden = false;
     document.querySelector("#weatherAdaptationForm").hidden = true;
