@@ -223,8 +223,7 @@ const mainAgentRoutes = [
     { type: "transport", title: "وكيل التنقل", icon: "fa-bus", keywords: ["مواصلات", "تنقل", "نقل", "سيارة", "تاكسي", "حافلة", "محطة", "توصيل"] },
     { type: "housing", title: "وكيل الإقامة", icon: "fa-house", keywords: ["سكن", "إقامة", "شقة", "فندق", "نزل", "فيلا", "إيجار", "غرفة"] },
     { type: "entertainment", title: "وكيل التجارب", icon: "fa-ticket", keywords: ["تجربة", "فعالية", "مطعم", "مقهى", "سياحة", "مغامرة", "فيلم", "حديقة"] },
-    { type: "guides", title: "وكيل المرشد المحلي", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "السودة", "تراث"] },
-    { type: "aseer-now", title: "وكيل عسير اللحظي", icon: "fa-location-crosshairs", keywords: ["الآن", "لحظي", "طقس", "ازدحام", "قريب", "تصوير"] }
+    { type: "guides", title: "وكيل المرشد المحلي", icon: "fa-person-hiking", keywords: ["مرشد", "مرشدين", "دليل", "جولة", "جولات", "سياحي", "السودة", "تراث"] }
 ];
 
 const agentPromptSuggestions = {
