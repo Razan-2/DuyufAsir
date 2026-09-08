@@ -66,7 +66,7 @@ class OpenAIResponsesProvider:
     def __init__(self) -> None:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         self.model = os.getenv("OPENAI_MODEL", "gpt-5-mini").strip()
-        self.timeout = float(os.getenv("OPENAI_TIMEOUT_SECONDS", "25"))
+        self.timeout = float(os.getenv("OPENAI_TIMEOUT_SECONDS", "15"))
 
     async def create(self, payload: dict[str, Any]) -> dict[str, Any]:
         if not self.api_key:
@@ -112,14 +112,14 @@ class SmartTripAgent:
         user_payload = {"request": request.message, "today_riyadh": datetime.now(riyadh_timezone).date().isoformat(), "preferences": request.preferences or {}, "current_profile": context.profile, "existing_trip": request.trip or []}
         inputs: list[dict[str, Any]] = [{"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)}]
         reply = ""
-        for _ in range(8):
+        for _ in range(6):
             response = await self._provider_call({
                 "instructions": SYSTEM_PROMPT,
                 "input": inputs,
                 "tools": TOOL_DEFINITIONS,
                 "tool_choice": "auto",
-                "parallel_tool_calls": False,
-                "max_output_tokens": 900,
+                "parallel_tool_calls": True,
+                "max_output_tokens": 550,
                 "store": False,
             })
             output = response.get("output", [])
@@ -128,12 +128,18 @@ class SmartTripAgent:
                 reply = (response.get("output_text") or "").strip()
                 break
             inputs.extend(output)
+            parsed_calls: list[tuple[dict[str, Any], dict[str, Any]]] = []
             for call in calls:
                 try:
                     arguments = json.loads(call.get("arguments") or "{}")
                 except json.JSONDecodeError:
                     arguments = {}
-                tool_result = await execute_tool(context, call.get("name", ""), arguments)
+                parsed_calls.append((call, arguments))
+            tool_results = await asyncio.gather(*(
+                execute_tool(context, call.get("name", ""), arguments)
+                for call, arguments in parsed_calls
+            ))
+            for (call, _), tool_result in zip(parsed_calls, tool_results):
                 inputs.append({"type": "function_call_output", "call_id": call["call_id"], "output": json.dumps(tool_result, ensure_ascii=False)})
         if not reply:
             reply = "تم تنفيذ الأدوات وبناء النتيجة المتاحة." if context.trip else "لم أتمكن من إكمال خطة الرحلة من النتائج المتاحة."
