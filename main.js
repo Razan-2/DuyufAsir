@@ -3089,6 +3089,65 @@ function renderPrototypeJourney(days = smartTripDays) {
     }).join("");
 }
 
+function syncAgentTripToAdaptiveJourney(agentTrip = [], profile = {}, sources = {}) {
+    if (!agentTrip.length) return;
+    const catalog = Object.values(smartTripPlaces).flat();
+    const startDate = new Date(`${profile.start_date || new Date().toISOString().slice(0, 10)}T12:00:00`);
+    const categoryDefaults = {
+        "كوفي": { icon: "☕", image: "assets/entertainment/food-cafe.jpg", indoor: true },
+        "مطعم": { icon: "🍽️", image: "assets/entertainment/joy-venue-restaurant.jpg", indoor: true },
+        "فعالية": { icon: "🎭", image: "assets/entertainment/activity-art-night.jpg", indoor: true },
+        "تجربة": { icon: "🧭", image: "assets/entertainment/tuesday-market-crafts.jpg", indoor: true },
+        "تراث": { icon: "🏛️", image: "assets/properties/rijal-almaa-heritage.jpg", indoor: true },
+        "طبيعة": { icon: "🌿", image: "assets/agents/smart-journey-asir-v2.png", indoor: false }
+    };
+    const defaultFor = (category = "") => Object.entries(categoryDefaults).find(([key]) => category.includes(key))?.[1] || categoryDefaults["تجربة"];
+    smartTripSettings = {
+        tripDate: profile.start_date,
+        days: profile.days,
+        dayStart: profile.day_start_time,
+        dayEnd: profile.day_end_time,
+        budget: profile.budget,
+        people: profile.people_count,
+        groupLabel: profile.group_type,
+        interests: profile.interests || [],
+        tripSetting: profile.trip_type === "سياحة زراعية" ? "agritourism" : "city",
+        rainPreference: profile.weather_preference === "يحب المطر" ? "yes" : "no"
+    };
+    smartTripDays = agentTrip.map((day, dayIndex) => {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + dayIndex);
+        return {
+            dayIndex,
+            date,
+            start: minutesFromTime(day.start_time),
+            end: minutesFromTime(day.end_time),
+            weather: { icon: "🌤️", label: "تم فحص الطقس أثناء بناء الرحلة", outdoor: true, source: sources.weather?.includes("Open-Meteo") ? "Open-Meteo" : "temporary_fallback" },
+            stops: day.stops.map((stop, stopIndex) => {
+                const known = catalog.find((item) => item.name === stop.name);
+                const fallback = defaultFor(stop.category);
+                return {
+                    name: stop.name,
+                    category: stop.category,
+                    icon: known?.icon || fallback.icon,
+                    duration: stop.duration_minutes || 60,
+                    indoor: known?.indoor ?? fallback.indoor,
+                    zone: known?.zone || (stop.name.includes("السودة") ? "السودة" : "وسط أبها"),
+                    cost: stop.estimated_cost || 0,
+                    interest: known?.interest || "nature",
+                    image: known?.image || fallback.image,
+                    timeMinutes: minutesFromTime(stop.time),
+                    travel: stopIndex ? 15 : 0,
+                    reason: stop.reason || "اختاره الوكيل حسب ملف رحلتك."
+                };
+            })
+        };
+    });
+    localStorage.setItem("smartTripPlan", JSON.stringify({ settings: smartTripSettings, days: smartTripDays }));
+    renderPrototypeJourney();
+    document.querySelector("#conditionLab").hidden = false;
+}
+
 function updateTripSettingPreferences(setting) {
     document.querySelectorAll("[data-setting-preferences]").forEach((section) => {
         const active = section.dataset.settingPreferences === setting;
@@ -3198,6 +3257,7 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
             output.innerHTML = `<div class="smart-agent-actions">${payload.actions.map((action) => `<span><i class="fa-solid fa-check"></i>${escapeHtml(({ profile_updated: "فهم التفضيلات", weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action))}</span>`).join("")}</div>${payload.trip.map((day) => `<article><h4>اليوم ${day.day} <small>${escapeHtml(formatClock12(day.start_time))} — ${escapeHtml(formatClock12(day.end_time))}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(formatClock12(stop.time))}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة · ${stop.estimated_cost} ر.س</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><b>مصادر البيانات:</b> الطقس: ${escapeHtml(payload.data_sources.weather)} · الكتالوج: ${escapeHtml(payload.data_sources.catalog)}</footer>`;
             output.hidden = false;
             localStorage.setItem("smartTripAgentTrip", JSON.stringify(payload.trip));
+            syncAgentTripToAdaptiveJourney(payload.trip, tripProfile, payload.data_sources);
         }
     } catch (error) {
         status.className = "smart-agent-status error";
@@ -3208,7 +3268,10 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
     }
 });
 
-renderTripProfile(JSON.parse(localStorage.getItem("smartTripAgentProfile") || "{}"));
+const restoredAgentProfile = JSON.parse(localStorage.getItem("smartTripAgentProfile") || "{}");
+const restoredAgentTrip = JSON.parse(localStorage.getItem("smartTripAgentTrip") || "[]");
+renderTripProfile(restoredAgentProfile);
+if (restoredAgentTrip.length) syncAgentTripToAdaptiveJourney(restoredAgentTrip, restoredAgentProfile, {});
 
 // محرك الاستمرارية: الطقس الأساسي يأتي من Open-Meteo عند توفره.
 // سيناريو التنبيه الاستباقي والازدحام أدناه Simulation مخصص لعرض الـPrototype وليس بيانات حية.
