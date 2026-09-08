@@ -219,6 +219,13 @@ function escapeHtml(value) {
     return String(value).replace(/[&<>"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[character]));
 }
 
+function formatClock12(value) {
+    const match = String(value ?? "").match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return String(value ?? "");
+    const hours = Number(match[1]);
+    return `${hours % 12 || 12}:${match[2]} ${hours >= 12 ? "م" : "ص"}`;
+}
+
 const mainAgentRoutes = [
     { type: "smart-trip", title: "وكيل الرحلة الذكية", icon: "fa-route", keywords: ["رحلة", "رحله", "خطط", "برنامج", "جدول", "مسار", "يتكيف", "يوم واحد", "يومين", "أيام"] },
     { type: "transport", title: "وكيل التنقل", icon: "fa-bus", keywords: ["مواصلات", "تنقل", "نقل", "سيارة", "تاكسي", "حافلة", "محطة", "توصيل"] },
@@ -1837,7 +1844,7 @@ function appendAgentTrip(trip, actions = [], sources = {}) {
     if (!Array.isArray(trip) || !trip.length) return;
     const card = document.createElement("section");
     card.className = "real-agent-trip";
-    card.innerHTML = `<header><i class="fa-solid fa-wand-magic-sparkles"></i><span><strong>جدول أنشأه Smart Trip Agent</strong><small>${actions.map((action) => ({ weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action)).join(" · ")}</small></span></header>${trip.map((day) => `<article><h4>اليوم ${day.day} <small>${day.start_time} — ${day.end_time}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(stop.time)}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><i class="fa-solid fa-database"></i> الطقس: ${escapeHtml(sources.weather || "غير مستخدم")} · البيانات: ${escapeHtml(sources.catalog || "بيانات المشروع")}</footer>`;
+    card.innerHTML = `<header><i class="fa-solid fa-wand-magic-sparkles"></i><span><strong>جدول أنشأه Smart Trip Agent</strong><small>${actions.map((action) => ({ weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action)).join(" · ")}</small></span></header>${trip.map((day) => `<article><h4>اليوم ${day.day} <small>${formatClock12(day.start_time)} — ${formatClock12(day.end_time)}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(formatClock12(stop.time))}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><i class="fa-solid fa-database"></i> الطقس: ${escapeHtml(sources.weather || "غير مستخدم")} · البيانات: ${escapeHtml(sources.catalog || "بيانات المشروع")}</footer>`;
     messages.appendChild(card);
     card.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -3125,7 +3132,7 @@ function renderTripProfile(profile = {}, missingFields = null) {
     const known = Object.entries(tripProfileLabels).filter(([key]) => profile[key] !== undefined && profile[key] !== null && profile[key] !== "" && (!Array.isArray(profile[key]) || profile[key].length));
     if (!missingFields) missingFields = Object.keys(tripProfileLabels).filter((key) => !known.some(([knownKey]) => knownKey === key));
     summary.innerHTML = known.length ? known.map(([key, label]) => {
-        const rawValue = key === "guide" ? (profile[key] ? "مع مرشد" : "بدون مرشد") : key === "interests" ? profile[key].join("، ") : profile[key];
+        const rawValue = key === "guide" ? (profile[key] ? "مع مرشد" : "بدون مرشد") : key === "interests" ? profile[key].join("، ") : ["start_time", "end_time"].includes(key) ? formatClock12(profile[key]) : profile[key];
         return `<li><i class="fa-solid fa-check"></i><span><small>${label}</small><strong>${escapeHtml(rawValue)}</strong></span></li>`;
     }).join("") : '<li class="empty"><i class="fa-solid fa-comments"></i> بانتظار إجابتك الأولى</li>';
     const completed = Object.keys(tripProfileLabels).length - missingFields.length;
@@ -3180,7 +3187,7 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
         renderSmartAgentQuickOptions(payload.quick_options);
         status.hidden = true;
         if (payload.trip?.length) {
-            output.innerHTML = `<div class="smart-agent-actions">${payload.actions.map((action) => `<span><i class="fa-solid fa-check"></i>${escapeHtml(({ profile_updated: "فهم التفضيلات", weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action))}</span>`).join("")}</div>${payload.trip.map((day) => `<article><h4>اليوم ${day.day} <small>${escapeHtml(day.start_time)} — ${escapeHtml(day.end_time)}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(stop.time)}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة · ${stop.estimated_cost} ر.س</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><b>مصادر البيانات:</b> الطقس: ${escapeHtml(payload.data_sources.weather)} · الكتالوج: ${escapeHtml(payload.data_sources.catalog)}</footer>`;
+            output.innerHTML = `<div class="smart-agent-actions">${payload.actions.map((action) => `<span><i class="fa-solid fa-check"></i>${escapeHtml(({ profile_updated: "فهم التفضيلات", weather_checked: "فحص الطقس", destinations_searched: "بحث الوجهات", restaurants_searched: "بحث المطاعم والكوفيهات", events_searched: "بحث الفعاليات", trip_created: "بناء الرحلة", trip_updated: "تحديث الرحلة" }[action] || action))}</span>`).join("")}</div>${payload.trip.map((day) => `<article><h4>اليوم ${day.day} <small>${escapeHtml(formatClock12(day.start_time))} — ${escapeHtml(formatClock12(day.end_time))}</small></h4><ol>${day.stops.map((stop) => `<li><time>${escapeHtml(formatClock12(stop.time))}</time><span><b>${escapeHtml(stop.name)}</b><small>${escapeHtml(stop.category)} · ${stop.duration_minutes} دقيقة · ${stop.estimated_cost} ر.س</small><em>${escapeHtml(stop.reason)}</em></span></li>`).join("")}</ol></article>`).join("")}<footer><b>مصادر البيانات:</b> الطقس: ${escapeHtml(payload.data_sources.weather)} · الكتالوج: ${escapeHtml(payload.data_sources.catalog)}</footer>`;
             output.hidden = false;
             localStorage.setItem("smartTripAgentTrip", JSON.stringify(payload.trip));
         }
