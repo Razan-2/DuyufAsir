@@ -3146,7 +3146,137 @@ function syncAgentTripToAdaptiveJourney(agentTrip = [], profile = {}, sources = 
     localStorage.setItem("smartTripPlan", JSON.stringify({ settings: smartTripSettings, days: smartTripDays }));
     renderPrototypeJourney();
     document.querySelector("#conditionLab").hidden = false;
+    showAsirGiftFeature();
 }
+
+const asirGiftLabels = {
+    recipient: { man: "رجالي", woman: "نسائي", child: "أطفال" },
+    gift_type: { asir_outfit: "زي عسيري", asir_qatt: "منتج قط عسيري", heritage_piece: "قطعة تراثية", surprise: "هدية يختارها الوكيل" },
+    style: { authentic: "تراثي أصيل", modern: "عصري بلمسة عسيرية", agent_choice: "اختيار الوكيل" },
+    pickup_method: { accommodation: "مقر الإقامة", experience: "موقع التجربة", provider: "الاستلام من مقدم الهدية" }
+};
+
+function renderAsirGiftCoupon(coupon) {
+    const host = document.querySelector("#asirGiftCouponHost");
+    if (!host) return;
+    const redeemed = coupon.status === "redeemed";
+    host.innerHTML = `<article class="asir-gift-coupon ${redeemed ? "redeemed" : ""}"><div class="asir-coupon-pattern"></div><header><i class="fa-solid fa-gift"></i><span><small>تجربة MVP مرتبطة برحلتك</small><h3>كوبون هدية عسير</h3></span><b>${redeemed ? "تم الاستلام" : "متاح"}</b></header><div class="asir-coupon-body"><dl><div><dt>الهدية</dt><dd>${escapeHtml(asirGiftLabels.gift_type[coupon.gift_type])}</dd></div><div><dt>الفئة</dt><dd>${escapeHtml(asirGiftLabels.recipient[coupon.recipient])}</dd></div>${coupon.size ? `<div><dt>المقاس</dt><dd dir="ltr">${escapeHtml(coupon.size)}</dd></div>` : ""}${coupon.style ? `<div><dt>الطابع</dt><dd>${escapeHtml(asirGiftLabels.style[coupon.style])}</dd></div>` : ""}<div><dt>الاستلام</dt><dd>${escapeHtml(asirGiftLabels.pickup_method[coupon.pickup_method])}</dd></div><div><dt>رمز الكوبون</dt><dd dir="ltr">${escapeHtml(coupon.code)}</dd></div></dl><figure><img src="${coupon.qr_svg}" alt="QR Code لكوبون هدية عسير"><figcaption>امسح الرمز عند تفعيل الاستلام</figcaption></figure></div><footer><p><i class="fa-solid fa-shield-halved"></i> كوبون تجريبي للعرض، ولا يمثل اتفاقية استلام حقيقية حاليًا.</p>${redeemed ? '<button type="button" disabled><i class="fa-solid fa-circle-check"></i> تم استخدام الكوبون</button>' : `<button type="button" data-redeem-asir-gift="${escapeHtml(coupon.code)}"><i class="fa-solid fa-gift"></i> تسجيل استلام الهدية</button>`}</footer></article>`;
+    host.hidden = false;
+    document.querySelector("#chooseAsirGift").innerHTML = 'عرض كوبونك <i class="fa-solid fa-arrow-down"></i>';
+}
+
+async function showAsirGiftFeature() {
+    const feature = document.querySelector("#asirGiftFeature");
+    if (!feature) return;
+    feature.hidden = false;
+    const sessionId = localStorage.getItem("smartTripAgentSessionId");
+    if (!sessionId) return;
+    try {
+        const response = await fetch(`/api/gift-coupons/trip/${encodeURIComponent(sessionId)}`);
+        if (response.ok) renderAsirGiftCoupon(await response.json());
+    } catch (_) {
+        // The gift selection remains available if restoring a previous coupon fails.
+    }
+}
+
+let asirGiftStep = 1;
+
+function showAsirGiftStep(step) {
+    const form = document.querySelector("#asirGiftForm");
+    if (!form) return;
+    asirGiftStep = step;
+    form.querySelectorAll("[data-gift-step]").forEach((fieldset) => { fieldset.hidden = Number(fieldset.dataset.giftStep) !== step; });
+    form.querySelectorAll(".asir-gift-steps i").forEach((item, index) => item.classList.toggle("active", index < step));
+    form.querySelector("#asirGiftPrevious").hidden = step === 1;
+    form.querySelector("#asirGiftNext").hidden = step === 4;
+    form.querySelector("#asirGiftCreate").hidden = step !== 4;
+    form.querySelector("#asirGiftError").hidden = true;
+}
+
+document.querySelector("#chooseAsirGift")?.addEventListener("click", () => {
+    const existing = document.querySelector("#asirGiftCouponHost:not([hidden])");
+    if (existing) {
+        existing.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+    showAsirGiftStep(1);
+    document.querySelector("#asirGiftDialog")?.showModal();
+});
+
+document.querySelector("[data-gift-close]")?.addEventListener("click", () => document.querySelector("#asirGiftDialog")?.close());
+
+document.querySelector("#asirGiftAgentSuggest")?.addEventListener("click", () => {
+    const profile = JSON.parse(localStorage.getItem("smartTripAgentProfile") || "{}");
+    const interests = (profile.interests || []).join(" ");
+    const suggestion = /تراث|فن|قط/.test(interests) ? "asir_qatt" : /مزرعة|زراع|طبيعة|عسل/.test(`${profile.trip_type || ""} ${interests}`) ? "heritage_piece" : "surprise";
+    const input = document.querySelector(`#asirGiftForm [name="gift_type"][value="${suggestion}"]`);
+    if (input) input.checked = true;
+    const note = document.querySelector("#asirGiftSuggestionNote");
+    note.textContent = suggestion === "surprise" ? "لا توجد اهتمامات كافية للاختيار بدقة؛ لذلك اخترنا «فاجئني» بدون تخمين معلومات شخصية." : `اقترح الوكيل «${asirGiftLabels.gift_type[suggestion]}» اعتمادًا على الاهتمامات المسجلة في ملف رحلتك فقط.`;
+    note.hidden = false;
+});
+
+document.querySelector("#asirGiftNext")?.addEventListener("click", () => {
+    const form = document.querySelector("#asirGiftForm");
+    const error = form.querySelector("#asirGiftError");
+    const selected = asirGiftStep === 1 ? form.elements.recipient.value : form.elements.gift_type.value;
+    if (!selected) {
+        error.textContent = "اختاري أحد الخيارات للمتابعة.";
+        error.hidden = false;
+        return;
+    }
+    showAsirGiftStep(asirGiftStep === 2 && selected !== "asir_outfit" ? 4 : asirGiftStep + 1);
+});
+
+document.querySelector("#asirGiftPrevious")?.addEventListener("click", () => {
+    const giftType = document.querySelector("#asirGiftForm").elements.gift_type.value;
+    showAsirGiftStep(asirGiftStep === 4 && giftType !== "asir_outfit" ? 2 : asirGiftStep - 1);
+});
+
+document.querySelector("#asirGiftForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const error = form.querySelector("#asirGiftError");
+    const pickupMethod = form.elements.pickup_method.value;
+    if (!pickupMethod) {
+        error.textContent = "اختاري طريقة الاستلام.";
+        error.hidden = false;
+        return;
+    }
+    const giftType = form.elements.gift_type.value;
+    const submit = form.querySelector("#asirGiftCreate");
+    submit.disabled = true;
+    submit.textContent = "جاري إنشاء الكوبون…";
+    try {
+        const response = await fetch("/api/gift-coupons", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trip_reference: localStorage.getItem("smartTripAgentSessionId"), recipient: form.elements.recipient.value, gift_type: giftType, size: giftType === "asir_outfit" ? form.elements.size.value : null, style: giftType === "asir_outfit" ? form.elements.style.value : null, pickup_method: pickupMethod }) });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || "تعذر إنشاء الكوبون.");
+        renderAsirGiftCoupon(payload);
+        document.querySelector("#asirGiftDialog").close();
+        document.querySelector("#asirGiftCouponHost").scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (failure) {
+        error.textContent = failure.message;
+        error.hidden = false;
+    } finally {
+        submit.disabled = false;
+        submit.textContent = "إنشاء كوبون الهدية";
+    }
+});
+
+document.querySelector("#asirGiftCouponHost")?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-redeem-asir-gift]");
+    if (!button) return;
+    button.disabled = true;
+    try {
+        const response = await fetch(`/api/gift-coupons/${encodeURIComponent(button.dataset.redeemAsirGift)}/redeem`, { method: "POST" });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || "تعذر تحديث حالة الكوبون.");
+        renderAsirGiftCoupon(payload);
+    } catch (failure) {
+        button.disabled = false;
+        window.alert(failure.message);
+    }
+});
 
 function updateTripSettingPreferences(setting) {
     document.querySelectorAll("[data-setting-preferences]").forEach((section) => {

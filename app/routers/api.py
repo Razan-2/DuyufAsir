@@ -1,5 +1,12 @@
-from fastapi import APIRouter, Depends, Query, status
+import base64
+import secrets
+from io import BytesIO
+
+import qrcode
+import qrcode.image.svg
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
@@ -8,6 +15,64 @@ from app.database import get_db
 from app.services import crud
 
 router = APIRouter(prefix="/api")
+
+
+def gift_coupon_response(coupon: models.GiftCoupon) -> schemas.GiftCouponRead:
+    image = qrcode.make(f"ASIR-GIFT:{coupon.code}", image_factory=qrcode.image.svg.SvgPathImage, box_size=8, border=2)
+    buffer = BytesIO()
+    image.save(buffer)
+    qr_svg = "data:image/svg+xml;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+    return schemas.GiftCouponRead.model_validate({
+        "trip_reference": coupon.trip_reference,
+        "recipient": coupon.recipient,
+        "gift_type": coupon.gift_type,
+        "size": coupon.size,
+        "style": coupon.style,
+        "pickup_method": coupon.pickup_method,
+        "code": coupon.code,
+        "status": coupon.status,
+        "qr_svg": qr_svg,
+        "created_at": coupon.created_at,
+        "redeemed_at": coupon.redeemed_at,
+    })
+
+
+@router.post("/gift-coupons", response_model=schemas.GiftCouponRead, status_code=201)
+def create_gift_coupon(data: schemas.GiftCouponCreate, db: Session = Depends(get_db)):
+    existing = db.scalar(select(models.GiftCoupon).where(models.GiftCoupon.trip_reference == data.trip_reference))
+    if existing:
+        return gift_coupon_response(existing)
+    coupon = models.GiftCoupon(**data.model_dump(), code=f"ASIR-GIFT-{secrets.token_hex(3).upper()}")
+    db.add(coupon)
+    try:
+        db.commit()
+    except IntegrityError as error:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="تم إنشاء كوبون لهذه الرحلة مسبقًا.") from error
+    db.refresh(coupon)
+    return gift_coupon_response(coupon)
+
+
+@router.get("/gift-coupons/trip/{trip_reference}", response_model=schemas.GiftCouponRead)
+def get_gift_coupon(trip_reference: str, db: Session = Depends(get_db)):
+    coupon = db.scalar(select(models.GiftCoupon).where(models.GiftCoupon.trip_reference == trip_reference))
+    if not coupon:
+        raise HTTPException(status_code=404, detail="لا يوجد كوبون لهذه الرحلة.")
+    return gift_coupon_response(coupon)
+
+
+@router.post("/gift-coupons/{code}/redeem", response_model=schemas.GiftCouponRead)
+def redeem_gift_coupon(code: str, db: Session = Depends(get_db)):
+    coupon = db.scalar(select(models.GiftCoupon).where(models.GiftCoupon.code == code))
+    if not coupon:
+        raise HTTPException(status_code=404, detail="رمز الكوبون غير موجود.")
+    if coupon.status == "redeemed":
+        raise HTTPException(status_code=409, detail="تم استلام هذه الهدية مسبقًا ولا يمكن استخدام الكوبون مرة أخرى.")
+    coupon.status = "redeemed"
+    coupon.redeemed_at = models.now_utc()
+    db.commit()
+    db.refresh(coupon)
+    return gift_coupon_response(coupon)
 
 
 def payload(data):

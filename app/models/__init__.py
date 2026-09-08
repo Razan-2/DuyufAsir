@@ -189,3 +189,21 @@ class OptimalWindow(Base, TimestampMixin):
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     predicted_score: Mapped[float] = mapped_column(Float)
+
+
+class GiftCoupon(Base, TimestampMixin):
+    __tablename__ = "gift_coupons"
+    __table_args__ = (
+        UniqueConstraint("trip_reference", name="uq_gift_coupon_trip_reference"),
+        CheckConstraint("status IN ('available', 'redeemed')", name="gift_coupon_valid_status"),
+    )
+    id: Mapped[int] = mapped_column(primary_key=True)
+    trip_reference: Mapped[str] = mapped_column(String(80), index=True)
+    code: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    recipient: Mapped[str] = mapped_column(String(20))
+    gift_type: Mapped[str] = mapped_column(String(30))
+    size: Mapped[str | None] = mapped_column(String(5), nullable=True)
+    style: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    pickup_method: Mapped[str] = mapped_column(String(40))
+    status: Mapped[str] = mapped_column(String(20), default="available")
+    redeemed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -116,7 +116,9 @@ fetch("/")
             });
 
         if (pageName === "contact") {
-            const footer = document.querySelector("footer");
+            // Target the site footer specifically; dialogs and embedded widgets
+            // can contain their own footer elements.
+            const footer = document.querySelector("footer#contact");
 
             if (footer) {
                 const contactPanel =

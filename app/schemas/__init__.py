@@ -1,5 +1,5 @@
 from datetime import date, datetime, time
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, HttpUrl, model_validator
 
@@ -202,3 +202,29 @@ class Page(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class GiftCouponCreate(BaseModel):
+    trip_reference: str = Field(min_length=8, max_length=80, pattern=r"^[A-Za-z0-9_-]+$")
+    recipient: Literal["man", "woman", "child"]
+    gift_type: Literal["asir_outfit", "asir_qatt", "heritage_piece", "surprise"]
+    size: Literal["S", "M", "L", "XL", "XXL"] | None = None
+    style: Literal["authentic", "modern", "agent_choice"] | None = None
+    pickup_method: Literal["accommodation", "experience", "provider"]
+
+    @model_validator(mode="after")
+    def outfit_details(self):
+        if self.gift_type == "asir_outfit" and (not self.size or not self.style):
+            raise ValueError("المقاس والطابع مطلوبان عند اختيار الزي العسيري")
+        if self.gift_type != "asir_outfit":
+            self.size = None
+            self.style = None
+        return self
+
+
+class GiftCouponRead(GiftCouponCreate, ORMModel):
+    code: str
+    status: Literal["available", "redeemed"]
+    qr_svg: str
+    created_at: datetime
+    redeemed_at: datetime | None
