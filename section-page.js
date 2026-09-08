@@ -56,6 +56,8 @@ fetch("/")
             const backButton = document.createElement("button");
             backButton.type = "button";
             backButton.className = "section-back-button";
+            backButton.setAttribute("aria-label", "رجوع للخلف");
+            backButton.title = "رجوع للخلف";
             backButton.innerHTML = '<i class="fa-solid fa-arrow-right"></i><span>رجوع للخلف</span>';
             backButton.addEventListener("click", () => {
                 const previousPage = document.referrer ? new URL(document.referrer) : null;
