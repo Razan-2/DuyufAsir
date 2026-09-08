@@ -240,15 +240,19 @@
         <div class="weather-demo-notice weather-live-notice"><i class="fa-solid fa-cloud-sun-rain"></i><span><strong>توقعات طقس حقيقية</strong><small>نفحص توقعات كل وجهة في وقت الزيارة عبر Open-Meteo. عند تعذر الاتصال تظهر المحاكاة المؤقتة بوضوح.</small></span></div>
     </div>
     <section class="smart-agent-console" aria-labelledby="smartAgentTitle">
-        <header><i class="fa-solid fa-robot"></i><span><small>وكيل AI حقيقي يستخدم الأدوات</small><h3 id="smartAgentTitle">خلّنا نبني رحلتك بالمحادثة</h3><p>أخبرني بما تعرفه الآن، وسأسألك فقط عن المعلومات الناقصة.</p></span></header>
         <div class="smart-agent-workspace">
             <div class="smart-agent-conversation">
+                <header class="smart-agent-chat-header"><i class="fa-solid fa-robot"></i><span><small>مساعدك الذكي في ضيوف عسير</small><h3 id="smartAgentTitle">خلّنا نبني رحلتك بالمحادثة</h3><p>أخبرني بما تعرفه الآن، وسأسألك فقط عن المعلومات الناقصة.</p></span></header>
                 <div class="smart-agent-messages" id="smartAgentMessages"><div class="smart-agent-message assistant"><i class="fa-solid fa-robot"></i><p>أهلًا بك، خليني أبني لك رحلة تناسبك. وش نوع التجربة اللي تفضلها؟</p></div></div>
                 <div class="smart-agent-quick-options" id="smartAgentQuickOptions"><button type="button">سياحة زراعية</button><button type="button">داخل المدينة</button><button type="button">طبيعة</button><button type="button">خليط</button></div>
                 <form id="smartTripAgentForm"><textarea name="message" minlength="2" maxlength="1200" rows="2" required placeholder="اكتب إجابتك أو اذكر كل تفاصيل رحلتك مرة واحدة..."></textarea><button type="submit"><i class="fa-solid fa-paper-plane"></i><span>إرسال</span></button></form>
                 <div class="smart-agent-status" id="smartAgentStatus" hidden aria-live="polite"></div><div class="smart-agent-output" id="smartAgentOutput" hidden></div>
             </div>
             <aside class="trip-profile-summary"><header><i class="fa-solid fa-clipboard-check"></i><span><strong>ملف رحلتك</strong><small>يتحدث تلقائيًا أثناء المحادثة</small></span></header><ul id="tripProfileSummary"><li class="empty"><i class="fa-solid fa-comments"></i> بانتظار إجابتك الأولى</li></ul><div class="trip-profile-progress"><span><i></i></span><small id="tripProfileProgressText">0 من 11 معلومات</small></div></aside>
+            <aside class="smart-trip-showcase" aria-label="رحلتك الذكية في عسير">
+                <img src="assets/brand/asir-sunset-hero-v2.png" alt="جبال عسير وقت الغروب" loading="eager">
+                <div class="smart-trip-showcase-content"><span>اكتشفها بطريقتك</span><h3>رحلتك الذكية<br>في عسير</h3><p>الطبيعة والتراث والتجارب الفريدة، مرتبة حسب ذوقك.</p><div><b><i class="fa-solid fa-car-side"></i> مواصلات</b><b><i class="fa-solid fa-user-check"></i> مرشدون</b><b><i class="fa-solid fa-shop"></i> تجارب</b><b><i class="fa-solid fa-basket-shopping"></i> أسر منتجة</b></div></div>
+            </aside>
         </div>
     </section>
     <form class="dna-form conversational-fallback-form" id="journeyDnaForm" aria-hidden="true">

@@ -5528,6 +5528,38 @@ details.classic-choice-card summary::-webkit-details-marker { display: none; }
 .trip-profile-summary ul { display:grid; gap:7px; margin:0; padding:0; list-style:none; }.trip-profile-summary li { display:flex; align-items:center; gap:8px; padding:8px; border-radius:9px; background:#fff; }.trip-profile-summary li>i { color:#1f7953; }.trip-profile-summary li>span { display:grid; gap:1px; }.trip-profile-summary li small { color:#84776e; font-size:9px; }.trip-profile-summary li strong { font-size:11px; }.trip-profile-summary li.empty { color:#82756b; font-size:11px; }
 .trip-profile-progress { display:grid; gap:6px; }.trip-profile-progress>span { height:8px; overflow:hidden; border-radius:99px; background:#e8ded2; }.trip-profile-progress i { display:block; width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg,#205c43,#d78c35); transition:width .35s ease; }.trip-profile-progress small { color:#766b62; font-size:9px; text-align:center; }
 @media(max-width:820px){.smart-agent-workspace{grid-template-columns:1fr}.trip-profile-summary{position:static;grid-row:1}.smart-agent-message{max-width:95%}}
+
+/* Smart Trip workspace: profile, conversation and visual introduction. */
+.smart-agent-console { padding:10px; overflow:hidden; border-radius:24px; background:#f4f8f4; }
+.smart-agent-workspace { direction:ltr; grid-template-columns:minmax(210px,.62fr) minmax(430px,1.55fr) minmax(260px,.82fr); grid-template-areas:"profile conversation showcase"; gap:10px; align-items:stretch; min-height:610px; }
+.smart-agent-conversation { grid-area:conversation; direction:rtl; grid-template-rows:auto minmax(230px,1fr) auto auto auto; height:610px; padding:12px; border-color:#c8dcd1; box-shadow:0 8px 24px rgba(29,82,59,.08); }
+.smart-agent-chat-header { display:flex; align-items:center; gap:10px; padding:3px 2px 11px; border-bottom:1px solid #e1ebe5; }
+.smart-agent-chat-header>i { display:grid; width:38px; height:38px; flex:0 0 38px; place-items:center; border-radius:12px; color:#fff; background:#205c43; }
+.smart-agent-chat-header>span { display:grid; gap:1px; }
+.smart-agent-chat-header small { color:#33815e; font-size:10px; font-weight:900; }
+.smart-agent-chat-header h3 { font-size:16px; }
+.smart-agent-chat-header p { color:#81766e; font-size:10px; }
+.smart-agent-messages { max-height:none; min-height:0; padding:8px 3px; }
+.smart-agent-console form { grid-template-columns:minmax(0,1fr) 48px; gap:7px; }
+.smart-agent-console textarea { min-height:48px; max-height:100px; padding:12px 14px; resize:none; }
+.smart-agent-console form button { min-width:48px; width:48px; min-height:48px; border-radius:12px; font-size:0; }
+.smart-agent-console form button i { font-size:16px; }
+.smart-agent-conversation>.smart-agent-output { max-height:360px; }
+.trip-profile-summary { grid-area:profile; direction:rtl; position:static; align-content:start; height:610px; padding:13px; overflow:auto; border-color:#d9cbb9; background:#fffaf3; }
+.trip-profile-summary li { min-height:42px; padding:7px 8px; box-shadow:0 2px 7px rgba(80,60,40,.04); }
+.trip-profile-summary li>i { display:grid; width:25px; height:25px; flex:0 0 25px; place-items:center; border-radius:8px; color:#19704d; background:#e6f4ec; }
+.smart-trip-showcase { grid-area:showcase; direction:rtl; position:relative; min-width:0; height:610px; overflow:hidden; border-radius:17px; isolation:isolate; background:#244f3d; }
+.smart-trip-showcase>img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:56% center; }
+.smart-trip-showcase::after { content:""; position:absolute; inset:0; z-index:0; background:linear-gradient(180deg,rgba(16,53,39,.05),rgba(255,249,225,.22) 35%,rgba(13,48,35,.76)); }
+.smart-trip-showcase-content { position:relative; z-index:1; display:flex; height:100%; flex-direction:column; align-items:center; justify-content:flex-end; gap:10px; padding:30px 18px; color:#fff; text-align:center; }
+.smart-trip-showcase-content>span { padding:6px 11px; border-radius:99px; background:rgba(255,255,255,.86); color:#205c43; font-size:10px; font-weight:900; }
+.smart-trip-showcase-content h3 { margin:0; color:#fff; font-size:clamp(27px,2.4vw,40px); line-height:1.2; text-shadow:0 3px 15px rgba(0,0,0,.28); }
+.smart-trip-showcase-content p { margin:0; max-width:250px; color:#fff; font-size:11px; line-height:1.8; }
+.smart-trip-showcase-content>div { display:grid; width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.smart-trip-showcase-content b { display:grid; gap:4px; padding:9px 5px; border:1px solid rgba(255,255,255,.38); border-radius:11px; background:rgba(255,255,255,.88); color:#205c43; font-size:9px; backdrop-filter:blur(5px); }
+.smart-trip-showcase-content b i { font-size:15px; }
+@media(max-width:1100px){.smart-agent-workspace{grid-template-columns:minmax(0,1fr) 260px;grid-template-areas:"conversation profile" "showcase showcase"}.smart-agent-conversation,.trip-profile-summary{height:590px}.smart-trip-showcase{height:240px}.smart-trip-showcase-content{justify-content:center}.smart-trip-showcase-content>div{max-width:520px;grid-template-columns:repeat(4,1fr)}}
+@media(max-width:760px){.smart-agent-console{padding:7px}.smart-agent-workspace{grid-template-columns:1fr;grid-template-areas:"showcase" "profile" "conversation"}.smart-trip-showcase{height:230px}.smart-trip-showcase-content{padding:18px}.smart-trip-showcase-content h3{font-size:28px}.smart-trip-showcase-content p{display:none}.smart-trip-showcase-content>div{grid-template-columns:repeat(4,1fr)}.trip-profile-summary{height:auto;max-height:370px}.smart-agent-conversation{height:620px}.smart-agent-chat-header h3{font-size:14px}.smart-agent-message{max-width:96%}}
 .journey-result-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }.journey-result-actions .choose-trip-guide { min-height:46px; padding:10px 18px; border:0; border-radius:12px; color:#fff; background:#9a623c; font:inherit; font-weight:900; cursor:pointer; }
 @media(max-width:700px){.modal-box:has(.guide-directory-list) .agent-features{grid-template-columns:1fr}.modal-box:has(.agent-workspace) .recommendations-list.guide-directory-list .guide-directory-item{grid-template-columns:38px 1fr auto;padding:12px}.guide-directory-item .guide-list-number{display:none}.guide-directory-item>b{font-size:0;padding:10px}.guide-directory-item>b i{font-size:13px}}
 @media(max-width:620px){.guide-preference-fieldset>div,.journey-guide-picker>div,.guide-linked-trip dl,.guide-request-form{grid-template-columns:1fr}.journey-guide-picker>header{align-items:flex-start;flex-direction:column}.guide-linked-trip dl .wide,.guide-request-form .wide,.guide-request-form>button{grid-column:auto}.guide-profile-meta{display:grid}.journey-result-actions,.journey-result-actions a,.journey-result-actions button{width:100%}}
