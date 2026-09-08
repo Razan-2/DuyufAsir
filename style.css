@@ -4755,6 +4755,7 @@ body.dark-mode { background: #000; color: #f5f5f5; }
 .condition-lab[hidden] { display:none; }
 .asir-gift-feature[hidden],.asir-gift-coupon-host[hidden],.asir-gift-wizard fieldset[hidden],.asir-gift-error[hidden],.asir-gift-wizard footer button[hidden] { display:none; }
 .asir-gift-feature { display:grid; gap:14px; margin-top:18px; }
+.about-only-page .asir-gift-feature { width:min(1120px,calc(100% - 40px)); margin:18px auto 0; }
 .asir-gift-card { position:relative; display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:15px; overflow:hidden; padding:20px 22px; border:1px solid #d7bc91; border-radius:20px; background:linear-gradient(125deg,#fff8e8,#f4ead4); box-shadow:0 12px 30px rgba(95,68,35,.10); }
 .asir-gift-card::after,.asir-gift-coupon::before { content:""; position:absolute; inset-inline-end:0; bottom:0; width:180px; height:18px; opacity:.4; background:repeating-linear-gradient(45deg,#1d6548 0 10px,#e1a33f 10px 20px,#a95735 20px 30px,#fff 30px 40px); clip-path:polygon(0 100%,7% 0,14% 100%,21% 0,28% 100%,35% 0,42% 100%,49% 0,56% 100%,63% 0,70% 100%,77% 0,84% 100%,91% 0,100% 100%); }
 .asir-gift-card>i { display:grid; width:64px; height:64px; place-items:center; border-radius:18px; color:#fff; background:linear-gradient(135deg,#205c43,#9b633c); font-size:27px; box-shadow:0 9px 20px rgba(32,92,67,.18); }

@@ -3179,6 +3179,14 @@ async function showAsirGiftFeature() {
     }
 }
 
+// Keep the gift module independent and mount it under coupons on the About page.
+if (document.body.classList.contains("about-only-page")) {
+    const rewardsSection = document.querySelector("#rewards");
+    const giftFeature = document.querySelector("#asirGiftFeature");
+    if (rewardsSection && giftFeature) rewardsSection.insertAdjacentElement("afterend", giftFeature);
+    showAsirGiftFeature();
+}
+
 let asirGiftStep = 1;
 
 function showAsirGiftStep(step) {
