@@ -73,6 +73,21 @@ def test_agent_collects_multiple_profile_fields_without_reasking(client):
     assert "days" not in payload["missing_fields"]
 
 
+def test_agent_accepts_ten_people_for_agritourism(client):
+    provider = FakeProvider([
+        tool_call("save_trip_profile", '{"trip_type":"سياحة زراعية","people":10,"interests":["مزارع","كشتات"]}'),
+        {"output": [], "output_text": "سأجهز رحلة زراعية مناسبة للمجموعة."},
+    ])
+    app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
+    try:
+        payload = client.post("/api/agent/chat", json={"message": "نحن 10 أشخاص ونبغى رحلة سياحة زراعية فيها مزارع وكشتات"}).json()
+    finally:
+        app.dependency_overrides.pop(get_smart_trip_agent, None)
+    assert payload["profile"]["people"] == 10
+    assert payload["profile"]["trip_type"] == "سياحة زراعية"
+    assert "people" not in payload["missing_fields"]
+
+
 def test_build_trip_handles_no_destination_results():
     with SessionLocal() as db:
         context = ToolContext(db=db, searches={"destinations": []})
