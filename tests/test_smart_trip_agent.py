@@ -58,34 +58,90 @@ def test_agent_executes_requested_tool(client):
 
 def test_agent_collects_multiple_profile_fields_without_reasking(client):
     provider = FakeProvider([
-        tool_call("save_trip_profile", '{"days":3,"people":4,"budget":"متوسطة","guide":false,"interests":["طبيعة","كوفيهات"]}'),
-        {"output": [], "output_text": "ممتاز، متى تبدأ وتنتهي رحلتكم كل يوم؟"},
+        tool_call("save_trip_profile", '{"days":3,"people_count":4,"budget":"متوسطة","guide":false,"interests":["طبيعة","كوفيهات"]}'),
     ])
     app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
     try:
         payload = client.post("/api/agent/chat", json={"message": "نحن 4 أشخاص، 3 أيام، ميزانيتنا متوسطة ونحب الطبيعة والكوفيهات وما نبي مرشد"}).json()
     finally:
         app.dependency_overrides.pop(get_smart_trip_agent, None)
-    assert payload["profile"]["people"] == 4
+    assert payload["trip_profile"]["people_count"] == 4
     assert payload["profile"]["days"] == 3
     assert payload["profile"]["guide"] is False
-    assert "people" not in payload["missing_fields"]
+    assert "people_count" not in payload["missing_fields"]
     assert "days" not in payload["missing_fields"]
 
 
 def test_agent_accepts_ten_people_for_agritourism(client):
     provider = FakeProvider([
-        tool_call("save_trip_profile", '{"trip_type":"سياحة زراعية","people":10,"interests":["مزارع","كشتات"]}'),
-        {"output": [], "output_text": "سأجهز رحلة زراعية مناسبة للمجموعة."},
+        tool_call("save_trip_profile", '{"trip_type":"سياحة زراعية","people_count":10,"interests":["مزارع","كشتات"]}'),
     ])
     app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
     try:
         payload = client.post("/api/agent/chat", json={"message": "نحن 10 أشخاص ونبغى رحلة سياحة زراعية فيها مزارع وكشتات"}).json()
     finally:
         app.dependency_overrides.pop(get_smart_trip_agent, None)
-    assert payload["profile"]["people"] == 10
+    assert payload["trip_profile"]["people_count"] == 10
     assert payload["profile"]["trip_type"] == "سياحة زراعية"
-    assert "people" not in payload["missing_fields"]
+    assert "people_count" not in payload["missing_fields"]
+
+
+def test_single_answer_never_builds_trip_early(client):
+    provider = FakeProvider([{
+        "output": [
+            tool_call("save_trip_profile", '{"trip_type":"سياحة زراعية"}')["output"][0],
+            tool_call("build_trip")["output"][0],
+        ]
+    }])
+    app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
+    try:
+        payload = client.post("/api/agent/chat", json={"session_id": "early-build-session", "message": "سياحة زراعية"}).json()
+    finally:
+        app.dependency_overrides.pop(get_smart_trip_agent, None)
+    assert payload["trip"] == []
+    assert payload["ready_to_build"] is False
+    assert "trip_created" not in payload["actions"]
+    assert "trip_type" not in payload["missing_fields"]
+    assert "guide" in payload["missing_fields"]
+
+
+def test_profile_is_retained_by_backend_between_messages(client):
+    provider = FakeProvider([
+        tool_call("save_trip_profile", '{"trip_type":"سياحة زراعية"}'),
+        tool_call("save_trip_profile", '{"days":3}'),
+    ])
+    agent = SmartTripAgent(provider)
+    app.dependency_overrides[get_smart_trip_agent] = lambda: agent
+    try:
+        first = client.post("/api/agent/chat", json={"session_id": "retained-session", "message": "سياحة زراعية"}).json()
+        second = client.post("/api/agent/chat", json={"session_id": "retained-session", "message": "3 أيام"}).json()
+    finally:
+        app.dependency_overrides.pop(get_smart_trip_agent, None)
+    assert first["trip_profile"]["trip_type"] == "سياحة زراعية"
+    assert "كم يوم" in first["reply"]
+    assert second["trip_profile"]["trip_type"] == "سياحة زراعية"
+    assert second["trip_profile"]["days"] == 3
+    assert "نوع التجربة" not in second["reply"]
+    assert "عدد الأشخاص" in second["reply"]
+    assert "trip_type" not in second["missing_fields"]
+    assert "days" not in second["missing_fields"]
+
+
+def test_trip_is_built_only_when_profile_is_complete(client):
+    complete = '{"trip_type":"طبيعة","guide":false,"start_date":"2026-09-10","days":1,"day_start_time":"16:00","day_end_time":"23:00","budget":800,"people_count":4,"group_type":"عائلة","interests":["طبيعة","مطاعم"],"weather_preference":"يفضل الصحو"}'
+    provider = FakeProvider([
+        {"output": [tool_call("save_trip_profile", complete)["output"][0], tool_call("build_trip", '{"days":1,"start_time":"16:00","end_time":"23:00","budget":800,"people":4,"interests":["طبيعة","مطاعم"]}')["output"][0]]},
+        {"output": [], "output_text": "اكتملت البيانات وبنيت الرحلة."},
+    ])
+    app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
+    try:
+        payload = client.post("/api/agent/chat", json={"session_id": "complete-session", "message": "هذه كل معلومات الرحلة"}).json()
+    finally:
+        app.dependency_overrides.pop(get_smart_trip_agent, None)
+    assert payload["missing_fields"] == []
+    assert payload["ready_to_build"] is True
+    assert payload["trip"]
+    assert "trip_created" in payload["actions"]
 
 
 def test_build_trip_handles_no_destination_results():

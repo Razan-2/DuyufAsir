@@ -44,28 +44,31 @@ class ToolContext:
     trip: list[dict[str, Any]] = field(default_factory=list)
 
 
-PROFILE_FIELDS = ("trip_type", "guide", "trip_date", "days", "start_time", "end_time", "budget", "people", "group_type", "interests", "rain_preference")
+PROFILE_FIELDS = ("trip_type", "days", "people_count", "budget", "group_type", "guide", "start_date", "day_start_time", "day_end_time", "interests", "weather_preference")
 
 
 def save_trip_profile(
     context: ToolContext,
     trip_type: str | None = None,
     guide: bool | None = None,
-    trip_date: str | None = None,
+    start_date: str | None = None,
     days: int | None = None,
-    start_time: str | None = None,
-    end_time: str | None = None,
+    day_start_time: str | None = None,
+    day_end_time: str | None = None,
     budget: str | float | None = None,
-    people: int | None = None,
+    people_count: int | None = None,
     group_type: str | None = None,
     interests: list[str] | None = None,
-    rain_preference: str | None = None,
+    weather_preference: str | None = None,
+    classic_car_experience: bool | None = None,
 ) -> dict[str, Any]:
     values = locals()
     for field_name in PROFILE_FIELDS:
         value = values[field_name]
         if value is not None and value != []:
             context.profile[field_name] = value
+    if classic_car_experience is not None:
+        context.profile["classic_car_experience"] = classic_car_experience
     missing = [field_name for field_name in PROFILE_FIELDS if context.profile.get(field_name) in (None, "", [])]
     context.actions.append("profile_updated")
     return {"profile": context.profile, "missing_fields": missing, "ready": not missing}
@@ -202,7 +205,7 @@ TOOL_HANDLERS = {
 }
 
 TOOL_DEFINITIONS = [
-    {"type": "function", "name": "save_trip_profile", "description": "سجل فقط معلومات الرحلة التي ذكرها المستخدم صراحة أو أجاب عنها. لا تخمن القيم الناقصة.", "parameters": {"type": "object", "properties": {"trip_type": {"type": ["string", "null"], "enum": ["سياحة زراعية", "داخل المدينة", "طبيعة", "خليط", None]}, "guide": {"type": ["boolean", "null"]}, "trip_date": {"type": ["string", "null"]}, "days": {"type": ["integer", "null"], "minimum": 1, "maximum": 7}, "start_time": {"type": ["string", "null"]}, "end_time": {"type": ["string", "null"]}, "budget": {"type": ["string", "number", "null"]}, "people": {"type": ["integer", "null"], "minimum": 1, "maximum": 30}, "group_type": {"type": ["string", "null"]}, "interests": {"type": ["array", "null"], "items": {"type": "string"}}, "rain_preference": {"type": ["string", "null"], "enum": ["يحب المطر", "يفضل الصحو", None]}}, "required": [], "additionalProperties": False}},
+    {"type": "function", "name": "save_trip_profile", "description": "سجل فقط معلومات الرحلة التي ذكرها المستخدم صراحة أو أجاب عنها. لا تخمن القيم الناقصة.", "parameters": {"type": "object", "properties": {"trip_type": {"type": ["string", "null"], "enum": ["سياحة زراعية", "داخل المدينة", "طبيعة", "خليط", None]}, "guide": {"type": ["boolean", "null"]}, "start_date": {"type": ["string", "null"]}, "days": {"type": ["integer", "null"], "minimum": 1, "maximum": 7}, "day_start_time": {"type": ["string", "null"]}, "day_end_time": {"type": ["string", "null"]}, "budget": {"type": ["string", "number", "null"]}, "people_count": {"type": ["integer", "null"], "minimum": 1, "maximum": 30}, "group_type": {"type": ["string", "null"]}, "interests": {"type": ["array", "null"], "items": {"type": "string"}}, "weather_preference": {"type": ["string", "null"], "enum": ["يحب المطر", "يفضل الصحو", None]}, "classic_car_experience": {"type": ["boolean", "null"]}}, "required": [], "additionalProperties": False}},
     {"type": "function", "name": "get_weather", "description": "افحص طقس وجهة في تاريخ ووقت محددين قبل إضافتها للرحلة.", "parameters": {"type": "object", "properties": {"location": {"type": "string"}, "forecast_date": {"type": "string"}, "visit_time": {"type": "string"}}, "required": ["location", "forecast_date"], "additionalProperties": False}},
     {"type": "function", "name": "search_destinations", "description": "ابحث في وجهات المشروع.", "parameters": {"type": "object", "properties": {"city": {"type": "string"}, "interest": {"type": "string"}}, "required": [], "additionalProperties": False}},
     {"type": "function", "name": "search_restaurants", "description": "ابحث عن مطاعم أو مقاهٍ.", "parameters": {"type": "object", "properties": {"city": {"type": "string"}, "kind": {"type": "string", "enum": ["all", "cafe", "restaurant"]}}, "required": [], "additionalProperties": False}},

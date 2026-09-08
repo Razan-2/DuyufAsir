@@ -3122,7 +3122,8 @@ updateJourneyGuidePicker();
 const tripDetailsStep = document.querySelector(".trip-details-fieldset legend span");
 if (tripDetailsStep) tripDetailsStep.textContent = "4";
 
-const tripProfileLabels = { trip_type: "نوع التجربة", guide: "المرشد", trip_date: "تاريخ الرحلة", days: "عدد الأيام", start_time: "بداية اليوم", end_time: "نهاية اليوم", budget: "الميزانية", people: "عدد الأشخاص", group_type: "نوع المجموعة", interests: "الاهتمامات", rain_preference: "الطقس المفضل" };
+const tripProfileLabels = { trip_type: "نوع التجربة", guide: "المرشد", start_date: "تاريخ الرحلة", days: "عدد الأيام", day_start_time: "بداية اليوم", day_end_time: "نهاية اليوم", budget: "الميزانية", people_count: "عدد الأشخاص", group_type: "نوع المجموعة", interests: "الاهتمامات", weather_preference: "الطقس المفضل", classic_car_experience: "تجربة السيارات الكلاسيكية" };
+const tripRequiredProfileKeys = ["trip_type", "guide", "start_date", "days", "day_start_time", "day_end_time", "budget", "people_count", "group_type", "interests", "weather_preference"];
 
 function renderTripProfile(profile = {}, missingFields = null) {
     const summary = document.querySelector("#tripProfileSummary");
@@ -3130,14 +3131,14 @@ function renderTripProfile(profile = {}, missingFields = null) {
     const progressBar = document.querySelector(".trip-profile-progress i");
     if (!summary) return;
     const known = Object.entries(tripProfileLabels).filter(([key]) => profile[key] !== undefined && profile[key] !== null && profile[key] !== "" && (!Array.isArray(profile[key]) || profile[key].length));
-    if (!missingFields) missingFields = Object.keys(tripProfileLabels).filter((key) => !known.some(([knownKey]) => knownKey === key));
+    if (!missingFields) missingFields = tripRequiredProfileKeys.filter((key) => !known.some(([knownKey]) => knownKey === key));
     summary.innerHTML = known.length ? known.map(([key, label]) => {
-        const rawValue = key === "guide" ? (profile[key] ? "مع مرشد" : "بدون مرشد") : key === "interests" ? profile[key].join("، ") : ["start_time", "end_time"].includes(key) ? formatClock12(profile[key]) : profile[key];
+        const rawValue = key === "guide" ? (profile[key] ? "مع مرشد" : "بدون مرشد") : key === "classic_car_experience" ? (profile[key] ? "مطلوبة" : "غير مطلوبة") : key === "interests" ? profile[key].join("، ") : ["day_start_time", "day_end_time"].includes(key) ? formatClock12(profile[key]) : profile[key];
         return `<li><i class="fa-solid fa-check"></i><span><small>${label}</small><strong>${escapeHtml(rawValue)}</strong></span></li>`;
     }).join("") : '<li class="empty"><i class="fa-solid fa-comments"></i> بانتظار إجابتك الأولى</li>';
-    const completed = Object.keys(tripProfileLabels).length - missingFields.length;
-    progressText.textContent = `${completed} من ${Object.keys(tripProfileLabels).length} معلومات`;
-    progressBar.style.width = `${completed / Object.keys(tripProfileLabels).length * 100}%`;
+    const completed = tripRequiredProfileKeys.length - missingFields.length;
+    progressText.textContent = `${completed} من ${tripRequiredProfileKeys.length} معلومات`;
+    progressBar.style.width = `${completed / tripRequiredProfileKeys.length * 100}%`;
 }
 
 function addSmartAgentMessage(role, text) {
@@ -3178,12 +3179,19 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
     try {
         const existingTrip = JSON.parse(localStorage.getItem("smartTripAgentTrip") || "null");
         const preferences = JSON.parse(localStorage.getItem("duofAsirPreferences") || "null");
-        const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message, trip: existingTrip, preferences, profile: savedProfile }) });
+        let sessionId = localStorage.getItem("smartTripAgentSessionId");
+        if (!sessionId) {
+            sessionId = globalThis.crypto?.randomUUID?.().replaceAll("-", "") || `trip_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            localStorage.setItem("smartTripAgentSessionId", sessionId);
+        }
+        const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sessionId, message, trip: existingTrip, preferences, profile: savedProfile }) });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(payload.detail || "تعذر تشغيل الوكيل.");
-        localStorage.setItem("smartTripAgentProfile", JSON.stringify(payload.profile));
-        renderTripProfile(payload.profile, payload.missing_fields);
-        addSmartAgentMessage("assistant", payload.ready && payload.trip?.length ? "عرفت ذوقك، وبنيت لك الرحلة المناسبة في عسير." : payload.reply);
+        localStorage.setItem("smartTripAgentSessionId", payload.session_id);
+        const tripProfile = payload.trip_profile || payload.profile || {};
+        localStorage.setItem("smartTripAgentProfile", JSON.stringify(tripProfile));
+        renderTripProfile(tripProfile, payload.missing_fields);
+        addSmartAgentMessage("assistant", payload.ready_to_build && payload.trip?.length ? "عرفت ذوقك، وبنيت لك الرحلة المناسبة في عسير." : payload.reply);
         renderSmartAgentQuickOptions(payload.quick_options);
         status.hidden = true;
         if (payload.trip?.length) {
