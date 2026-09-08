@@ -56,6 +56,23 @@ def test_agent_executes_requested_tool(client):
     assert any(item.get("type") == "function_call_output" for item in provider.calls[1]["input"])
 
 
+def test_agent_collects_multiple_profile_fields_without_reasking(client):
+    provider = FakeProvider([
+        tool_call("save_trip_profile", '{"days":3,"people":4,"budget":"متوسطة","guide":false,"interests":["طبيعة","كوفيهات"]}'),
+        {"output": [], "output_text": "ممتاز، متى تبدأ وتنتهي رحلتكم كل يوم؟"},
+    ])
+    app.dependency_overrides[get_smart_trip_agent] = lambda: SmartTripAgent(provider)
+    try:
+        payload = client.post("/api/agent/chat", json={"message": "نحن 4 أشخاص، 3 أيام، ميزانيتنا متوسطة ونحب الطبيعة والكوفيهات وما نبي مرشد"}).json()
+    finally:
+        app.dependency_overrides.pop(get_smart_trip_agent, None)
+    assert payload["profile"]["people"] == 4
+    assert payload["profile"]["days"] == 3
+    assert payload["profile"]["guide"] is False
+    assert "people" not in payload["missing_fields"]
+    assert "days" not in payload["missing_fields"]
+
+
 def test_build_trip_handles_no_destination_results():
     with SessionLocal() as db:
         context = ToolContext(db=db, searches={"destinations": []})
@@ -76,4 +93,3 @@ def test_bad_weather_excludes_outdoor_destination():
     names = [stop["name"] for day in result["trip"] for stop in day["stops"]]
     assert "السودة" not in names
     assert "قصور أبو سراح" in names
-
