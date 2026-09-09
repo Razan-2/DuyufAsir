@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ضيوف عسير | عسير رحلة تتكيّف معك</title>
 
-    <link rel="stylesheet" href="style.css?v=277">
+    <link rel="stylesheet" href="style.css?v=286">
     <link rel="icon" type="image/png" href="assets/brand/duof-asir-sun-logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -240,6 +240,11 @@
         <div class="weather-demo-notice weather-live-notice"><i class="fa-solid fa-cloud-sun-rain"></i><span><strong>توقعات طقس حقيقية</strong><small>نفحص توقعات كل وجهة في وقت الزيارة عبر Open-Meteo. عند تعذر الاتصال تظهر المحاكاة المؤقتة بوضوح.</small></span></div>
     </div>
     <section class="smart-agent-console" aria-labelledby="smartAgentTitle">
+        <div class="trip-live-location" id="tripLiveLocation">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span><strong>حدّد موقعك لطقس أدق</strong><small id="tripLocationStatus">سنستخدم موقعك بإذنك لجلب طقس اليوم الحقيقي للمدينة الأقرب.</small></span>
+            <button type="button" id="detectTripLocation"><i class="fa-solid fa-location-dot"></i> استخدام موقعي</button>
+        </div>
         <div class="smart-agent-workspace">
             <div class="smart-agent-conversation">
                 <header class="smart-agent-chat-header"><i class="fa-solid fa-robot"></i><span><small>مساعدك الذكي في ضيوف عسير</small><h3 id="smartAgentTitle">خلّنا نبني رحلتك بالمحادثة</h3><p>أخبرني بما تعرفه الآن، وسأسألك فقط عن المعلومات الناقصة.</p></span></header>
@@ -944,7 +949,7 @@
 </div>
 
 
-<script src="main.js?v=283"></script>
+<script src="main.js?v=286"></script>
 
 </body>
 </html>

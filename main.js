@@ -49,6 +49,15 @@ const agentWorkspace = document.querySelector(".agent-workspace");
 const agentChatToggle = document.querySelector("#agentChatToggle");
 let selectedBooking = null;
 
+const mainNavbar = document.querySelector(".navbar");
+if (mainNavbar && !document.querySelector(".mobile-section-links")) {
+    const mobileLinks = document.createElement("nav");
+    mobileLinks.className = "mobile-section-links";
+    mobileLinks.setAttribute("aria-label", "روابط الصفحات");
+    mobileLinks.innerHTML = '<a href="/about.html"><i class="fa-solid fa-circle-info"></i> عن المنصة</a><a href="/contact.html"><i class="fa-solid fa-headset"></i> الدعم الفني</a>';
+    mainNavbar.insertAdjacentElement("afterend", mobileLinks);
+}
+
 const heroSection = document.querySelector(".hero");
 const servicesSection = document.querySelector(".services");
 const mainAssistantSection = document.querySelector(".main-assistant-section");
@@ -3360,6 +3369,81 @@ document.querySelector("#smartAgentQuickOptions")?.addEventListener("click", (ev
     form.requestSubmit();
 });
 
+const asirLocationCenters = [
+    { city: "أبها", latitude: 18.2164, longitude: 42.5053 },
+    { city: "خميس مشيط", latitude: 18.3069, longitude: 42.7294 },
+    { city: "أحد رفيدة", latitude: 18.1980, longitude: 42.8280 },
+    { city: "سراة عبيدة", latitude: 18.0747, longitude: 43.1414 },
+    { city: "النماص", latitude: 19.1217, longitude: 42.1353 },
+    { city: "تنومة", latitude: 18.9425, longitude: 42.1627 },
+    { city: "محايل عسير", latitude: 18.5473, longitude: 42.0496 }
+];
+
+function nearestAsirCity(latitude, longitude) {
+    const toRadians = (value) => value * Math.PI / 180;
+    return asirLocationCenters.map((place) => {
+        const latDelta = toRadians(place.latitude - latitude);
+        const lonDelta = toRadians(place.longitude - longitude);
+        const a = Math.sin(latDelta / 2) ** 2 + Math.cos(toRadians(latitude)) * Math.cos(toRadians(place.latitude)) * Math.sin(lonDelta / 2) ** 2;
+        return { ...place, distance: 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) };
+    }).sort((first, second) => first.distance - second.distance)[0];
+}
+
+function currentWeatherLabel(code) {
+    if ([0, 1].includes(code)) return "صحو";
+    if ([2, 3].includes(code)) return "غائم جزئيًا";
+    if ([45, 48].includes(code)) return "ضباب";
+    if (code >= 51 && code <= 67) return "أمطار";
+    if (code >= 80 && code <= 82) return "زخات مطر";
+    if (code >= 95) return "عواصف رعدية";
+    return "طقس متغير";
+}
+
+async function detectTripLocation() {
+    const panel = document.querySelector("#tripLiveLocation");
+    const status = document.querySelector("#tripLocationStatus");
+    const button = document.querySelector("#detectTripLocation");
+    if (!panel || !navigator.geolocation) {
+        if (status) status.textContent = "المتصفح لا يدعم تحديد الموقع؛ سيستمر الوكيل بفحص طقس الوجهات نفسها.";
+        return;
+    }
+    panel.classList.add("loading");
+    button.disabled = true;
+    status.textContent = "جاري تحديد موقعك وجلب طقس اليوم الحقيقي…";
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+        try {
+            const city = nearestAsirCity(coords.latitude, coords.longitude);
+            const url = new URL("https://api.open-meteo.com/v1/forecast");
+            url.search = new URLSearchParams({ latitude: coords.latitude.toFixed(5), longitude: coords.longitude.toFixed(5), current: "temperature_2m,weather_code,precipitation,rain", timezone: "Asia/Riyadh" });
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("weather");
+            const weather = (await response.json()).current;
+            const locationContext = { city: city.city, latitude: Number(coords.latitude.toFixed(4)), longitude: Number(coords.longitude.toFixed(4)), temperature: weather.temperature_2m, condition: currentWeatherLabel(weather.weather_code), rain: weather.rain ?? weather.precipitation ?? 0, observed_at: weather.time, source: "Open-Meteo live" };
+            localStorage.setItem("smartTripUserLocation", JSON.stringify(locationContext));
+            status.textContent = `${city.city} (أقرب مدينة) · ${weather.temperature_2m}° · ${locationContext.condition} · مطر ${locationContext.rain} ملم · تحديث اليوم`;
+            button.innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث الموقع';
+            panel.classList.add("detected");
+        } catch (_) {
+            status.textContent = "تم تحديد موقعك، لكن تعذر جلب طقس اليوم. سيستخدم الوكيل توقعات الوجهات الحقيقية أثناء بناء الرحلة.";
+        } finally {
+            panel.classList.remove("loading");
+            button.disabled = false;
+        }
+    }, (error) => {
+        status.textContent = error.code === 1 ? "لم يتم السماح بالموقع. يمكنك المحاولة مجددًا، وسيظل فحص طقس الوجهات يعمل." : "تعذر تحديد موقعك الآن. حاول مجددًا.";
+        panel.classList.remove("loading");
+        button.disabled = false;
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+}
+
+document.querySelector("#detectTripLocation")?.addEventListener("click", detectTripLocation);
+const restoredUserLocation = JSON.parse(localStorage.getItem("smartTripUserLocation") || "null");
+if (restoredUserLocation && document.querySelector("#tripLocationStatus")) {
+    document.querySelector("#tripLiveLocation").classList.add("detected");
+    document.querySelector("#tripLocationStatus").textContent = `${restoredUserLocation.city} (أقرب مدينة) · ${restoredUserLocation.temperature}° · ${restoredUserLocation.condition} · طقس اليوم من Open-Meteo`;
+    document.querySelector("#detectTripLocation").innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث الموقع';
+}
+
 document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -3383,7 +3467,9 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
             sessionId = globalThis.crypto?.randomUUID?.().replaceAll("-", "") || `trip_${Date.now()}_${Math.random().toString(36).slice(2)}`;
             localStorage.setItem("smartTripAgentSessionId", sessionId);
         }
-        const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sessionId, message, trip: existingTrip, preferences, profile: savedProfile }) });
+        const userLocation = JSON.parse(localStorage.getItem("smartTripUserLocation") || "null");
+        const agentMessage = userLocation ? `${message.slice(0, 900)}\n\n[سياق موقع شاركه المستخدم بإذنه: أقرب مدينة ${userLocation.city}، الإحداثيات ${userLocation.latitude},${userLocation.longitude}، طقس اليوم ${userLocation.condition} ودرجة الحرارة ${userLocation.temperature}°، المصدر Open-Meteo.]` : message;
+        const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sessionId, message: agentMessage, trip: existingTrip, preferences, profile: savedProfile }) });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(payload.detail || "تعذر تشغيل الوكيل.");
         localStorage.setItem("smartTripAgentSessionId", payload.session_id);

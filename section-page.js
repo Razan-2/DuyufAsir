@@ -49,9 +49,19 @@ fetch("/")
 
         if (pageName === "journey") {
             document.querySelector(".header-journey-btn")?.remove();
+            const packages = document.querySelector("#tourPackages");
+            const siteFooter = document.querySelector("footer#contact");
+            if (packages && siteFooter) siteFooter.before(packages);
         }
 
         const navbar = document.querySelector(".navbar");
+        if (navbar && !document.querySelector(".mobile-section-links")) {
+            const mobileLinks = document.createElement("nav");
+            mobileLinks.className = "mobile-section-links";
+            mobileLinks.setAttribute("aria-label", "روابط الصفحات");
+            mobileLinks.innerHTML = '<a href="/about.html"><i class="fa-solid fa-circle-info"></i> عن المنصة</a><a href="/contact.html"><i class="fa-solid fa-headset"></i> الدعم الفني</a>';
+            navbar.insertAdjacentElement("afterend", mobileLinks);
+        }
         if (navbar && !document.querySelector(".section-back-button")) {
             const backButton = document.createElement("button");
             backButton.type = "button";
@@ -176,7 +186,7 @@ fetch("/")
 
         const script = document.createElement("script");
 
-        script.src = "/main.js?v=283";
+        script.src = "/main.js?v=286";
         script.defer = true;
 
         document.body.appendChild(script);
