@@ -3149,7 +3149,6 @@ function syncAgentTripToAdaptiveJourney(agentTrip = [], profile = {}, sources = 
     localStorage.setItem("smartTripPlan", JSON.stringify({ settings: smartTripSettings, days: smartTripDays }));
     renderPrototypeJourney();
     document.querySelector("#conditionLab").hidden = false;
-    showAsirGiftFeature();
 }
 
 const asirGiftLabels = {
