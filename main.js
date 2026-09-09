@@ -3399,6 +3399,22 @@ function currentWeatherLabel(code) {
     return "طقس متغير";
 }
 
+async function loadTripCityWeather(latitude, longitude, city, locationMode) {
+    const panel = document.querySelector("#tripLiveLocation");
+    const status = document.querySelector("#tripLocationStatus");
+    const url = new URL("https://api.open-meteo.com/v1/forecast");
+    url.search = new URLSearchParams({ latitude: latitude.toFixed(5), longitude: longitude.toFixed(5), current: "temperature_2m,weather_code,precipitation,rain", timezone: "Asia/Riyadh" });
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("weather");
+    const weather = (await response.json()).current;
+    const locationContext = { city, latitude: Number(latitude.toFixed(4)), longitude: Number(longitude.toFixed(4)), temperature: weather.temperature_2m, condition: currentWeatherLabel(weather.weather_code), rain: weather.rain ?? weather.precipitation ?? 0, observed_at: weather.time, source: "Open-Meteo live", location_mode: locationMode };
+    localStorage.setItem("smartTripUserLocation", JSON.stringify(locationContext));
+    const cityDescription = locationMode === "manual" ? `${city} (اختيارك)` : `موقع تقريبي قرب ${city}`;
+    status.textContent = `${cityDescription} · ${weather.temperature_2m}° · ${locationContext.condition} · مطر ${locationContext.rain} ملم · تحديث اليوم`;
+    panel.classList.add("detected");
+    return locationContext;
+}
+
 async function detectTripLocation() {
     const panel = document.querySelector("#tripLiveLocation");
     const status = document.querySelector("#tripLocationStatus");
@@ -3413,16 +3429,8 @@ async function detectTripLocation() {
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
         try {
             const city = nearestAsirCity(coords.latitude, coords.longitude);
-            const url = new URL("https://api.open-meteo.com/v1/forecast");
-            url.search = new URLSearchParams({ latitude: coords.latitude.toFixed(5), longitude: coords.longitude.toFixed(5), current: "temperature_2m,weather_code,precipitation,rain", timezone: "Asia/Riyadh" });
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("weather");
-            const weather = (await response.json()).current;
-            const locationContext = { city: city.city, latitude: Number(coords.latitude.toFixed(4)), longitude: Number(coords.longitude.toFixed(4)), temperature: weather.temperature_2m, condition: currentWeatherLabel(weather.weather_code), rain: weather.rain ?? weather.precipitation ?? 0, observed_at: weather.time, source: "Open-Meteo live" };
-            localStorage.setItem("smartTripUserLocation", JSON.stringify(locationContext));
-            status.textContent = `${city.city} (أقرب مدينة) · ${weather.temperature_2m}° · ${locationContext.condition} · مطر ${locationContext.rain} ملم · تحديث اليوم`;
+            await loadTripCityWeather(coords.latitude, coords.longitude, city.city, "approximate");
             button.innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث الموقع';
-            panel.classList.add("detected");
         } catch (_) {
             status.textContent = "تم تحديد موقعك، لكن تعذر جلب طقس اليوم. سيستخدم الوكيل توقعات الوجهات الحقيقية أثناء بناء الرحلة.";
         } finally {
@@ -3437,10 +3445,27 @@ async function detectTripLocation() {
 }
 
 document.querySelector("#detectTripLocation")?.addEventListener("click", detectTripLocation);
+document.querySelector("#tripCityOverride")?.addEventListener("change", async (event) => {
+    const selected = asirLocationCenters.find((place) => place.city === event.target.value);
+    if (!selected) return;
+    const panel = document.querySelector("#tripLiveLocation");
+    const status = document.querySelector("#tripLocationStatus");
+    panel.classList.add("loading");
+    status.textContent = `جاري جلب طقس ${selected.city} الحقيقي لليوم…`;
+    try {
+        await loadTripCityWeather(selected.latitude, selected.longitude, selected.city, "manual");
+    } catch (_) {
+        status.textContent = `تعذر جلب طقس ${selected.city} الآن. حاول مرة أخرى.`;
+    } finally {
+        panel.classList.remove("loading");
+    }
+});
 const restoredUserLocation = JSON.parse(localStorage.getItem("smartTripUserLocation") || "null");
 if (restoredUserLocation && document.querySelector("#tripLocationStatus")) {
     document.querySelector("#tripLiveLocation").classList.add("detected");
-    document.querySelector("#tripLocationStatus").textContent = `${restoredUserLocation.city} (أقرب مدينة) · ${restoredUserLocation.temperature}° · ${restoredUserLocation.condition} · طقس اليوم من Open-Meteo`;
+    const restoredDescription = restoredUserLocation.location_mode === "manual" ? `${restoredUserLocation.city} (اختيارك)` : `موقع تقريبي قرب ${restoredUserLocation.city}`;
+    document.querySelector("#tripLocationStatus").textContent = `${restoredDescription} · ${restoredUserLocation.temperature}° · ${restoredUserLocation.condition} · طقس اليوم من Open-Meteo`;
+    if (restoredUserLocation.location_mode === "manual") document.querySelector("#tripCityOverride").value = restoredUserLocation.city;
     document.querySelector("#detectTripLocation").innerHTML = '<i class="fa-solid fa-rotate"></i> تحديث الموقع';
 }
 
@@ -3468,7 +3493,8 @@ document.querySelector("#smartTripAgentForm")?.addEventListener("submit", async 
             localStorage.setItem("smartTripAgentSessionId", sessionId);
         }
         const userLocation = JSON.parse(localStorage.getItem("smartTripUserLocation") || "null");
-        const agentMessage = userLocation ? `${message.slice(0, 900)}\n\n[سياق موقع شاركه المستخدم بإذنه: أقرب مدينة ${userLocation.city}، الإحداثيات ${userLocation.latitude},${userLocation.longitude}، طقس اليوم ${userLocation.condition} ودرجة الحرارة ${userLocation.temperature}°، المصدر Open-Meteo.]` : message;
+        const locationDescription = userLocation?.location_mode === "manual" ? `المدينة التي اختارها المستخدم ${userLocation.city}` : `موقع متصفح تقريبي قرب ${userLocation?.city || "مدينة غير محددة"}`;
+        const agentMessage = userLocation ? `${message.slice(0, 900)}\n\n[سياق موقع شاركه المستخدم بإذنه: ${locationDescription}، الإحداثيات ${userLocation.latitude},${userLocation.longitude}، طقس اليوم ${userLocation.condition} ودرجة الحرارة ${userLocation.temperature}°، المصدر Open-Meteo.]` : message;
         const response = await fetch("/api/agent/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sessionId, message: agentMessage, trip: existingTrip, preferences, profile: savedProfile }) });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(payload.detail || "تعذر تشغيل الوكيل.");
