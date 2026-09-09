@@ -2329,7 +2329,10 @@ languageObserver.observe(document.body, { childList: true, subtree: true });
 
 loginButton.addEventListener("click", () => openSimpleModal(loginModal));
 document.querySelector("#feedbackBtn").addEventListener("click", () => openSimpleModal(feedbackModal));
-document.querySelector(".watch-btn").addEventListener("click", openAbhaVideo);
+document.querySelector(".watch-btn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    openAbhaVideo();
+});
 abhaVideoPage.addEventListener("click", (event) => { if (event.target === abhaVideoPage) closeAbhaVideo(); });
 abhaVideo.addEventListener("ended", closeAbhaVideo);
 document.addEventListener("fullscreenchange", () => {
